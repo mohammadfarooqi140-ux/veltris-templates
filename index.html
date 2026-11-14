@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Template Library — Veltris</title>
+<meta name="description" content="Every Veltris template, free. Complete source code, no paywall, no catch.">
+<style>
+  :root{
+    --bg:#0B0B0C;
+    --panel:#141416;
+    --panel-2:#1A1A1D;
+    --line:#26262A;
+    --text:#F5F5F2;
+    --muted:#A9A9A2;
+    --gold:#D4AF37;
+    --gold-dark:#0B0B0C;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    line-height:1.5;
+  }
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+
+  /* Header */
+  header.top{
+    border-bottom:1px solid var(--line);
+    padding:18px 0;
+  }
+  .top-row{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .wordmark{
+    font-size:24px;font-weight:800;letter-spacing:.28em;color:var(--text);
+  }
+  .wordmark span{color:var(--gold)}
+  .tagline{font-size:13px;color:var(--muted);letter-spacing:.02em}
+
+  /* Hero */
+  .hero{padding:56px 0 8px;text-align:left}
+  .hero .kicker{
+    color:var(--gold);font-size:13px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;
+  }
+  .hero h1{
+    font-size:clamp(36px,6vw,58px);font-weight:800;line-height:1.08;margin:14px 0 16px;letter-spacing:-.01em;
+  }
+  .hero p.sub{
+    font-size:clamp(16px,2.4vw,19px);color:var(--muted);max-width:640px;
+  }
+  .hero p.sub strong{color:var(--text);font-weight:600}
+  .count{
+    margin-top:22px;font-size:14px;color:var(--muted);
+  }
+  .count b{color:var(--gold);font-weight:700}
+
+  /* Grid + cards */
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
+    gap:22px;
+    padding:34px 0 64px;
+  }
+  .card{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:14px;
+    overflow:hidden;
+    display:flex;flex-direction:column;
+  }
+  .thumb{position:relative;aspect-ratio:3/2;background:#000;overflow:hidden}
+  .thumb iframe.pv-frame{
+    position:absolute;left:0;top:0;width:1080px;height:1920px;border:0;
+    transform-origin:0 0;pointer-events:none;background:#000;
+  }
+  .badge-free{
+    position:absolute;z-index:2;top:12px;right:12px;
+    background:var(--gold);color:var(--gold-dark);
+    font-size:12px;font-weight:800;letter-spacing:.14em;
+    padding:5px 10px;border-radius:6px;
+  }
+  .badge-new{
+    position:absolute;z-index:2;top:12px;left:12px;
+    background:var(--text);color:var(--gold-dark);
+    font-size:12px;font-weight:800;letter-spacing:.14em;
+    padding:5px 10px;border-radius:6px;
+  }
+  .card-body{padding:18px 18px 20px;display:flex;flex-direction:column;gap:8px;flex:1}
+  .card h2{font-size:20px;font-weight:700;line-height:1.25}
+  .card .subject{font-size:14.5px;color:var(--muted)}
+  .card .get{font-size:14.5px;color:var(--text)}
+  .card .built{font-size:13px;color:var(--muted);margin-top:2px}
+  .btns{display:flex;gap:10px;margin-top:auto;padding-top:14px}
+  .btn{
+    flex:1;text-align:center;
+    font-size:14.5px;font-weight:700;
+    padding:11px 10px;border-radius:9px;
+    border:1px solid var(--gold);
+    transition:background .15s ease,color .15s ease;
+  }
+  .btn-live{background:var(--gold);color:var(--gold-dark)}
+  .btn-live:hover{background:#e5c65a}
+  .btn-dl{background:transparent;color:var(--gold)}
+  .btn-dl:hover{background:var(--panel-2)}
+
+  /* Footer */
+  footer{
+    border-top:1px solid var(--line);
+    padding:30px 0 42px;
+    color:var(--muted);font-size:14px;
+  }
+  footer .f-row{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
+  footer b{color:var(--text);font-weight:600}
+  footer a{color:var(--gold)}
+
+  @media (max-width:560px){
+    .hero{padding:38px 0 4px}
+    .grid{grid-template-columns:1fr;gap:18px;padding-bottom:48px}
+    .wordmark{font-size:20px}
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap top-row">
+    <div class="wordmark">VELTRIS<span>.</span></div>
+    <div class="tagline">Helping UK businesses implement AI systems</div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <div class="kicker">Veltris Templates</div>
+    <h1>Free Template Library</h1>
+    <p class="sub">Every template is <strong>free</strong>. Complete source code, <strong>no paywall</strong>, <strong>no catch</strong>. Download it, open it in a browser, make it yours.</p>
+    <p class="count"><b>11 templates</b> &nbsp;·&nbsp; every one free &nbsp;·&nbsp; new ones added as the reels drop</p>
+  </section>
+
+  <section class="grid">
+
+    <article class="card">
+      <div class="thumb">
+        <iframe class="pv-frame" src="templates/glassy-crm-v12.html?t=3.2" data-oy="216" loading="lazy" scrolling="no" tabindex="-1" aria-hidden="true" title="Glassy CRM V12 live preview"></iframe>
+        <span class="badge-new">NEW</span>
+        <span class="badge-free">FREE</span>
+      </div>
+      <div class="card-body">
+        <h2>Glassy CRM V12</h2>
+        <p class="subject">Warm peach glass CRM dashboard for a building firm, with a programme ring, stat cards, calendar and analytics.</p>
+        <p class="get">What you'll get: the complete source code, ready to open and edit</p>
+        <p class="built">Built with HTML, CSS &amp; JavaScript — one single file, no build step</p>
+        <div class="btns">
+          <a class="btn btn-live" href="templates/glassy-crm-v12.html">View live</a>
+          <a class="btn btn-dl" href="templates/glassy-crm-v12.html" download="glassy-crm-v12.html">Download</a>
+        </div>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="thumb">
+        <iframe class="pv-frame" src="templates/glassy-crm-v11.html?t=1.25" data-oy="216" loading="lazy" scrolling="no" tabindex="-1" aria-hidden="true" title="Glassy CRM V11 live preview"></iframe>
+        <span class="badge-free">FREE</span>
+      </div>
+      <div class="card-body">
+        <h2>Glassy CRM V11</h2>
+        <p class="subject">Emerald glass CRM dashboard for a building firm. Inbox, calendar, analytics and reviews in one window.</p>
+        <p class="get">What you'll get: the complete source code, ready to open and edit</p>
+        <p class="built">Built with HTML, CSS &amp; JavaScript — one single file, no build step</p>
+        <div class="btns">
+          <a class="btn btn-live" href="templates/glassy-crm-v11.html">View live</a>
+          <a class="btn btn-dl" href="templates/glassy-crm-v11.html" download="glassy-crm-v11.html">Download</a>
+        </div>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="thumb">
+        <iframe class="pv-frame" src="templates/glassy-crm-v10.html?t=5.15" data-oy="216" loading="lazy" scrolling="no" tabindex="-1" aria-hidden="true" title="Glassy CRM V10 live preview"></iframe>
+        <span class="badge-free">FREE</span>
+      </div>
+      <div class="card-body">
+        <h2>Glassy CRM V10</h2>
+        <p class="subject">Teal and emerald glass CRM dashboard with a live analytics view.</p>
+        <p class="get">What you'll get: the complete source code, ready to open and edit</p>
+        <p class="built">Built with HTML, CSS &amp; JavaScript — one single file, no build step</p>
+        <div class="btns">
+          <a class="btn btn-live" href="templates/glassy-crm-v10.html">View live</a>
+          <a class="btn btn-dl" href="templates/glassy-crm-v10.html" download="glassy-crm-v10.html">Download</a>
+        </div>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="thumb">
+        <iframe class="pv-frame" src="templates/glassy-crm-v9.html?t=1.25" data-oy="216" loading="lazy" scrolling="no" tabindex="-1" aria-hidden="true" title="Glassy CRM V9 live preview"></iframe>
+        <span class="badge-free">FREE</span>
+      </div>
+      <div class="card-body">
+        <h2>Glassy CRM V9</h2>
+        <p class="subject">Emerald glass CRM dashboard with analytics, inbox and bookings.</p>
+        <p class="get">What you'll get: the complete source code, ready to open and edit</p>
+        <p class="built">Built with HTML, CSS &amp; JavaScript — one single file, no build step</p>
+        <div class="btns">
+          <a class="btn btn-live" href="templates/glassy-crm-v9.html">View live</a>
+          <a class="btn btn-dl" href="templates/glassy-crm-v9.html" download="glassy-crm-v9.html">Download</a>
+        </div>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="thumb">
+        <iframe class="pv-frame" src="templates/glassy-crm-v8.html?t=5.15" data-oy="216" loading="lazy" scrolling="no" tabindex="-1" aria-hidden="true" title="Glassy CRM V8 live preview"></iframe>
+        <span class="badge-free">FREE</span>
+      </div>
+      <div class="card-body">
+        <h2>Glassy CRM V8</h2>
+        <p class="subject">Midnight indigo glass CRM. An inbox first dashboard with analytics and a jobs chart.</p>
+        <p class="get">What you'll get: the complete source code, ready to open and edit</p>
+        <p class="built">Built with HTML, CSS &amp; JavaScript — one single file, no build step</p>
+        <div class="btns">
+          <a class="btn btn-live" href="templates/glassy-crm-v8.html">View live</a>
+          <a class="btn btn-dl" href="templates/glassy-crm-v8.html" download="glassy-crm-v8.html">Download</a>
+        </div>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="thumb">
+        <iframe class="pv-frame" src="templates/glassy-crm-v5.html?t=5.95" data-oy="216" loading="lazy" scrolling="no" tabindex="-1" aria-hidden="true" title="Glassy CRM V5 live preview"></iframe>
+        <span class="badge-free">FREE</span>
+      </div>
+      <div class="card-body">
+        <h2>Glassy CRM V5</h2>
+        <p class="subject">Dark violet glass CRM dashboard for a home builder, with pipeline, calendar and job stats.</p>
+        <p class="get">What you'll get: the complete source code, ready to open and edit</p>
+        <p class="built">Built with HTML, CSS &amp; JavaScript — one single file, no build step</p>
+        <div class="btns">
+          <a class="btn btn-live" href="templates/glassy-crm-v5.html">View live</a>
+          <a class="btn btn-dl" href="templates/glassy-crm-v5.html" download="glassy-crm-v5.html">Download</a>
+        </div>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="thumb">
+        <iframe class="pv-frame" src="templates/glassy-admin-v2.html?t=1.45" data-oy="216" loading="lazy" scrolling="no" tabindex="-1" aria-hidden="true" title="Glassy Admin Panel V2 live preview"></iframe>
+        <span class="badge-free">FREE</span>
+      </div>
+      <div class="card-body">
+        <h2>Glassy Admin Panel V2</h2>
+        <p class="subject">Glass admin panel with overview, orders, users and analytics pages.</p>
+        <p class="get">What you'll get: the complete source code, ready to open and edit</p>
+        <p class="built">Built with HTML, CSS &amp; JavaScript — one single file, no build step</p>
+        <div class="btns">
+          <a class="btn btn-live" href="templates/glassy-admin-v2.html">View live</a>
+          <a class="btn btn-dl" href="templates/glassy-admin-v2.html" download="glassy-admin-v2.html">Download</a>
+        </div>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="thumb">
+        <iframe class="pv-frame" src="templates/glassy-admin-v1.html?t=2.6" data-oy="360" loading="lazy" scrolling="no" tabindex="-1" aria-hidden="true" title="Glassy Admin Panel V1 live preview"></iframe>
+        <span class="badge-free">FREE</span>
+      </div>
+      <div class="card-body">
+        <h2>Glassy Admin Panel V1</h2>
+        <p class="subject">The first glass admin panel. Overview stats, a revenue chart and a users table.</p>
+        <p class="get">What you'll get: the complete source code, ready to open and edit</p>
+        <p class="built">Built with HTML, CSS &amp; JavaScript — one single file, no build step</p>
+        <div class="btns">
+          <a class="btn btn-live" href="templates/glassy-admin-v1.html">View live</a>
+          <a class="btn btn-dl" href="templates/glassy-admin-v1.html" download="glassy-admin-v1.html">Download</a>
+        </div>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="thumb">
+        <iframe class="pv-frame" src="templates/glassy-otp-v5.html" data-oy="0" loading="lazy" scrolling="no" tabindex="-1" aria-hidden="true" title="Glassy OTP V5 live preview"></iframe>
+        <span class="badge-free">FREE</span>
+      </div>
+      <div class="card-body">
+        <h2>Glassy OTP V5</h2>
+        <p class="subject">Glass OTP verification screen. A working demo: type the code and it auto verifies.</p>
+        <p class="get">What you'll get: the complete source code, ready to open and edit</p>
+        <p class="built">Built with HTML, CSS &amp; JavaScript — interactive, one single file</p>
+        <div class="btns">
+          <a class="btn btn-live" href="templates/glassy-otp-v5.html">View live</a>
+          <a class="btn btn-dl" href="templates/glassy-otp-v5.html" download="glassy-otp-v5.html">Download</a>
+        </div>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="thumb">
+        <iframe class="pv-frame" src="templates/glassy-login-v2.html" data-oy="696" loading="lazy" scrolling="no" tabindex="-1" aria-hidden="true" title="Glassy Login Form V2 live preview"></iframe>
+        <span class="badge-free">FREE</span>
+      </div>
+      <div class="card-body">
+        <h2>Glassy Login Form V2</h2>
+        <p class="subject">Glass login form with sliding sign in and create account panels.</p>
+        <p class="get">What you'll get: the complete source code, ready to open and edit</p>
+        <p class="built">Built with HTML, CSS &amp; JavaScript — one single file, no build step</p>
+        <div class="btns">
+          <a class="btn btn-live" href="templates/glassy-login-v2.html">View live</a>
+          <a class="btn btn-dl" href="templates/glassy-login-v2.html" download="glassy-login-v2.html">Download</a>
+        </div>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="thumb">
+        <iframe class="pv-frame" src="templates/glassy-sidebar-v5.html?t=11" data-oy="600" loading="lazy" scrolling="no" tabindex="-1" aria-hidden="true" title="Glassy Sidebar V5 live preview"></iframe>
+        <span class="badge-free">FREE</span>
+      </div>
+      <div class="card-body">
+        <h2>Glassy Sidebar V5</h2>
+        <p class="subject">Glass sidebar navigation over a photo stage. Collapsible, with tooltips.</p>
+        <p class="get">What you'll get: the complete source code, ready to open and edit</p>
+        <p class="built">Built with HTML, CSS &amp; JavaScript — one single file, images embedded</p>
+        <div class="btns">
+          <a class="btn btn-live" href="templates/glassy-sidebar-v5.html">View live</a>
+          <a class="btn btn-dl" href="templates/glassy-sidebar-v5.html" download="glassy-sidebar-v5.html">Download</a>
+        </div>
+      </div>
+    </article>
+
+  </section>
+</main>
+
+<footer>
+  <div class="wrap f-row">
+    <div>Built by <b>Veltris</b> — <a href="https://veltris.uk">veltris.uk</a></div>
+    <div>New templates are added as the reels drop.</div>
+  </div>
+</footer>
+
+
+<script>
+(function(){
+  var frames = Array.prototype.slice.call(document.querySelectorAll('iframe.pv-frame'));
+  function fit(){
+    frames.forEach(function(f){
+      var w = f.parentElement.clientWidth;
+      if(!w) return;
+      var s = w / 1080;
+      var oy = parseFloat(f.getAttribute('data-oy') || '0');
+      f.style.transform = 'translateY(' + (-oy * s).toFixed(2) + 'px) scale(' + s.toFixed(5) + ')';
+    });
+  }
+  window.addEventListener('resize', fit);
+  window.addEventListener('load', fit);
+  fit();
+})();
+</script>
+</body>
+</html>

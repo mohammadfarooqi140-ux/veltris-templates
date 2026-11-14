@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Glassy Admin — V1</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html,body { width:1080px; height:1920px; overflow:hidden; }
+  body {
+    font-family:'Jost','Liberation Sans',sans-serif;
+    color:#131c38;
+    -webkit-font-smoothing:antialiased;
+    background:linear-gradient(165deg,#d9f2ff 0%,#e3e9ff 42%,#f6e3ff 74%,#ffe4f1 100%);
+  }
+  /* ---------- TITLE ZONE ---------- */
+  .title-zone { padding-top:104px; text-align:center; }
+  .title-zone .name { font-size:96px; font-weight:600; letter-spacing:1px; color:#131c38; line-height:1.05; }
+  .title-zone .ver  { font-size:96px; font-weight:700; color:#8b5cf6; line-height:1.1; }
+  /* ---------- MIDDLE ZONE — bright aurora stage ---------- */
+  .stage {
+    position:relative; margin-top:60px; height:694px; width:1080px;
+    background:linear-gradient(150deg,#22d3ee 0%,#38bdf8 24%,#818cf8 52%,#c084fc 76%,#f472b6 100%);
+    overflow:hidden;
+  }
+  .blob { position:absolute; border-radius:50%; filter:blur(70px); }
+  .blob.b1 { width:560px; height:560px; background:#a5f3fc; left:-120px; top:-180px; opacity:.65; }
+  .blob.b2 { width:520px; height:520px; background:#fde68a; right:-150px; top:40px; opacity:.5; }
+  .blob.b3 { width:460px; height:460px; background:#f9a8d4; left:300px; bottom:-260px; opacity:.55; }
+  .blob.b4 { width:300px; height:300px; background:#ffffff; left:420px; top:-120px; opacity:.5; }
+  /* dashboard window — 954x586, frosted white glass */
+  .dash {
+    position:absolute; left:63px; top:54px; width:954px; height:586px;
+    border-radius:34px;
+    background:linear-gradient(155deg, rgba(255,255,255,.68), rgba(255,255,255,.48) 55%, rgba(255,255,255,.58));
+    border:1px solid rgba(255,255,255,.85);
+    box-shadow:0 40px 90px rgba(76,29,149,.35), inset 0 1px 0 rgba(255,255,255,.9);
+    backdrop-filter:blur(22px) saturate(150%);
+    overflow:hidden;
+    display:flex;
+  }
+  /* ---------- SIDEBAR ---------- */
+  .side {
+    width:176px; flex:0 0 176px; height:100%;
+    background:linear-gradient(180deg, rgba(255,255,255,.42), rgba(255,255,255,.18));
+    border-right:1px solid rgba(255,255,255,.65);
+    display:flex; flex-direction:column; padding:20px 14px 16px;
+  }
+  .logo { display:flex; align-items:center; gap:9px; padding:0 6px; }
+  .logo .lg {
+    width:30px; height:30px; border-radius:9px; flex:0 0 30px;
+    background:linear-gradient(145deg,#38bdf8,#8b5cf6);
+    display:flex; align-items:center; justify-content:center;
+    font-size:15px; font-weight:700; color:#fff;
+    box-shadow:0 6px 14px rgba(139,92,246,.45);
+  }
+  .logo .ln { font-size:14.5px; font-weight:600; color:#131c38; line-height:1.1; }
+  .logo .ln span { display:block; font-size:9.5px; font-weight:600; color:#7c8aa5; letter-spacing:1.1px; margin-top:2px; }
+  .nav { margin-top:26px; display:flex; flex-direction:column; gap:5px; }
+  .nitem {
+    display:flex; align-items:center; gap:10px; padding:9px 10px; border-radius:11px;
+    font-size:13.5px; font-weight:500; color:#5b6b8c;
+    border:1px solid transparent;
+  }
+  .nitem svg { width:16px; height:16px; flex:0 0 16px; }
+  .nitem .bdg { margin-left:auto; font-size:10px; font-weight:700; background:#f43f5e; color:#fff; border-radius:999px; padding:1px 6px; }
+  .nitem.on {
+    background:linear-gradient(120deg,#8b5cf6,#ec4899); color:#fff;
+    box-shadow:0 8px 18px rgba(168,85,247,.4), inset 0 1px 0 rgba(255,255,255,.35);
+  }
+  .side .sp { flex:1; }
+  .syscard {
+    border-radius:14px; padding:10px 11px;
+    background:rgba(255,255,255,.5);
+    border:1px solid rgba(255,255,255,.75);
+  }
+  .syscard .at { font-size:11.5px; font-weight:600; color:#065f46; display:flex; align-items:center; gap:6px; }
+  .syscard .at i { width:6px; height:6px; border-radius:50%; background:#10b981; display:block; }
+  .syscard .am { font-size:10.5px; color:#5b6b8c; line-height:1.35; margin-top:3px; }
+  .userchip { display:flex; align-items:center; gap:9px; margin-top:12px; padding:0 4px; }
+  .userchip .un { font-size:12px; font-weight:600; color:#131c38; line-height:1.15; }
+  .userchip .un span { display:block; font-size:10px; color:#7c8aa5; font-weight:400; }
+  .av { border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:600; color:#fff; flex:0 0 auto; }
+  /* ---------- MAIN ---------- */
+  .main2 { flex:1; min-width:0; display:flex; flex-direction:column; }
+  .topbar {
+    flex:0 0 52px; display:flex; align-items:center; gap:14px; padding:0 22px;
+    border-bottom:1px solid rgba(255,255,255,.65);
+  }
+  .search {
+    flex:1; max-width:340px; height:34px; border-radius:999px;
+    background:rgba(255,255,255,.55); border:1px solid rgba(255,255,255,.8);
+    display:flex; align-items:center; gap:8px; padding:0 14px;
+    font-size:12.5px; color:#7c8aa5;
+  }
+  .search svg { width:14px; height:14px; }
+  .topbar .tbtn {
+    margin-left:auto; font-size:12.5px; font-weight:600; color:#fff;
+    background:linear-gradient(120deg,#8b5cf6,#ec4899); border-radius:999px; padding:8px 15px;
+    box-shadow:0 8px 18px rgba(168,85,247,.4); white-space:nowrap;
+  }
+  .view { flex:1; min-height:0; padding:14px 22px 12px; display:flex; flex-direction:column; gap:10px; }
+  .vhead { display:flex; align-items:baseline; justify-content:space-between; flex:0 0 auto; }
+  .vhead .vt { font-size:24px; font-weight:600; color:#131c38; letter-spacing:.2px; }
+  .vhead .vt span { color:#8b5cf6; }
+  .vhead .vs { font-size:12px; color:#5b6b8c; display:flex; align-items:center; gap:6px; }
+  .vhead .vs .livedot { width:7px; height:7px; border-radius:50%; background:#10b981; display:inline-block; }
+  .vhead .vs b { color:#059669; font-weight:600; }
+  .card {
+    background:rgba(255,255,255,.55);
+    border:1px solid rgba(255,255,255,.78);
+    border-radius:20px;
+    box-shadow:0 12px 26px rgba(76,29,149,.13), inset 0 1px 0 rgba(255,255,255,.85);
+  }
+  /* ---------- STAT CARDS ---------- */
+  .stats { display:flex; gap:12px; flex:0 0 auto; }
+  .stat { flex:1; padding:11px 14px 10px; border-radius:20px; }
+  .stat .srow { display:flex; align-items:flex-start; justify-content:space-between; }
+  .stat .ic {
+    width:34px; height:34px; border-radius:12px; display:flex; align-items:center; justify-content:center;
+  }
+  .stat .ic svg { width:19px; height:19px; }
+  .chip { font-size:10.5px; font-weight:700; border-radius:999px; padding:2.5px 7px; display:flex; align-items:center; gap:2px; }
+  .stat .sl { font-size:11.5px; font-weight:600; color:#7c8aa5; letter-spacing:.4px; margin-top:7px; text-transform:uppercase; }
+  .stat .sv { font-size:26px; font-weight:700; color:#131c38; line-height:1.1; margin-top:1px; }
+  /* ---------- CHART ---------- */
+  .chartcard { padding:11px 16px 8px; flex:0 0 auto; }
+  .chead { display:flex; align-items:baseline; justify-content:space-between; }
+  .chead .ct { font-size:14.5px; font-weight:600; color:#131c38; }
+  .chead .ct span { color:#7c8aa5; font-weight:500; font-size:12px; margin-left:6px; }
+  .legend { display:flex; gap:14px; font-size:11px; color:#5b6b8c; font-weight:500; }
+  .legend i { width:8px; height:8px; border-radius:50%; display:inline-block; margin-right:5px; }
+  .days { display:flex; justify-content:space-between; padding:0 16px 0; font-size:10.5px; color:#7c8aa5; font-weight:500; }
+  /* ---------- TABLE ---------- */
+  .tablecard { padding:8px 16px 6px; flex:1; min-height:0; }
+  .thead2 { display:flex; align-items:baseline; justify-content:space-between; margin-bottom:2px; }
+  .thead2 .ct { font-size:14.5px; font-weight:600; color:#131c38; }
+  .thead2 .va { font-size:11.5px; font-weight:600; color:#8b5cf6; }
+  .trow {
+    display:flex; align-items:center; gap:11px; padding:4.5px 2px;
+    border-bottom:1px solid rgba(19,28,56,.06);
+  }
+  .trow:last-child { border-bottom:none; }
+  .trow .who { flex:1; min-width:0; }
+  .trow .wn { font-size:13.5px; font-weight:600; color:#131c38; line-height:1.15; }
+  .trow .we { font-size:11px; color:#7c8aa5; }
+  .trow .role { width:76px; font-size:12px; color:#5b6b8c; font-weight:500; }
+  .trow .when { width:74px; text-align:right; font-size:11.5px; color:#7c8aa5; }
+  .pill { font-size:10.5px; font-weight:700; border-radius:999px; padding:3px 9px; display:flex; align-items:center; gap:5px; width:88px; justify-content:center; }
+  .pill i { width:5.5px; height:5.5px; border-radius:50%; display:block; }
+  .pill.act { background:#d1fae5; color:#047857; } .pill.act i { background:#10b981; }
+  .pill.pen { background:#fef3c7; color:#b45309; } .pill.pen i { background:#f59e0b; }
+  .pill.blo { background:#ffe4e6; color:#be123c; } .pill.blo i { background:#f43f5e; }
+  /* ---------- CODE ZONE (format unchanged, light glass) ---------- */
+  .codewin {
+    margin:56px 48px 0; height:596px; border-radius:24px; overflow:hidden;
+    background:rgba(255,255,255,.85); border:1px solid rgba(255,255,255,.95);
+    box-shadow:0 34px 80px rgba(76,29,149,.2);
+  }
+  .codebar {
+    height:64px; background:rgba(255,255,255,.6); display:flex; align-items:center; gap:9px;
+    padding:0 22px; border-bottom:1px solid rgba(19,28,56,.07);
+  }
+  .cdot { width:15px; height:15px; border-radius:50%; }
+  .tab {
+    margin-left:20px; background:#ffffff; border:1px solid rgba(19,28,56,.08); border-bottom:none;
+    padding:9px 18px; border-radius:10px 10px 0 0; font-family:'Liberation Mono',monospace;
+    font-size:16.5px; color:#334155; align-self:flex-end; height:44px; display:flex; align-items:center;
+  }
+  .tab i { color:#f97316; font-style:normal; }
+  pre {
+    padding:30px 34px; font-family:'Liberation Mono','DejaVu Sans Mono',monospace;
+    font-size:23.5px; line-height:1.85; color:#3c4a68; white-space:pre;
+  }
+  .k { color:#7c3aed; } .s { color:#059669; } .t { color:#0284c7; }
+  .f { color:#2563eb; } .p { color:#db2777; } .n { color:#ea580c; } .cm { color:#94a3b8; }
+</style>
+</head>
+<body>
+  <div class="title-zone">
+    <div class="name">Glassy Admin</div>
+    <div class="ver">V1</div>
+  </div>
+
+  <div class="stage">
+    <div class="blob b1"></div>
+    <div class="blob b2"></div>
+    <div class="blob b3"></div>
+    <div class="blob b4"></div>
+    <div class="dash">
+      <div class="side">
+        <div class="logo"><div class="lg">A</div><div class="ln">Adminly<span>ADMIN CONSOLE</span></div></div>
+        <div class="nav" id="nav"></div>
+        <div class="sp"></div>
+        <div class="syscard"><div class="at"><i class="livedot2"></i>System status</div><div class="am">All systems live · 99.99% uptime</div></div>
+        <div class="userchip"><div class="av" style="width:30px;height:30px;font-size:11px;background:linear-gradient(145deg,#f472b6,#8b5cf6)">SC</div><div class="un">Sarah Chen<span>Super Admin</span></div></div>
+      </div>
+      <div class="main2">
+        <div class="topbar">
+          <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.8-3.8"/></svg>Search users, orders, products…</div>
+          <span class="tbtn">+ Invite user</span>
+          <div class="av" style="width:32px;height:32px;font-size:11px;background:linear-gradient(145deg,#38bdf8,#6366f1)">SC</div>
+        </div>
+        <div class="view" id="view"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="codewin">
+    <div class="codebar">
+      <div class="cdot" style="background:#ff5f57"></div>
+      <div class="cdot" style="background:#febc2e"></div>
+      <div class="cdot" style="background:#28c840"></div>
+      <div class="tab">Overview<i>.jsx</i></div>
+    </div>
+    <pre><code><span class="k">import</span> { StatCard, RevenueChart, UsersTable } <span class="k">from</span> <span class="s">'./widgets'</span>;
+
+<span class="k">export const</span> <span class="f">Overview</span> = () =&gt; {
+  <span class="k">const</span> stats = <span class="f">useStats</span>();
+
+  <span class="k">return</span> (
+    &lt;<span class="t">section</span> <span class="p">className</span>=<span class="s">"admin aurora-glass"</span>&gt;
+      &lt;<span class="t">Sidebar</span> <span class="p">items</span>={[<span class="s">'Overview'</span>, <span class="s">'Users'</span>, <span class="s">'Orders'</span>]} /&gt;
+      &lt;<span class="t">StatCard</span> <span class="p">title</span>=<span class="s">"Total Users"</span> <span class="p">trend</span>=<span class="s">"+12.5%"</span> /&gt;
+      &lt;<span class="t">RevenueChart</span> <span class="p">data</span>={week} /&gt;
+      &lt;<span class="t">UsersTable</span> <span class="p">rows</span>={recent} /&gt;
+    &lt;/<span class="t">section</span>&gt;
+  );
+};</code></pre>
+  </div>
+<script>
+/* ---------- sidebar nav ---------- */
+const ICONS = {
+  grid:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7.5" height="7.5" rx="1.8"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.8"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.8"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.8"/></svg>',
+  users:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="8" r="3.4"/><path d="M3.5 19.5c.6-3 2.8-4.5 5.5-4.5s4.9 1.5 5.5 4.5"/><path d="M15.5 5.4a3.4 3.4 0 0 1 0 5.9M17.8 15.3c1.6.7 2.5 2 2.8 4.2"/></svg>',
+  cart:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h2.2l2.3 11h10.6l2-8H7"/><circle cx="10" cy="20" r="1.4"/><circle cx="17.5" cy="20" r="1.4"/></svg>',
+  box:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4v10l-8 4-8-4V7z"/><path d="M4 7l8 4 8-4M12 11v10"/></svg>',
+  chart:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 4v16h16"/><path d="M8 16v-5M12 16V8M16 16v-8M20 16V6"/></svg>',
+  gear:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.8v2.6M12 18.6v2.6M2.8 12h2.6M18.6 12h2.6M5.2 5.2l1.8 1.8M17 17l1.8 1.8M18.8 5.2L17 7M7 17l-1.8 1.8"/></svg>',
+  dollar:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v18M16.5 6.5c-.8-1-2.4-1.5-4.5-1.5-2.8 0-4.5 1.3-4.5 3.2 0 4.6 9.3 2.4 9.3 7 0 1.9-2 3.3-4.8 3.3-2.2 0-4-.7-4.9-1.9"/></svg>'
+};
+const NAV = [
+  ['grid','Overview',1,''], ['users','Users',0,''], ['cart','Orders',0,'8'],
+  ['box','Products',0,''], ['chart','Analytics',0,''], ['gear','Settings',0,'']
+];
+document.getElementById('nav').innerHTML = NAV.map(n =>
+  `<div class="nitem${n[2] ? ' on' : ''}">${ICONS[n[0]]}${n[1]}${n[3] ? `<span class="bdg">${n[3]}</span>` : ''}</div>`
+).join('');
+
+/* ---------- the one hero view : OVERVIEW ---------- */
+const stat = (icon, tint, colour, label, count, prefix, chipBg, chipCol, trend, delay) => `
+  <div class="stat card" data-settle="${delay}">
+    <div class="srow">
+      <div class="ic" style="background:${tint};color:${colour}">${ICONS[icon]}</div>
+      <div class="chip" style="background:${chipBg};color:${chipCol}">↗ ${trend}</div>
+    </div>
+    <div class="sl">${label}</div>
+    <div class="sv" data-count="${count}" data-prefix="${prefix}">0</div>
+  </div>`;
+
+const userRow = (init, grad, name, email, role, pill, pillTxt, when, delay) => `
+  <div class="trow" data-settle="${delay}">
+    <div class="av" style="width:30px;height:30px;font-size:10.5px;background:${grad}">${init}</div>
+    <div class="who"><div class="wn">${name}</div><div class="we">${email}</div></div>
+    <div class="role">${role}</div>
+    <div class="pill ${pill}"><i></i>${pillTxt}</div>
+    <div class="when">${when}</div>
+  </div>`;
+
+/* chart geometry — viewBox 0 0 694 80 */
+const wk  = [42,55,48,70,64,86,96];           /* this week  */
+const wkL = [30,38,36,48,52,60,66];           /* last week  */
+const px = i => 20 + i * 109;
+const py = v => 74 - v * 0.66;
+const line = a => a.map((v,i)=>`${i ? 'L' : 'M'}${px(i)},${py(v).toFixed(1)}`).join(' ');
+const area = line(wk) + ` L${px(6)},76 L${px(0)},76 Z`;
+
+document.getElementById('view').innerHTML = `
+  <div class="vhead" data-settle="0">
+    <div class="vt">Overview <span>· welcome back, Sarah</span></div>
+    <div class="vs"><span class="livedot"></span>Live · <b>342</b> active now</div>
+  </div>
+  <div class="stats">
+    ${stat('users','rgba(14,165,233,.14)','#0284c7','Total Users',48290,'','#d1fae5','#047857','12.5%',0.12)}
+    ${stat('dollar','rgba(16,185,129,.14)','#059669','Revenue',86400,'$','#d1fae5','#047857','8.2%',0.22)}
+    ${stat('cart','rgba(245,158,11,.16)','#d97706','Orders',12847,'','#d1fae5','#047857','3.9%',0.32)}
+    ${stat('chart','rgba(244,63,94,.13)','#e11d48','Active Now',342,'','#ffe4e6','#be123c','18.6%',0.42)}
+  </div>
+  <div class="chartcard card" data-settle="0.5">
+    <div class="chead">
+      <div class="ct">Revenue overview<span>Last 7 days</span></div>
+      <div class="legend"><span><i style="background:#a855f7"></i>This week</span><span><i style="background:#38bdf8"></i>Last week</span></div>
+    </div>
+    <svg width="694" height="80" viewBox="0 0 694 80" style="display:block;margin-top:4px">
+      <defs>
+        <linearGradient id="ag" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#a855f7" stop-opacity=".38"/>
+          <stop offset="1" stop-color="#ec4899" stop-opacity=".03"/>
+        </linearGradient>
+        <linearGradient id="lg" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stop-color="#8b5cf6"/>
+          <stop offset="1" stop-color="#ec4899"/>
+        </linearGradient>
+      </defs>
+      <g stroke="rgba(19,28,56,.07)" stroke-width="1">
+        <line x1="0" y1="16" x2="694" y2="16"/><line x1="0" y1="42" x2="694" y2="42"/><line x1="0" y1="68" x2="694" y2="68"/>
+      </g>
+      <path id="wkLast" d="${line(wkL)}" fill="none" stroke="#38bdf8" stroke-width="2.5" stroke-dasharray="6 6" stroke-linecap="round" opacity="0"/>
+      <path id="wkArea" d="${area}" fill="url(#ag)" opacity="0"/>
+      <path id="wkLine" d="${line(wk)}" fill="none" stroke="url(#lg)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100"/>
+      ${wk.map((v,i)=>`<circle class="wdot" data-i="${i}" cx="${px(i)}" cy="${py(v).toFixed(1)}" r="0" fill="#fff" stroke="#c026d3" stroke-width="2.5"/>`).join('')}
+    </svg>
+    <div class="days"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+  </div>
+  <div class="tablecard card" data-settle="0.62">
+    <div class="thead2"><div class="ct">Recent users</div><div class="va">View all →</div></div>
+    ${userRow('EW','linear-gradient(145deg,#38bdf8,#8b5cf6)','Emma Wilson','emma@wilson.co','Admin','act','Active','2 min ago',1.15)}
+    ${userRow('LC','linear-gradient(145deg,#34d399,#0ea5e9)','Liam Carter','liam.carter@mail.com','Editor','act','Active','18 min ago',1.3)}
+    ${userRow('SR','linear-gradient(145deg,#fbbf24,#f97316)','Sofia Reyes','sofia.reyes@mail.com','Customer','pen','Pending','42 min ago',1.45)}
+    ${userRow('NB','linear-gradient(145deg,#fb7185,#a855f7)','Noah Bennett','noah.b@mail.com','Customer','blo','Blocked','1 hr ago',1.6)}
+  </div>`;
+
+/* ---------- motion ----------
+   Chrome (sidebar, topbar, window, code pane) is never transformed.
+   One hero view, no cuts: content settles in place — staggered fades with a
+   short glide, counters climb, the chart line draws from its baseline and
+   its dots pop in sequence, the last-week line fades in dashed behind it. */
+function renderAt(t) {
+  const clamp = (x,a,b)=>Math.max(a,Math.min(b,x));
+  const easeOut = x=>1-Math.pow(1-x,3);
+  const smooth = x=>{ x = clamp(x,0,1); return x*x*(3-2*x); };
+
+  document.querySelectorAll('[data-settle]').forEach(el=>{
+    const d = parseFloat(el.dataset.settle);
+    const p = easeOut(clamp((t - d) / 0.55, 0, 1));
+    el.style.opacity = p.toFixed(3);
+    el.style.transform = `translateY(${((1 - p) * 16).toFixed(1)}px)`;
+  });
+
+  document.querySelectorAll('[data-count]').forEach(c=>{
+    const target = parseFloat(c.dataset.count);
+    let v;
+    if (target === 342 && t > 1.9) {
+      /* Active Now — counted up, then breathes like a live number */
+      v = 342 + Math.round(2.5 * Math.sin((t - 1.9) * 1.15));
+    } else {
+      v = Math.round(target * easeOut(clamp((t - 0.3) / 1.5, 0, 1)));
+    }
+    c.textContent = (c.dataset.prefix || '') + v.toLocaleString('en-GB');
+  });
+
+  const lp = easeOut(clamp((t - 0.6) / 1.6, 0, 1));
+  const wl = document.getElementById('wkLine');
+  if (wl) wl.style.strokeDashoffset = (100 * (1 - lp)).toFixed(1);
+  const wa = document.getElementById('wkArea');
+  if (wa) wa.style.opacity = (0.95 * smooth(clamp((t - 1.15) / 1.2, 0, 1))).toFixed(3);
+  const lk = document.getElementById('wkLast');
+  if (lk) lk.style.opacity = (0.75 * smooth(clamp((t - 1.0) / 1.0, 0, 1))).toFixed(3);
+  document.querySelectorAll('.wdot').forEach(d=>{
+    const i = parseInt(d.dataset.i);
+    const dp = easeOut(clamp((t - 0.75 - i * 0.2) / 0.3, 0, 1));
+    d.setAttribute('r', (4.6 * dp).toFixed(2));
+  });
+
+  /* live dots — continuous, subtle, like a real app */
+  const pulse = 0.55 + 0.45 * Math.sin(t * 2.4);
+  document.querySelectorAll('.livedot, .livedot2').forEach(d=>{ d.style.opacity = pulse.toFixed(3); });
+}
+window.renderAt = renderAt;
+renderAt(parseFloat(new URLSearchParams(location.search).get('t') || '0'));
+</script>
+</body>
+</html>

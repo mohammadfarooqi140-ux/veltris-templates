@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Glassy Login Form V2</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html,body { width:1080px; height:1920px; overflow:hidden; background:#000; }
+  body { font-family:'Liberation Sans',Arial,sans-serif; -webkit-font-smoothing:antialiased; }
+
+  /* ---------- TITLE BAND (top ~30%) ---------- */
+  .title-band {
+    height:576px; background:#000; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; gap:14px;
+  }
+  .title-band h1 { font-size:66px; font-weight:700; color:#fff; letter-spacing:0.5px; }
+  .title-band .ver { font-size:52px; font-weight:700; color:#FF6A00; }
+
+  /* ---------- FACET ZONE (middle ~40%) ---------- */
+  .facet-zone { position:relative; height:768px; overflow:hidden; background:#0A0A0A; }
+  .facet-zone svg.bg { position:absolute; inset:0; width:1080px; height:768px; display:block; }
+
+  /* ---------- LOGIN CARD ---------- */
+  #card {
+    position:absolute; left:81px; top:204px; width:918px; height:420px;
+    border-radius:18px; overflow:hidden; z-index:10;
+    background:rgba(31,41,55,0.30);
+    backdrop-filter:blur(14px) saturate(120%);
+    -webkit-backdrop-filter:blur(14px) saturate(120%);
+    border:1px solid rgba(255,255,255,0.20);
+    box-shadow:0 30px 80px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.12);
+  }
+  .state { position:absolute; inset:0; }
+  .statebg { position:absolute; inset:0; background:rgba(31,41,55,0.55);
+    backdrop-filter:blur(12px) saturate(120%); -webkit-backdrop-filter:blur(12px) saturate(120%); }
+  .clipL { position:absolute; inset:0; overflow:hidden; }
+  .clipR { position:absolute; inset:0; overflow:hidden; }
+  .drift { position:absolute; inset:0; will-change:transform; }
+
+  .zoneL { position:absolute; left:0; top:0; width:560px; height:420px; padding:0 30px 0 40px; }
+  .zoneR { position:absolute; right:0; top:0; width:560px; height:420px; padding:0 40px 0 96px; }
+  .zoneR2 { padding-left:158px; }
+  #stateA .zoneR .field { margin-left:56px; }
+
+  .msg { height:100%; display:flex; flex-direction:column; justify-content:center; }
+  .msg h2 { font-size:50px; font-weight:700; color:#fff; line-height:1.12; letter-spacing:0.5px; }
+  .msg p { margin-top:20px; font-size:27px; line-height:1.45; color:#D1D5DB; width:400px; }
+  .btn-outline {
+    margin-top:30px; align-self:flex-start; padding:15px 38px; border-radius:999px;
+    border:1.5px solid rgba(255,255,255,0.55); background:rgba(10,12,16,0.35);
+    color:#fff; font-size:27px; font-weight:600; white-space:nowrap;
+  }
+  .msgR h2 { font-size:50px; }
+
+  .form { height:100%; display:flex; flex-direction:column; justify-content:center; }
+  .form h2 { font-size:42px; font-weight:700; color:#fff; margin-bottom:18px; }
+  .field {
+    display:flex; align-items:center; gap:14px; padding:7px 2px 9px;
+    border-bottom:2px solid #4B5563; margin-bottom:16px; position:relative;
+  }
+  .field svg { flex:0 0 30px; display:block; }
+  .field .txt { font-size:27px; color:#9CA3AF; white-space:nowrap; }
+  .field .txt.filled { color:#D1D5DB; letter-spacing:1px; }
+  .field .eye { margin-left:auto; }
+  .focusline {
+    position:absolute; left:0; right:0; bottom:-2px; height:2px;
+    background:#FFFFFF; opacity:0;
+  }
+  .btn-solid {
+    margin-top:4px; padding:13px 0; border-radius:999px; text-align:center;
+    background:#6B7280; color:#fff; font-size:27px; font-weight:600;
+  }
+  .small { margin-top:14px; font-size:23px; color:#9CA3AF; }
+  .small b { color:#fff; font-weight:700; text-decoration:underline; }
+  .forgot { margin-top:12px; text-align:center; font-size:23px; color:#9CA3AF; }
+
+  #dividerSvg { position:absolute; inset:0; z-index:40; pointer-events:none; }
+
+  /* ---------- CODE BAND (bottom ~30%) ---------- */
+  .code-band { height:576px; background:#000; position:relative; overflow:hidden; }
+  .editor {
+    position:absolute; left:50%; transform:translateX(-50%); top:20px;
+    width:918px; height:700px; background:#101318; border-radius:14px 14px 0 0;
+    border:1px solid rgba(255,255,255,0.08); border-bottom:none; overflow:hidden;
+  }
+  .editor .head {
+    height:54px; background:#16191F; display:flex; align-items:center; padding:0 22px;
+    border-bottom:1px solid rgba(255,255,255,0.06);
+  }
+  .tl { width:22px; height:22px; border-radius:50%; margin-right:12px; }
+  .editor .lang { margin-left:auto; font-size:22px; color:#8A919C;
+    font-family:'DejaVu Sans Mono',monospace; }
+  .code { padding:16px 0 0 0; font-family:'DejaVu Sans Mono',monospace; font-size:17px; line-height:36px; }
+  .ln { display:flex; white-space:pre; }
+  .no { flex:0 0 52px; text-align:right; padding-right:16px; color:#6B7280; }
+  .tx { color:#E5E7EB; }
+  .kw { color:#F472B6; } .st { color:#A3E635; } .bl { color:#60A5FA; } .gn { color:#4ADE80; } .gy { color:#9CA3AF; }
+
+  /* ---------- CURSOR ---------- */
+  #cursor { position:absolute; left:0; top:0; z-index:60; pointer-events:none;
+    filter:drop-shadow(0 3px 6px rgba(0,0,0,0.45)); will-change:transform; }
+</style>
+</head>
+<body>
+
+  <!-- TITLE -->
+  <div class="title-band">
+    <h1>Glassy login form</h1>
+    <div class="ver">V2</div>
+  </div>
+
+  <!-- FACET ZONE + CARD -->
+  <div class="facet-zone">
+    <svg class="bg" viewBox="0 0 1080 768" preserveAspectRatio="none">
+      <defs>
+        <pattern id="dia" width="216" height="216" patternUnits="userSpaceOnUse">
+          <rect width="216" height="216" fill="#101010"/>
+          <polygon points="108,4 212,108 108,212 4,108" fill="#171717" stroke="rgba(255,255,255,0.02)" stroke-width="1.5"/>
+          <polygon points="0,0 108,0 0,108" fill="#1D1D1D" stroke="rgba(255,255,255,0.02)" stroke-width="1.5"/>
+          <polygon points="216,0 216,108 108,0" fill="#131313" stroke="rgba(255,255,255,0.02)" stroke-width="1.5"/>
+          <polygon points="0,216 0,108 108,216" fill="#1E1E1E" stroke="rgba(255,255,255,0.02)" stroke-width="1.5"/>
+          <polygon points="216,216 108,216 216,108" fill="#161616" stroke="rgba(255,255,255,0.02)" stroke-width="1.5"/>
+        </pattern>
+      </defs>
+      <rect width="1080" height="768" fill="url(#dia)"/>
+      <rect width="1080" height="768" fill="rgba(0,0,0,0.38)"/>
+    </svg>
+
+    <div id="card">
+      <!-- STATE A : P1 (message left / signup form right) -->
+      <div class="state" id="stateA">
+        <div class="statebg"></div>
+        <div class="clipL" style="clip-path:polygon(0 0, 60% 0, 40% 100%, 0 100%);">
+          <div class="drift" id="driftA">
+            <div class="zoneL">
+              <div class="msg">
+                <h2>WELCOME BACK!</h2>
+                <p>Already a Member? Please Login with your credentials.</p>
+                <div class="btn-outline">Sign In &#8594;</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="clipR" style="clip-path:polygon(60% 0, 100% 0, 100% 100%, 40% 100%);">
+          <div class="drift" id="driftA2">
+            <div class="zoneR">
+              <div class="form">
+                <h2 style="margin-left:104px; font-size:38px;">Create Account</h2>
+                <div class="field">
+                  <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5"/></svg>
+                  <span class="txt">Full Name</span>
+                </div>
+                <div class="field">
+                  <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+                  <span class="txt">Work Email</span>
+                  <div class="focusline" id="focusEmail"></div>
+                </div>
+                <div class="field" style="margin-bottom:14px;">
+                  <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.8" stroke-linecap="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+                  <span class="txt">Create Password</span>
+                </div>
+                <div class="btn-solid" style="margin-left:56px;">Sign Up</div>
+                <div class="small" style="margin-left:56px;">Already a Member? <b>Login</b></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STATE B : P2 (login form left / message right) -->
+      <div class="state" id="stateB" style="clip-path:polygon(125% 0, 100% 0, 100% 100%, 105% 100%);">
+        <div class="statebg"></div>
+        <div class="clipL" style="clip-path:polygon(0 0, 60% 0, 40% 100%, 0 100%);">
+          <div class="drift" id="driftB">
+            <div class="zoneL">
+              <div class="form">
+                <h2>Login</h2>
+                <div class="field" style="width:404px;">
+                  <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5"/></svg>
+                  <span class="txt filled" style="letter-spacing:0;">coder_admin</span>
+                  <div class="focusline" id="focusUser"></div>
+                </div>
+                <div class="field" style="margin-bottom:14px; width:396px;">
+                  <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.8" stroke-linecap="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+                  <span class="txt filled">&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;</span>
+                  <span class="eye">
+                    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-6.5 10-6.5S22 12 22 12s-3.5 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
+                  </span>
+                </div>
+                <div class="btn-solid">Login</div>
+                <div class="small">Don&#8217;t have an account? <b>Sign Up</b></div>
+                <div class="forgot">Forgot Password?</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="clipR" style="clip-path:polygon(60% 0, 100% 0, 100% 100%, 40% 100%);">
+          <div class="drift" id="driftB2">
+            <div class="zoneR zoneR2">
+              <div class="msg msgR">
+                <h2>HELLO,<br>FRIEND!</h2>
+                <p>Enter your personal details and start your journey with us.</p>
+                <div class="btn-outline">Create Account &#8594;</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- divider + streak -->
+      <svg id="dividerSvg" viewBox="0 0 918 420" preserveAspectRatio="none">
+        <line id="dividerLine" x1="550.8" y1="-4" x2="367.2" y2="424"
+              stroke="rgba(255,255,255,0.35)" stroke-width="2"/>
+        <line id="streakLine" x1="1200" y1="-6" x2="1016" y2="426"
+              stroke="rgba(255,255,255,0.95)" stroke-width="3.5"
+              style="filter:drop-shadow(0 0 9px rgba(255,255,255,0.85)); opacity:0;"/>
+      </svg>
+    </div>
+
+    <!-- CURSOR (facet-zone space) -->
+    <div id="cursor">
+      <svg width="34" height="34" viewBox="0 0 24 24">
+        <path d="M5 3 L19 12 L12.5 13.2 L15.5 20 L13 21.2 L10 14.6 L6.8 18.5 Z"
+              fill="#FFFFFF" stroke="#111111" stroke-width="1.4" stroke-linejoin="round"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- CODE BAND -->
+  <div class="code-band">
+    <div class="editor">
+      <div class="head">
+        <span class="tl" style="background:#FF5F57;"></span>
+        <span class="tl" style="background:#FEBC2E;"></span>
+        <span class="tl" style="background:#28C840;"></span>
+        <span class="lang">jsx</span>
+      </div>
+      <div class="code">
+        <div class="ln"><span class="no">1</span><span class="tx"><span class="kw">import</span> { motion } <span class="kw">from</span> <span class="st">'framer-motion'</span>;</span></div>
+        <div class="ln"><span class="no">2</span><span class="tx"><span class="kw">import</span> { ShoppingBag, Users, DollarSign, ArrowUpRight } <span class="kw">from</span> <span class="st">'lucide-react'</span>;</span></div>
+        <div class="ln"><span class="no">3</span><span class="tx"></span></div>
+        <div class="ln"><span class="no">4</span><span class="tx"><span class="kw">const</span> <span class="bl">StatsCard</span> = ({ title, value, change, icon: Icon, gradient }) =&gt; {</span></div>
+        <div class="ln"><span class="no">5</span><span class="tx">  <span class="kw">return</span> (</span></div>
+        <div class="ln"><span class="no">6</span><span class="tx">    &lt;<span class="gn">motion.div</span> <span class="bl">whileHover</span>={{ y: -5 }} <span class="bl">className</span>=<span class="st">"glass-card p-6 rounded-2xl"</span>&gt;</span></div>
+        <div class="ln"><span class="no">7</span><span class="tx">      &lt;<span class="gn">div</span> <span class="bl">className</span>=<span class="st">"flex items-center justify-between"</span>&gt;</span></div>
+        <div class="ln"><span class="no">8</span><span class="tx">        &lt;<span class="gn">div</span>&gt;</span></div>
+        <div class="ln"><span class="no">9</span><span class="tx">          &lt;<span class="gn">p</span> <span class="bl">className</span>=<span class="st">"text-sm text-white/60"</span>&gt;{title}&lt;/<span class="gn">p</span>&gt;</span></div>
+        <div class="ln"><span class="no">10</span><span class="tx">          &lt;<span class="gn">h2</span> <span class="bl">className</span>=<span class="st">"text-2xl font-bold text-white"</span>&gt;{value}&lt;/<span class="gn">h2</span>&gt;</span></div>
+        <div class="ln"><span class="no">11</span><span class="tx">          &lt;<span class="gn">p</span> <span class="bl">className</span>=<span class="st">"flex items-center gap-1 text-sm text-emerald-400"</span>&gt;</span></div>
+        <div class="ln"><span class="no">12</span><span class="tx">            &lt;<span class="gn">ArrowUpRight</span> <span class="bl">size</span>={16} /&gt; {change}%</span></div>
+        <div class="ln"><span class="no">13</span><span class="tx">          &lt;/<span class="gn">p</span>&gt;</span></div>
+        <div class="ln"><span class="no">14</span><span class="tx">        &lt;/<span class="gn">div</span>&gt;</span></div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  var W = 918, H = 420, CYCLE = 2.85;
+  var stateA = document.getElementById('stateA');
+  var stateB = document.getElementById('stateB');
+  var driftA = [document.getElementById('driftA'), document.getElementById('driftA2')];
+  var driftB = [document.getElementById('driftB'), document.getElementById('driftB2')];
+  var streak = document.getElementById('streakLine');
+  var divider = document.getElementById('dividerLine');
+  var cursor = document.getElementById('cursor');
+  var focusEmail = document.getElementById('focusEmail');
+  var focusUser = document.getElementById('focusUser');
+
+  function clamp01(v){ return v < 0 ? 0 : (v > 1 ? 1 : v); }
+  function lerp(a,b,k){ return a + (b-a)*k; }
+  function easeOutCubic(x){ return 1 - Math.pow(1-x, 3); }
+  function easeInOut(x){ return x < 0.5 ? 2*x*x : 1 - Math.pow(-2*x+2, 2)/2; }
+  function ramp(t, t0, t1){ return clamp01((t - t0) / (t1 - t0)); }
+
+  // cursor waypoints in facet-zone coords: [startT, endT, x, y] (move ends at x,y)
+  var SEGS = [
+    [0.00, 0.28, 540, 414],   // Create Account btn -> card centre/divider
+    [0.28, 0.55, 700, 419],   // -> Work Email field
+    [0.60, 0.78, 800, 554],   // -> Sign Up button
+    [0.78, 0.95, 225, 509],   // -> Sign In button (click ~0.90, slide 1.10)
+    [1.05, 1.35, 470, 430],   // drift with the slide
+    [1.40, 1.68, 300, 349],   // -> username field (P2 left)
+    [1.82, 2.00, 300, 500],   // -> Login button
+    [2.00, 2.18, 770, 509]    // -> Create Account button (click ~2.15, slide 2.35)
+  ];
+  var START = [770, 509]; // cursor position at t=0 (= end of cycle, seamless)
+
+  function cursorPos(tc){
+    var px = START[0], py = START[1];
+    for (var i = 0; i < SEGS.length; i++){
+      var s = SEGS[i];
+      if (tc < s[0]) break;
+      if (tc >= s[1]) { px = s[2]; py = s[3]; continue; }
+      var k = easeInOut((tc - s[0]) / (s[1] - s[0]));
+      return [lerp(px, s[2], k), lerp(py, s[3], k)];
+    }
+    return [px, py];
+  }
+
+  function renderAt(t){
+    var tc = t % CYCLE;
+
+    /* panel progress: 0 = P1, 1 = P2 */
+    var pVis, sliding = 0;
+    if (tc < 1.10) { pVis = 0; }
+    else if (tc < 1.60) { var r1 = (tc - 1.10) / 0.5; pVis = easeOutCubic(r1); sliding = (r1 > 0 && r1 < 1) ? 1 : 0; }
+    else if (tc < 2.35) { pVis = 1; }
+    else { var r2 = (tc - 2.35) / 0.5; pVis = 1 - easeOutCubic(r2); sliding = (r2 > 0 && r2 < 1) ? 1 : 0; }
+
+    /* sweep clip for incoming state B */
+    var sTop = lerp(1.25 * W, -0.25 * W, pVis);
+    var sBot = lerp(1.05 * W, -0.45 * W, pVis);
+    stateB.style.clipPath = 'polygon(' + sTop + 'px 0, ' + (W + 60) + 'px 0, ' + (W + 60) + 'px ' + H + 'px, ' + sBot + 'px ' + H + 'px)';
+    stateA.style.clipPath = 'polygon(-60px 0, ' + sTop + 'px 0, ' + sBot + 'px ' + H + 'px, -60px ' + H + 'px)';
+
+    /* content drift with the divider */
+    var dxA = -30 * pVis, dxB = 30 * (1 - pVis);
+    for (var i = 0; i < 2; i++){
+      driftA[i].style.transform = 'translateX(' + dxA + 'px)';
+      driftB[i].style.transform = 'translateX(' + dxB + 'px)';
+    }
+
+    /* streak follows the sweep boundary; standing divider during holds */
+    streak.setAttribute('x1', Math.max(-30, Math.min(W + 30, sTop)));
+    streak.setAttribute('x2', Math.max(-30, Math.min(W + 30, sBot)));
+    streak.style.opacity = sliding ? 0.95 : 0;
+    divider.style.opacity = sliding ? 0.2 : 0.9;
+
+    /* field focus underlines (~0.2s fades) */
+    focusEmail.style.opacity = ramp(tc, 0.50, 0.70) * (1 - ramp(tc, 1.05, 1.20));
+    focusUser.style.opacity  = ramp(tc, 1.62, 1.82) * (1 - ramp(tc, 2.28, 2.43));
+
+    /* cursor */
+    var cp = cursorPos(tc);
+    cursor.style.transform = 'translate(' + cp[0] + 'px,' + cp[1] + 'px)';
+  }
+  renderAt(0);
+</script>
+</body>
+</html>

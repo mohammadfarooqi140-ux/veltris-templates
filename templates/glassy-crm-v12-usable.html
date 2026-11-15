@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Northbeam Builders — CRM</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html,body { height:100%; }
+  body {
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+    color:#432818; -webkit-font-smoothing:antialiased; overflow:hidden;
+    background:linear-gradient(160deg,#3a1c0a,#211105 70%);
+  }
+  /* ---------- colourful backdrop behind the glass ---------- */
+  .backdrop { position:fixed; inset:0; overflow:hidden; z-index:0; }
+  .blob { position:absolute; border-radius:50%; filter:blur(70px); }
+  .blob.b1 { width:55vw; height:55vw; background:#FF8A5C; left:-14vw; top:-20vw; opacity:.95; }
+  .blob.b2 { width:52vw; height:52vw; background:#E4572E; right:-13vw; top:2vh; opacity:.85; }
+  .blob.b3 { width:44vw; height:44vw; background:#FFB25E; left:26vw; bottom:-24vw; opacity:.8; }
+  .blob.b4 { width:34vw; height:34vw; background:#FF5A49; right:14vw; bottom:-18vw; opacity:.55; }
+
+  /* ---------- app shell — one big glass window filling the browser ---------- */
+  .app {
+    position:relative; z-index:1; display:flex; height:100dvh; margin:14px;
+    border-radius:26px; overflow:hidden;
+    background:linear-gradient(155deg, rgba(255,255,255,.52), rgba(255,255,255,.30) 55%, rgba(255,255,255,.38));
+    border:1px solid rgba(255,255,255,.65);
+    box-shadow:0 40px 90px rgba(43,16,2,.5), inset 0 1px 0 rgba(255,255,255,.7);
+    backdrop-filter:blur(22px) saturate(150%); -webkit-backdrop-filter:blur(22px) saturate(150%);
+  }
+
+  /* ---------- sidebar ---------- */
+  .sidebar {
+    width:236px; flex:0 0 236px; display:flex; flex-direction:column; padding:22px 16px 18px;
+    background:linear-gradient(180deg, rgba(255,255,255,.30), rgba(255,255,255,.14));
+    border-right:1px solid rgba(255,255,255,.5);
+  }
+  .logo { display:flex; align-items:center; gap:10px; padding:0 6px; }
+  .logo .lg { width:36px; height:36px; border-radius:11px; flex:0 0 36px;
+    background:linear-gradient(145deg,#F0562F,#C9330F); display:flex; align-items:center; justify-content:center;
+    font-size:18px; font-weight:700; color:#fff; box-shadow:0 6px 14px rgba(217,60,15,.45); }
+  .logo .ln { font-size:16.5px; font-weight:600; color:#3A2113; line-height:1.1; }
+  .logo .ln span { display:block; font-size:10.5px; font-weight:500; color:rgba(67,40,24,.5); letter-spacing:.8px; margin-top:2px; }
+  .nav { margin-top:26px; display:flex; flex-direction:column; gap:5px; }
+  .nitem {
+    display:flex; align-items:center; gap:11px; padding:10px 12px; border-radius:12px; width:100%;
+    font:inherit; font-size:14.5px; font-weight:500; color:rgba(67,40,24,.62); text-align:left;
+    background:none; border:1px solid transparent; cursor:pointer; transition:background .15s,color .15s;
+  }
+  .nitem:hover { background:rgba(255,255,255,.45); }
+  .nitem svg { width:18px; height:18px; flex:0 0 18px; }
+  .nitem .bdg { margin-left:auto; font-size:10.5px; font-weight:700; background:#D63C14; color:#fff; border-radius:999px; padding:1px 7px; }
+  .nitem .bdg.hide { display:none; }
+  .nitem.on { background:rgba(255,255,255,.92); color:#3A2113; font-weight:600; border-color:rgba(255,255,255,.9);
+    box-shadow:0 8px 18px rgba(146,64,14,.22), inset 0 1px 0 #fff; }
+  .sidebar .sp { flex:1; }
+  .aicard { border-radius:15px; padding:12px 13px;
+    background:linear-gradient(150deg, rgba(255,255,255,.5), rgba(255,214,170,.35)); border:1px solid rgba(255,255,255,.6); }
+  .aicard .at { font-size:12.5px; font-weight:600; color:#8A3B12; display:flex; align-items:center; gap:7px; }
+  .aicard .at i { width:7px; height:7px; border-radius:50%; background:#F0562F; display:block; animation:pulse 2.2s infinite; }
+  .aicard.off .at i { background:rgba(67,40,24,.35); animation:none; }
+  .aicard .am { font-size:11.5px; color:rgba(67,40,24,.6); line-height:1.4; margin-top:4px; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.45} }
+  .userchip { display:flex; align-items:center; gap:10px; margin-top:14px; padding:0 4px; }
+  .userchip .un { font-size:13px; font-weight:600; color:#3A2113; line-height:1.2; }
+  .userchip .un span { display:block; font-size:11px; color:rgba(67,40,24,.45); font-weight:400; }
+  .av { border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:600; color:#fff; flex:0 0 auto; }
+
+  /* ---------- main column ---------- */
+  .main { flex:1; min-width:0; display:flex; flex-direction:column; }
+  .topbar { flex:0 0 auto; display:flex; align-items:center; gap:12px; padding:14px 22px;
+    border-bottom:1px solid rgba(146,64,14,.14); position:relative; }
+  .burger { display:none; width:38px; height:38px; border-radius:11px; border:1px solid rgba(146,64,14,.25);
+    background:rgba(255,255,255,.4); color:#3A2113; cursor:pointer; align-items:center; justify-content:center; flex:0 0 auto; }
+  .burger svg { width:19px; height:19px; }
+  .search { flex:1; min-width:0; max-width:380px; height:38px; border-radius:999px;
+    background:rgba(255,255,255,.4); border:1px solid rgba(255,255,255,.55);
+    display:flex; align-items:center; gap:8px; padding:0 14px; }
+  .search svg { width:15px; height:15px; color:rgba(67,40,24,.5); flex:0 0 auto; }
+  .search input { flex:1; min-width:0; border:none; outline:none; background:none; font:inherit; font-size:13.5px; color:#3A2113; }
+  .search input::placeholder { color:rgba(67,40,24,.5); }
+  .btn { font:inherit; cursor:pointer; border-radius:999px; white-space:nowrap; }
+  .btn.ghost { font-size:13px; font-weight:500; color:rgba(67,40,24,.75);
+    border:1px solid rgba(146,64,14,.25); padding:9px 15px; background:rgba(255,255,255,.3); }
+  .btn.ghost:hover { background:rgba(255,255,255,.55); }
+  .btn.primary { font-size:13px; font-weight:600; color:#fff; border:none; padding:10px 17px;
+    background:linear-gradient(120deg,#F0562F,#C9330F); box-shadow:0 8px 18px rgba(217,60,15,.4); }
+  .btn.primary:hover { filter:brightness(1.07); }
+
+  /* activity dropdown */
+  .actpanel { position:absolute; top:calc(100% + 8px); right:22px; width:340px; max-width:calc(100vw - 44px); z-index:40;
+    background:rgba(255,250,244,.96); border:1px solid rgba(255,255,255,.8); border-radius:18px;
+    box-shadow:0 24px 50px rgba(43,16,2,.35); padding:14px 16px; display:none; }
+  .actpanel.open { display:block; }
+  .actpanel h4 { font-size:13px; font-weight:700; color:#3A2113; margin-bottom:8px; }
+  .actpanel .ai { display:flex; gap:9px; padding:7px 0; border-top:1px solid rgba(146,64,14,.10); font-size:12.5px; color:rgba(67,40,24,.75); }
+  .actpanel .ai b { color:#3A2113; font-weight:600; }
+  .actpanel .ai .when { margin-left:auto; font-size:11px; color:rgba(67,40,24,.45); flex:0 0 auto; }
+
+  /* ---------- pages ---------- */
+  .pages { flex:1; overflow-y:auto; padding:22px 24px 30px; }
+  .page { display:none; flex-direction:column; gap:16px; max-width:1180px; margin:0 auto; width:100%; }
+  .page.on { display:flex; }
+  .gcard { background:rgba(255,255,255,.45); border:1px solid rgba(255,255,255,.62); border-radius:20px;
+    box-shadow:0 14px 30px rgba(146,64,14,.16), inset 0 1px 0 rgba(255,255,255,.65); }
+  .phead { display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+  .phead .pt { font-size:26px; font-weight:600; color:#3A2113; letter-spacing:.2px; }
+  .phead .ps { font-size:13px; color:rgba(67,40,24,.5); display:flex; align-items:center; gap:6px; }
+  .phead .ps .livedot { width:7px; height:7px; border-radius:50%; background:#F0562F; display:inline-block; animation:pulse 2.2s infinite; }
+  .phead .ps b { color:#C2430F; font-weight:600; }
+
+  /* greeting + hero */
+  .greet .gt { font-size:29px; font-weight:600; color:#3A2113; letter-spacing:.2px; line-height:1.12; }
+  .greet .gt span { color:#C2430F; }
+  .greet .gs { font-size:13.5px; color:rgba(67,40,24,.55); margin-top:5px; }
+  .herorow { display:flex; gap:16px; align-items:stretch; }
+  .hero { flex:1.8; border-radius:24px; padding:20px 24px; position:relative; overflow:hidden; min-height:238px;
+    background:linear-gradient(135deg,#F0562F 0%,#DE4218 55%,#C9330F 100%);
+    box-shadow:0 22px 44px rgba(190,50,10,.4), inset 0 1px 0 rgba(255,255,255,.35); color:#fff; display:flex; flex-direction:column; }
+  .hero::after { content:''; position:absolute; width:360px; height:360px; border-radius:50%; right:-110px; top:-170px;
+    background:radial-gradient(circle, rgba(255,205,150,.5), rgba(255,205,150,0) 70%); pointer-events:none; }
+  .hero .hpill { align-self:flex-start; font-size:11px; font-weight:600; letter-spacing:.3px; z-index:1;
+    background:rgba(255,255,255,.22); border:1px solid rgba(255,255,255,.35); padding:4px 11px; border-radius:999px;
+    display:flex; align-items:center; gap:6px; }
+  .hero .hpill i { width:6px; height:6px; border-radius:50%; background:#FFD9A8; display:block; }
+  .hero .hh { font-size:25px; font-weight:600; line-height:1.2; margin-top:12px; max-width:330px; z-index:1; }
+  .hero .hh em { font-family:Georgia,'Times New Roman',serif; font-style:italic; font-weight:500; }
+  .hero .hsub2 { font-size:12.5px; color:rgba(255,240,230,.78); line-height:1.45; margin-top:6px; max-width:320px; z-index:1; }
+  .hero .hstats { display:flex; gap:22px; margin-top:auto; padding-top:14px; z-index:1; }
+  .hero .hstat b { font-size:19px; font-weight:700; display:block; line-height:1.1; }
+  .hero .hstat span { font-size:10px; color:rgba(255,240,230,.68); letter-spacing:.4px; }
+  .hero .hbtns { display:flex; gap:9px; margin-top:12px; z-index:1; }
+  .hero .hb1, .hero .hb2 { font:inherit; font-size:12.5px; border-radius:999px; padding:7px 15px; cursor:pointer; }
+  .hero .hb1 { font-weight:600; background:#fff; color:#C2430F; border:none; }
+  .hero .hb2 { font-weight:500; color:#fff; border:1px solid rgba(255,255,255,.55); background:none; }
+  .ringwrap { position:absolute; right:22px; top:50%; transform:translateY(-50%); width:172px; height:172px; z-index:1; }
+  .ringwrap .rc { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); text-align:center; }
+  .ringwrap .rc b { font-size:30px; font-weight:700; display:block; line-height:1; }
+  .ringwrap .rc span { font-size:10px; color:rgba(255,240,230,.78); letter-spacing:.5px; }
+  .ringav { position:absolute; width:28px; height:28px; border-radius:50%; border:2px solid rgba(255,255,255,.85);
+    display:flex; align-items:center; justify-content:center; font-size:9.5px; font-weight:700; color:#fff; }
+
+  /* mini calendar */
+  .calcard { flex:1; min-width:280px; padding:18px 20px; display:flex; flex-direction:column; }
+  .calcard .chead { display:flex; align-items:flex-start; justify-content:space-between; }
+  .calcard .cday { font-size:38px; font-weight:700; color:#D63C14; line-height:1; }
+  .calcard .cmon { font-size:13.5px; font-weight:600; color:#3A2113; line-height:1.3; text-align:right; }
+  .calcard .cmon span { display:block; font-size:11px; font-weight:500; color:rgba(67,40,24,.5); }
+  .weekstrip { display:flex; gap:4px; margin-top:13px; }
+  .wd { flex:1; text-align:center; padding:6px 0 5px; border-radius:10px; font-size:10.5px; font-weight:600;
+    color:rgba(67,40,24,.55); font-family:inherit; background:none; border:none; cursor:pointer; }
+  .wd b { display:block; font-size:13.5px; font-weight:700; color:#3A2113; margin-top:1px; }
+  .wd:hover { background:rgba(255,255,255,.5); }
+  .wd.on { background:#D63C14; color:rgba(255,235,225,.85); box-shadow:0 6px 12px rgba(214,60,20,.35); }
+  .wd.on b { color:#fff; }
+  .cev { display:flex; gap:10px; margin-top:11px; padding:9px 11px; border-radius:13px;
+    background:rgba(255,255,255,.5); border:1px solid rgba(255,255,255,.6); align-items:flex-start; }
+  .cev .ct3 { font-size:11.5px; font-weight:700; color:#C2430F; flex:0 0 38px; padding-top:1px; }
+  .cev .cb { flex:1; min-width:0; }
+  .cev .cn2 { font-size:12.5px; font-weight:600; color:#3A2113; }
+  .cev .cs2 { font-size:11px; color:rgba(67,40,24,.5); margin-top:1px; }
+  .cev .next { font-size:9px; font-weight:700; letter-spacing:.5px; color:#C2430F; background:rgba(240,86,47,.14);
+    border:1px solid rgba(240,86,47,.35); padding:2px 7px; border-radius:999px; flex:0 0 auto; }
+  .cev.none { color:rgba(67,40,24,.5); font-size:12.5px; align-items:center; }
+
+  /* stat cards */
+  .statrow { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
+  .statrow.three { grid-template-columns:repeat(3,1fr); }
+  .stat { padding:16px 18px 14px; display:flex; flex-direction:column; position:relative; overflow:hidden; min-height:132px; }
+  .stat .stop { display:flex; align-items:flex-start; justify-content:space-between; }
+  .stat .sic { width:33px; height:33px; border-radius:11px; background:rgba(255,255,255,.65); border:1px solid rgba(255,255,255,.7);
+    display:flex; align-items:center; justify-content:center; color:#C2430F; }
+  .stat .sic svg { width:17px; height:17px; }
+  .stat .chg { font-size:11px; font-weight:700; color:#15803D; background:rgba(22,163,74,.13); border:1px solid rgba(22,163,74,.25); padding:2px 8px; border-radius:999px; }
+  .stat .sval { font-size:33px; font-weight:700; color:#3A2113; line-height:1.1; margin-top:10px; }
+  .stat .slab { font-size:13.5px; font-weight:600; color:#3A2113; margin-top:2px; }
+  .stat .ssub { font-size:11.5px; color:rgba(67,40,24,.5); margin-top:2px; }
+  .stat .spark { position:absolute; right:14px; bottom:11px; opacity:.85; }
+  .stat.red { background:linear-gradient(140deg,#F0562F,#C9330F); border-color:rgba(255,255,255,.35);
+    box-shadow:0 18px 36px rgba(190,50,10,.35), inset 0 1px 0 rgba(255,255,255,.3); }
+  .stat.red .sic { background:rgba(255,255,255,.22); border-color:rgba(255,255,255,.3); color:#fff; }
+  .stat.red .chg { color:#D9F99D; background:rgba(255,255,255,.16); border-color:rgba(255,255,255,.3); }
+  .stat.red .sval, .stat.red .slab { color:#fff; }
+  .stat.red .ssub { color:rgba(255,240,230,.65); }
+
+  /* quick pills */
+  .qpills { display:flex; gap:9px; flex-wrap:wrap; }
+  .qpill { flex:1 1 140px; padding:11px 10px; text-align:center; font:inherit; font-size:12.5px; font-weight:600; color:#8A3B12;
+    background:rgba(255,255,255,.5); border:1px solid rgba(255,255,255,.65); border-radius:999px; cursor:pointer;
+    box-shadow:0 8px 18px rgba(146,64,14,.14), inset 0 1px 0 rgba(255,255,255,.7); }
+  .qpill:hover { background:rgba(255,255,255,.8); }
+
+  /* chart cards */
+  .splitrow { display:flex; gap:16px; align-items:stretch; }
+  .chartcard { flex:1.6; padding:18px 20px 14px; display:flex; flex-direction:column; min-width:0; }
+  .chartcard .ct { font-size:16px; font-weight:600; color:#3A2113; display:flex; align-items:flex-start; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+  .chartcard .ct .csub2 { font-size:11.5px; color:rgba(67,40,24,.45); font-weight:500; margin-top:2px; }
+  .legend { display:flex; gap:14px; font-size:11.5px; font-weight:500; color:rgba(67,40,24,.6); align-items:center; }
+  .legend i { width:8px; height:8px; border-radius:50%; display:inline-block; margin-right:5px; }
+  .rangewrap { display:flex; align-items:center; gap:8px; margin-top:12px; flex-wrap:wrap; }
+  .rpill { font:inherit; font-size:11.5px; font-weight:500; color:rgba(67,40,24,.6); background:rgba(255,255,255,.5);
+    border:1px solid rgba(255,255,255,.6); padding:6px 13px; border-radius:999px; cursor:pointer; }
+  .rpill.on { background:#3A2113; color:#FFF3E8; border-color:#3A2113; font-weight:600; }
+  .recbtn { margin-left:auto; font:inherit; font-size:12px; font-weight:600; color:#fff; border:none; cursor:pointer;
+    background:linear-gradient(120deg,#F0562F,#C9330F); padding:7px 14px; border-radius:999px; box-shadow:0 8px 16px rgba(217,60,15,.35); }
+  .hmonths { display:flex; justify-content:space-between; font-size:11px; color:rgba(67,40,24,.4); font-weight:500; padding:4px 2px 2px; }
+  .chartsvg { width:100%; height:auto; display:block; margin-top:10px; }
+
+  /* channel donut */
+  .chancard { flex:1; min-width:270px; padding:18px 20px 14px; display:flex; flex-direction:column; }
+  .chancard .cht { font-size:16px; font-weight:600; color:#3A2113; }
+  .chancard .chsub { font-size:11.5px; color:rgba(67,40,24,.45); font-weight:500; margin-top:2px; }
+  .chanviz { position:relative; width:150px; height:150px; margin:14px auto 6px; }
+  .chanviz .chtotal { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+  .chanviz .chtotal b { font-size:23px; font-weight:700; color:#3A2113; line-height:1; }
+  .chanviz .chtotal span { font-size:9.5px; font-weight:600; letter-spacing:.7px; color:rgba(67,40,24,.5); margin-top:4px; }
+  .chrow { display:flex; align-items:center; gap:9px; padding:8px 2px; border-top:1px solid rgba(146,64,14,.10); }
+  .chrow i { width:10px; height:10px; border-radius:3px; flex:0 0 10px; }
+  .chrow .chn { font-size:13px; font-weight:600; color:#3A2113; }
+  .chrow .chp { margin-left:auto; font-size:11.5px; font-weight:500; color:rgba(67,40,24,.5); }
+  .chrow .chv { font-size:13.5px; font-weight:700; color:#3A2113; min-width:56px; text-align:right; }
+
+  /* tables */
+  .tablecard { padding:18px 20px 10px; }
+  .tablecard .tt { font-size:16px; font-weight:600; color:#3A2113; display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+  .tablecard .tt .tsub { font-size:11.5px; color:rgba(67,40,24,.45); font-weight:500; }
+  .tabs { display:flex; gap:8px; margin-top:13px; flex-wrap:wrap; }
+  .tab2 { font:inherit; font-size:12px; font-weight:500; color:rgba(67,40,24,.6); background:rgba(255,255,255,.5);
+    border:1px solid rgba(255,255,255,.6); padding:6px 14px; border-radius:999px; cursor:pointer; }
+  .tab2.on { background:#3A2113; color:#FFF3E8; border-color:#3A2113; font-weight:600; }
+  .tscroll { overflow-x:auto; margin-top:8px; }
+  table { width:100%; border-collapse:collapse; font-size:13.5px; min-width:560px; }
+  th { text-align:left; font-size:11px; font-weight:700; letter-spacing:.6px; color:rgba(67,40,24,.45);
+    padding:10px 10px 8px; border-bottom:1px solid rgba(146,64,14,.16); white-space:nowrap; }
+  td { padding:11px 10px; border-bottom:1px solid rgba(146,64,14,.08); color:rgba(67,40,24,.8); vertical-align:middle; }
+  td b { color:#3A2113; font-weight:600; }
+  tr:last-child td { border-bottom:none; }
+  .pill { display:inline-block; font-size:11px; font-weight:700; padding:3px 10px; border-radius:999px; white-space:nowrap; }
+  .pill.green { color:#15803D; background:rgba(22,163,74,.13); border:1px solid rgba(22,163,74,.25); }
+  .pill.amber { color:#B45309; background:rgba(245,158,11,.14); border:1px solid rgba(245,158,11,.3); }
+  .pill.red { color:#C2430F; background:rgba(240,86,47,.13); border:1px solid rgba(240,86,47,.3); }
+  .pill.grey { color:rgba(67,40,24,.6); background:rgba(255,255,255,.5); border:1px solid rgba(146,64,14,.18); }
+  .rowbtn { font:inherit; font-size:11.5px; font-weight:600; color:#C2430F; background:rgba(240,86,47,.12);
+    border:1px solid rgba(240,86,47,.35); padding:5px 12px; border-radius:999px; cursor:pointer; white-space:nowrap; }
+  .rowbtn:hover { background:rgba(240,86,47,.22); }
+  .rowbtn:disabled { opacity:.55; cursor:default; }
+  .noresults { display:none; padding:16px 10px; font-size:13px; color:rgba(67,40,24,.5); }
+
+  /* inbox */
+  .inq { display:flex; gap:12px; padding:14px 16px; cursor:pointer; align-items:flex-start; }
+  .inq:hover { background:rgba(255,255,255,.6); }
+  .inq .ib { flex:1; min-width:0; }
+  .inq .in1 { display:flex; align-items:baseline; gap:8px; }
+  .inq .inm { font-size:14px; font-weight:600; color:#3A2113; }
+  .inq .itm { margin-left:auto; font-size:11px; color:rgba(67,40,24,.45); flex:0 0 auto; }
+  .inq .isb { font-size:12.5px; color:rgba(67,40,24,.6); margin-top:2px; }
+  .inq .ibd { font-size:13px; color:rgba(67,40,24,.75); line-height:1.5; margin-top:8px; display:none; }
+  .inq.open .ibd { display:block; }
+  .inq .unread { width:9px; height:9px; border-radius:50%; background:#D63C14; flex:0 0 auto; margin-top:5px; }
+  .inq.read .unread { visibility:hidden; }
+  .inq.read .inm { font-weight:500; color:rgba(67,40,24,.65); }
+  .listcard { padding:6px 0; overflow:hidden; }
+  .listcard > .inq + .inq { border-top:1px solid rgba(146,64,14,.09); }
+
+  /* reviews */
+  .scorecard { padding:20px 22px; display:flex; gap:22px; align-items:center; flex-wrap:wrap; }
+  .scorecard .big { font-size:52px; font-weight:700; color:#3A2113; line-height:1; }
+  .stars { color:#E4572E; font-size:17px; letter-spacing:2px; }
+  .scorecard .sc-sub { font-size:12.5px; color:rgba(67,40,24,.55); margin-top:4px; }
+  .dist { flex:1; min-width:220px; display:flex; flex-direction:column; gap:5px; }
+  .dist .dr { display:flex; align-items:center; gap:9px; font-size:11.5px; font-weight:600; color:rgba(67,40,24,.6); }
+  .dist .bar { flex:1; height:8px; border-radius:99px; background:rgba(255,255,255,.5); overflow:hidden; }
+  .dist .bar i { display:block; height:100%; background:linear-gradient(90deg,#F2A93B,#E4572E); border-radius:99px; }
+  .revgrid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:16px; }
+  .rev { padding:17px 19px; }
+  .rev .rh { display:flex; align-items:center; gap:10px; }
+  .rev .rn { font-size:13.5px; font-weight:600; color:#3A2113; line-height:1.2; }
+  .rev .rn span { display:block; font-size:11px; font-weight:400; color:rgba(67,40,24,.5); }
+  .rev .rt { font-size:13px; line-height:1.55; color:rgba(67,40,24,.78); margin-top:10px; }
+
+  /* settings */
+  .setgrid { display:grid; grid-template-columns:1fr 1fr; gap:16px; align-items:start; }
+  .setcard { padding:19px 21px; }
+  .setcard h3 { font-size:15.5px; font-weight:600; color:#3A2113; margin-bottom:6px; }
+  .fld { margin-top:12px; }
+  .fld label { display:block; font-size:11.5px; font-weight:700; letter-spacing:.4px; color:rgba(67,40,24,.5); margin-bottom:5px; }
+  .fld input { width:100%; font:inherit; font-size:13.5px; color:#3A2113; padding:9px 13px; border-radius:12px;
+    border:1px solid rgba(146,64,14,.22); background:rgba(255,255,255,.55); outline:none; }
+  .fld input:focus { border-color:#E4572E; }
+  .togglerow { display:flex; align-items:center; gap:12px; padding:13px 0; border-top:1px solid rgba(146,64,14,.10); }
+  .togglerow:first-of-type { border-top:none; }
+  .togglerow .tl { flex:1; }
+  .togglerow .tl b { display:block; font-size:13.5px; font-weight:600; color:#3A2113; }
+  .togglerow .tl span { font-size:11.5px; color:rgba(67,40,24,.5); }
+  .switch { position:relative; width:46px; height:26px; flex:0 0 auto; border:none; cursor:pointer; border-radius:999px;
+    background:rgba(67,40,24,.25); transition:background .18s; padding:0; }
+  .switch::after { content:''; position:absolute; top:3px; left:3px; width:20px; height:20px; border-radius:50%;
+    background:#fff; box-shadow:0 2px 6px rgba(0,0,0,.25); transition:left .18s; }
+  .switch[aria-checked="true"] { background:linear-gradient(120deg,#F0562F,#C9330F); }
+  .switch[aria-checked="true"]::after { left:23px; }
+
+  /* schedule */
+  .dayevents { display:flex; flex-direction:column; gap:0; }
+  .schev { display:flex; gap:12px; padding:13px 4px; border-top:1px solid rgba(146,64,14,.09); align-items:flex-start; }
+  .schev:first-child { border-top:none; }
+  .schev .st { font-size:12.5px; font-weight:700; color:#C2430F; flex:0 0 46px; padding-top:1px; }
+  .schev .sb b { display:block; font-size:14px; font-weight:600; color:#3A2113; }
+  .schev .sb span { font-size:12px; color:rgba(67,40,24,.55); }
+  .schev .crew { margin-left:auto; display:flex; gap:5px; flex:0 0 auto; }
+
+  /* modal + toast */
+  .scrim { position:fixed; inset:0; background:rgba(24,10,2,.45); z-index:55; display:none; }
+  .scrim.open { display:block; }
+  .modal { position:fixed; z-index:60; left:50%; top:50%; transform:translate(-50%,-50%); width:420px; max-width:calc(100vw - 32px);
+    background:rgba(255,250,244,.98); border:1px solid rgba(255,255,255,.85); border-radius:22px; padding:22px 24px;
+    box-shadow:0 30px 70px rgba(24,10,2,.5); display:none; }
+  .modal.open { display:block; }
+  .modal h3 { font-size:18px; font-weight:600; color:#3A2113; }
+  .modal .msub { font-size:12.5px; color:rgba(67,40,24,.55); margin-top:3px; }
+  .modal .mrow { display:flex; gap:10px; margin-top:18px; justify-content:flex-end; }
+  .modal select { width:100%; font:inherit; font-size:13.5px; color:#3A2113; padding:9px 13px; border-radius:12px;
+    border:1px solid rgba(146,64,14,.22); background:rgba(255,255,255,.7); outline:none; }
+  .toast { position:fixed; z-index:70; left:50%; bottom:26px; transform:translate(-50%,80px); opacity:0;
+    background:#3A2113; color:#FFF3E8; font-size:13.5px; font-weight:500; padding:12px 20px; border-radius:999px;
+    box-shadow:0 16px 36px rgba(24,10,2,.45); transition:transform .3s,opacity .3s; pointer-events:none; max-width:calc(100vw - 32px); text-align:center; }
+  .toast.show { transform:translate(-50%,0); opacity:1; }
+
+  .navscrim { position:fixed; inset:0; background:rgba(24,10,2,.4); z-index:44; display:none; }
+
+  /* ---------- responsive ---------- */
+  @media (max-width:1080px) {
+    .statrow { grid-template-columns:repeat(2,1fr); }
+    .splitrow { flex-direction:column; }
+    .herorow { flex-direction:column; }
+    .setgrid { grid-template-columns:1fr; }
+  }
+  @media (max-width:860px) {
+    .app { margin:0; border-radius:0; border:none; }
+    .sidebar { position:fixed; z-index:50; top:0; left:0; bottom:0; width:262px; flex:none;
+      transform:translateX(-105%); transition:transform .28s ease;
+      background:linear-gradient(180deg, rgba(255,246,236,.97), rgba(255,236,220,.95));
+      box-shadow:20px 0 50px rgba(24,10,2,.35); }
+    .sidebar.open { transform:translateX(0); }
+    .navscrim.open { display:block; }
+    .burger { display:flex; }
+    .topbar { padding:12px 14px; }
+    .topbar .btn.ghost { display:none; }
+    .pages { padding:16px 14px 24px; }
+    .ringwrap { position:relative; right:auto; top:auto; transform:none; margin:14px auto 2px; }
+    .hero { min-height:0; }
+  }
+  @media (max-width:560px) {
+    .topbar .av { display:none; }
+    .topbar .btn.primary { padding:9px 12px; font-size:12.5px; }
+    .statrow, .statrow.three { grid-template-columns:1fr; }
+    .greet .gt { font-size:24px; }
+    .phead .pt { font-size:22px; }
+    .hero .hstats { flex-wrap:wrap; gap:14px; }
+  }
+</style>
+</head>
+<body>
+<div class="backdrop"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div></div>
+
+<div class="app">
+  <!-- ================= SIDEBAR ================= -->
+  <aside class="sidebar" id="sidebar">
+    <div class="logo"><div class="lg">N</div><div class="ln">Northbeam<span>BUILDERS</span></div></div>
+    <nav class="nav" id="nav"></nav>
+    <div class="sp"></div>
+    <div class="aicard" id="aicard">
+      <div class="at"><i></i><span id="aicard-title">AI receptionist</span></div>
+      <div class="am" id="aicard-msg">Live · answered 14 enquiries today</div>
+    </div>
+    <div class="userchip">
+      <div class="av" style="width:34px;height:34px;font-size:12px;background:linear-gradient(145deg,#F0562F,#C9330F)">JD</div>
+      <div class="un">James Doyle<span>Owner</span></div>
+    </div>
+  </aside>
+  <div class="navscrim" id="navscrim"></div>
+
+  <!-- ================= MAIN ================= -->
+  <div class="main">
+    <div class="topbar">
+      <button class="burger" id="burger" aria-label="Open menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+      <div class="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.8-3.8"/></svg>
+        <input id="search" type="text" placeholder="Search clients, jobs, invoices…" autocomplete="off">
+      </div>
+      <button class="btn ghost" id="activityBtn">Activity log</button>
+      <button class="btn primary" id="newEnquiryBtn">+ New enquiry</button>
+      <div class="av" style="width:36px;height:36px;font-size:12px;background:linear-gradient(145deg,#FFB25E,#E4572E)">JD</div>
+      <div class="actpanel" id="actpanel">
+        <h4>Activity log</h4>
+        <div class="ai"><span><b>AI receptionist</b> answered an enquiry about a garage conversion</span><span class="when">12 min</span></div>
+        <div class="ai"><span><b>Quote sent</b> · Riverside Barn conversion, £128,000</span><span class="when">1 hr</span></div>
+        <div class="ai"><span><b>Payment received</b> · The Old Bakery, £12,750</span><span class="when">2 hrs</span></div>
+        <div class="ai"><span><b>Site visit booked</b> · Maple Court, Monday 09:30</span><span class="when">3 hrs</span></div>
+        <div class="ai"><span><b>New review</b> · 5 stars on Google</span><span class="when">Yesterday</span></div>
+      </div>
+    </div>
+
+    <div class="pages" id="pages">
+
+      <!-- ================= OVERVIEW ================= -->
+      <section class="page" id="page-overview">
+        <div class="greet">
+          <div class="gt">Good afternoon, <span>Northbeam Builders</span></div>
+          <div class="gs">Monday 17 November · 3 things need your attention</div>
+        </div>
+        <div class="herorow">
+          <div class="hero">
+            <span class="hpill"><i></i>Week 47 · 4 crews on site</span>
+            <div class="hh">Your crews are <em>ahead</em> of programme this week</div>
+            <div class="hsub2">72% of this week's jobs are on schedule, and two handovers are ready to go.</div>
+            <div class="ringwrap">
+              <svg width="172" height="172" viewBox="0 0 172 172">
+                <circle cx="86" cy="86" r="68" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="12"/>
+                <circle cx="86" cy="86" r="68" fill="none" stroke="#fff" stroke-width="12" stroke-linecap="round"
+                        stroke-dasharray="307.7 427.3" transform="rotate(-90 86 86)"/>
+              </svg>
+              <div class="rc"><b>72%</b><span>ON SCHEDULE</span></div>
+              <div class="ringav" style="left:72px;top:-6px;background:linear-gradient(145deg,#F0562F,#C9330F)">JD</div>
+              <div class="ringav" style="left:142px;top:28px;background:linear-gradient(145deg,#FFB25E,#E4572E)">MK</div>
+              <div class="ringav" style="left:144px;top:114px;background:linear-gradient(145deg,#37c8d9,#1f7f96)">AS</div>
+              <div class="ringav" style="left:70px;top:146px;background:linear-gradient(145deg,#f0b454,#b97e22)">RW</div>
+              <div class="ringav" style="left:-4px;top:72px;background:linear-gradient(145deg,#6ee7a0,#2f9e5f)">TP</div>
+            </div>
+            <div class="hstats">
+              <div class="hstat"><b data-count="12">0</b><span>JOBS LIVE</span></div>
+              <div class="hstat"><b data-count="7">0</b><span>VISITS TODAY</span></div>
+              <div class="hstat"><b><span data-count="98">0</span>%</b><span>ON TIME</span></div>
+            </div>
+            <div class="hbtns">
+              <button class="hb1" data-goto="schedule">View programme ↗</button>
+              <button class="hb2" data-goto="jobs" data-jobs-tab="progress">+ Add job</button>
+            </div>
+          </div>
+          <div class="calcard gcard">
+            <div class="chead"><div class="cday" id="calDayNum">17</div>
+              <div class="cmon"><span id="calDayName">Monday</span>November 2026 · <span id="calEvCount">2 events</span></div></div>
+            <div class="weekstrip" id="weekstrip"></div>
+            <div id="calEvents"></div>
+          </div>
+        </div>
+
+        <div class="statrow">
+          <div class="stat gcard">
+            <div class="stop"><div class="sic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15a8 8 0 0 1 16 0"/><path d="M2 15h20v2.5H2z"/><path d="M10 7.5V4h4v3.5"/></svg></div><span class="chg">▲ 12%</span></div>
+            <div class="sval" data-count="24">0</div><div class="slab">Active jobs</div><div class="ssub">6 crews on site right now</div>
+            <svg class="spark" width="52" height="20" viewBox="0 0 52 20"><polyline points="2,15 12,11 22,12 30,7 40,8 50,3" fill="none" stroke="#E4572E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="stat gcard">
+            <div class="stop"><div class="sic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2.5h8L19 7v14.5H6z"/><path d="M13.5 2.5V7.5H19M9 12h6M9 15.5h6"/></svg></div><span class="chg">▲ 8%</span></div>
+            <div class="sval" data-count="38">0</div><div class="slab">Open quotes</div><div class="ssub">Worth £412k in the pipeline</div>
+            <svg class="spark" width="52" height="20" viewBox="0 0 52 20"><polyline points="2,16 12,13 22,14 30,9 40,10 50,5" fill="none" stroke="#E4572E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="stat gcard red">
+            <div class="stop"><div class="sic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 6.5C16.6 5 14.9 4 13 4c-2.8 0-5 2.2-5 5v2H5.5M8 15H5.5M8 11h6.5M8 11v5.5L6.8 20h11"/></svg></div><span class="chg">▲ 9%</span></div>
+            <div class="sval">£<span data-count="186400" data-fmt="1">0</span></div><div class="slab">Revenue this month</div><div class="ssub">vs £171.2k last month</div>
+            <svg class="spark" width="52" height="20" viewBox="0 0 52 20"><polyline points="2,15 12,12 22,13 30,8 40,9 50,4" fill="none" stroke="#FFD9A8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="stat gcard">
+            <div class="stop"><div class="sic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.6l2.6 5.3 5.8.8-4.2 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8L3.6 9.7l5.8-.8z"/></svg></div><span class="chg">▲ 0.4</span></div>
+            <div class="sval"><span data-count="49" data-dec="1">0</span></div><div class="slab">Review score</div><div class="ssub">212 Google reviews</div>
+            <svg class="spark" width="52" height="20" viewBox="0 0 52 20"><polyline points="2,14 12,12 22,10 30,9 40,6 50,4" fill="none" stroke="#E4572E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+        </div>
+
+        <div class="qpills">
+          <button class="qpill" data-goto="jobs" data-jobs-tab="quoting">New quote</button>
+          <button class="qpill" id="qpBookVisit">Book a visit</button>
+          <button class="qpill" data-goto="payments">Send invoice</button>
+          <button class="qpill" data-goto="payments">Chase payment</button>
+          <button class="qpill" data-goto="payments">Pay the team</button>
+          <button class="qpill" id="qpDownload">Download report</button>
+        </div>
+
+        <div class="splitrow">
+          <div class="chartcard gcard">
+            <div class="ct"><div>Revenue overview<div class="csub2">Invoiced vs costs · Jun to Nov</div></div>
+              <div class="legend"><span><i style="background:#E4572E"></i>Revenue</span><span><i style="background:#C08552"></i>Costs</span></div></div>
+            <div id="overviewChart"></div>
+            <div class="hmonths"><span>JUN</span><span>JUL</span><span>AUG</span><span>SEP</span><span>OCT</span><span>NOV</span></div>
+          </div>
+          <div class="chancard gcard">
+            <div class="cht">Revenue by channel</div>
+            <div class="chsub">Where the £964k came from</div>
+            <div class="chanviz" id="chanviz"></div>
+            <div id="chanrows"></div>
+          </div>
+        </div>
+
+        <div class="tablecard gcard">
+          <div class="tt"><span>Active jobs</span><span class="tsub">Search above filters this table</span></div>
+          <div class="tscroll"><table>
+            <thead><tr><th>Job</th><th>Client</th><th>Type</th><th>Value</th><th>Status</th></tr></thead>
+            <tbody id="overviewJobsBody"></tbody>
+          </table></div>
+          <div class="noresults" data-noresults>No jobs match your search.</div>
+        </div>
+      </section>
+
+      <!-- ================= ANALYTICS ================= -->
+      <section class="page" id="page-analytics">
+        <div class="phead"><div class="pt">Analytics</div><div class="ps"><span class="livedot"></span>Updated <b>just now</b> · <span id="anaRangeLabel">last 6 months</span></div></div>
+        <div class="statrow">
+          <div class="stat gcard">
+            <div class="stop"><div class="sic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3 7l9 6 9-6"/></svg></div><span class="chg">▲ 18%</span></div>
+            <div class="sval" data-count="142">0</div><div class="slab">Enquiries</div><div class="ssub">Answered in 28s on average</div>
+            <svg class="spark" width="52" height="20" viewBox="0 0 52 20"><polyline points="2,15 12,11 22,12 30,7 40,8 50,3" fill="none" stroke="#E4572E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="stat gcard">
+            <div class="stop"><div class="sic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2.5"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></div><span class="chg">▲ 11%</span></div>
+            <div class="sval" data-count="96">0</div><div class="slab">Site visits booked</div><div class="ssub">Across 4 crews this month</div>
+            <svg class="spark" width="52" height="20" viewBox="0 0 52 20"><polyline points="2,16 12,13 22,14 30,9 40,10 50,5" fill="none" stroke="#E4572E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="stat gcard red">
+            <div class="stop"><div class="sic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 6.5C16.6 5 14.9 4 13 4c-2.8 0-5 2.2-5 5v2H5.5M8 15H5.5M8 11h6.5M8 11v5.5L6.8 20h11"/></svg></div><span class="chg">▲ 14%</span></div>
+            <div class="sval">£<span data-count="512800" data-fmt="1">0</span></div><div class="slab">Quoted value</div><div class="ssub">Sent in the last 6 months</div>
+            <svg class="spark" width="52" height="20" viewBox="0 0 52 20"><polyline points="2,15 12,12 22,13 30,8 40,9 50,4" fill="none" stroke="#FFD9A8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="stat gcard">
+            <div class="stop"><div class="sic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M3.5 20c.6-3.2 2.8-5 5.5-5s4.9 1.8 5.5 5"/><path d="M16 5.2a3.5 3.5 0 0 1 0 5.9M18.5 15.4c1 .8 1.7 2 2 4.6"/></svg></div><span class="chg">▲ 6 pts</span></div>
+            <div class="sval"><span data-count="34">0</span>%</div><div class="slab">Win rate</div><div class="ssub">34 of every 100 quotes won</div>
+            <svg class="spark" width="52" height="20" viewBox="0 0 52 20"><polyline points="2,14 12,12 22,10 30,9 40,6 50,4" fill="none" stroke="#E4572E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+        </div>
+        <div class="chartcard gcard">
+          <div class="ct"><div>Revenue<div class="csub2" id="anaChartSub">£964k invoiced over the last 6 months</div></div>
+            <div class="legend"><span><i style="background:#E4572E"></i>Revenue</span><span><i style="background:#C08552"></i>Costs</span></div></div>
+          <div class="rangewrap">
+            <button class="rpill" data-range="3">3 months</button>
+            <button class="rpill on" data-range="6">6 months</button>
+            <button class="rpill" data-range="12">12 months</button>
+            <button class="recbtn" id="recordPaymentBtn">+ Record a payment</button>
+          </div>
+          <div id="analyticsChart"></div>
+          <div class="hmonths" id="anaMonths"></div>
+        </div>
+        <div class="chancard gcard" style="min-width:0">
+          <div class="cht">Revenue by channel</div>
+          <div class="chsub">Where the £964k came from</div>
+          <div class="chanviz" id="chanviz2"></div>
+          <div id="chanrows2"></div>
+        </div>
+      </section>
+
+      <!-- ================= SCHEDULE ================= -->
+      <section class="page" id="page-schedule">
+        <div class="phead"><div class="pt">Schedule</div><div class="ps">Week 47 · 17–23 November 2026</div></div>
+        <div class="calcard gcard" style="min-width:0">
+          <div class="chead"><div class="cday" id="schDayNum">17</div>
+            <div class="cmon"><span id="schDayName">Monday</span>November 2026 · <span id="schEvCount">2 events</span></div></div>
+          <div class="weekstrip" id="weekstrip2"></div>
+          <div class="dayevents" id="schEvents" style="margin-top:8px"></div>
+        </div>
+        <button class="btn primary" id="bookVisitBtn" style="align-self:flex-start">+ Book a visit</button>
+      </section>
+
+      <!-- ================= JOBS ================= -->
+      <section class="page" id="page-jobs">
+        <div class="phead"><div class="pt">Jobs</div><div class="ps">24 active · 38 open quotes worth £412k</div></div>
+        <div class="tablecard gcard">
+          <div class="tt"><span>All jobs</span><span class="tsub">Search above filters this table</span></div>
+          <div class="tabs" id="jobsTabs">
+            <button class="tab2 on" data-jtab="all">All</button>
+            <button class="tab2" data-jtab="progress">In progress</button>
+            <button class="tab2" data-jtab="quoting">Quoting</button>
+            <button class="tab2" data-jtab="completed">Completed</button>
+          </div>
+          <div class="tscroll"><table>
+            <thead><tr><th>Job</th><th>Client</th><th>Type</th><th>Value</th><th>Status</th></tr></thead>
+            <tbody id="jobsBody"></tbody>
+          </table></div>
+          <div class="noresults" data-noresults>No jobs match.</div>
+        </div>
+      </section>
+
+      <!-- ================= INBOX ================= -->
+      <section class="page" id="page-inbox">
+        <div class="phead"><div class="pt">Inbox</div><div class="ps"><span class="livedot"></span>AI receptionist · answered <b>14 enquiries</b> today</div></div>
+        <div class="listcard gcard" id="inboxList"></div>
+        <div class="noresults" data-noresults>No enquiries match your search.</div>
+      </section>
+
+      <!-- ================= PAYMENTS ================= -->
+      <section class="page" id="page-payments">
+        <div class="phead"><div class="pt">Payments</div><div class="ps">Revenue this month · <b>£186,400</b></div></div>
+        <div class="statrow three" id="payStats">
+          <div class="stat gcard">
+            <div class="sval" id="payOutstanding">£0</div><div class="slab">Outstanding</div><div class="ssub">Invoices due or overdue</div>
+          </div>
+          <div class="stat gcard">
+            <div class="sval" id="payPaid">£0</div><div class="slab">Paid</div><div class="ssub">Received and settled</div>
+          </div>
+          <div class="stat gcard red">
+            <div class="sval" id="payOverdue">£0</div><div class="slab">Overdue</div><div class="ssub">Needs chasing</div>
+          </div>
+        </div>
+        <div class="tablecard gcard">
+          <div class="tt"><span>Invoices</span><span class="tsub">Search above filters this table</span></div>
+          <div class="tscroll"><table>
+            <thead><tr><th>Invoice</th><th>Job</th><th>Description</th><th>Amount</th><th>Status</th><th></th></tr></thead>
+            <tbody id="invoicesBody"></tbody>
+          </table></div>
+          <div class="noresults" data-noresults>No invoices match your search.</div>
+        </div>
+      </section>
+
+      <!-- ================= REVIEWS ================= -->
+      <section class="page" id="page-reviews">
+        <div class="phead"><div class="pt">Reviews</div><div class="ps">Google · updated today</div></div>
+        <div class="scorecard gcard">
+          <div>
+            <div class="big">4.9</div>
+            <div class="stars">★★★★★</div>
+            <div class="sc-sub">212 Google reviews</div>
+          </div>
+          <div class="dist" id="revDist"></div>
+        </div>
+        <div class="revgrid" id="revGrid"></div>
+      </section>
+
+      <!-- ================= SETTINGS ================= -->
+      <section class="page" id="page-settings">
+        <div class="phead"><div class="pt">Settings</div><div class="ps">Northbeam Builders account</div></div>
+        <div class="setgrid">
+          <div class="setcard gcard">
+            <h3>Business profile</h3>
+            <div class="fld"><label>BUSINESS NAME</label><input id="setBiz" type="text" value="Northbeam Builders"></div>
+            <div class="fld"><label>OWNER NAME</label><input id="setOwner" type="text" value="James Doyle"></div>
+            <div class="fld"><label>EMAIL</label><input id="setEmail" type="email" value="james@northbeambuilders.co.uk"></div>
+            <div class="fld"><label>PHONE</label><input id="setPhone" type="tel" value="0161 496 0234"></div>
+            <div class="mrow" style="display:flex;justify-content:flex-end;margin-top:16px">
+              <button class="btn primary" id="saveSettingsBtn">Save changes</button>
+            </div>
+          </div>
+          <div class="setcard gcard">
+            <h3>Notifications &amp; automation</h3>
+            <div class="togglerow">
+              <div class="tl"><b>AI receptionist</b><span>Answers enquiries when the office is closed</span></div>
+              <button class="switch" id="tgAI" role="switch" aria-checked="true" aria-label="AI receptionist"></button>
+            </div>
+            <div class="togglerow">
+              <div class="tl"><b>Email notifications</b><span>New enquiry and payment alerts by email</span></div>
+              <button class="switch" id="tgEmail" role="switch" aria-checked="true" aria-label="Email notifications"></button>
+            </div>
+            <div class="togglerow">
+              <div class="tl"><b>SMS alerts</b><span>Text the on-call phone for urgent jobs</span></div>
+              <button class="switch" id="tgSms" role="switch" aria-checked="false" aria-label="SMS alerts"></button>
+            </div>
+            <div class="togglerow">
+              <div class="tl"><b>Weekly summary report</b><span>Revenue and jobs round-up every Monday</span></div>
+              <button class="switch" id="tgReport" role="switch" aria-checked="true" aria-label="Weekly summary report"></button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div><!-- /pages -->
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<!-- ================= MODAL + TOAST ================= -->
+<div class="scrim" id="scrim"></div>
+<div class="modal" id="enquiryModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <h3 id="modalTitle">New enquiry</h3>
+  <div class="msub">It lands in your Inbox straight away.</div>
+  <form id="enquiryForm">
+    <div class="fld"><label>CLIENT NAME</label><input id="fName" type="text" required placeholder="e.g. Mrs Hartley"></div>
+    <div class="fld"><label>TYPE</label>
+      <select id="fType">
+        <option>Extension</option><option>Loft conversion</option><option>Renovation</option>
+        <option>New build</option><option>Site visit</option><option>Other</option>
+      </select></div>
+    <div class="fld"><label>DETAILS</label><input id="fDetails" type="text" required placeholder="What do they need?"></div>
+    <div class="mrow">
+      <button type="button" class="btn ghost" id="modalCancel">Cancel</button>
+      <button type="submit" class="btn primary">Add enquiry</button>
+    </div>
+  </form>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ================= icons ================= */
+const P = {
+  grid:'<rect x="3" y="3" width="7.5" height="7.5" rx="1.8"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.8"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.8"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.8"/>',
+  chart:'<path d="M4 20V10M10 20V4M16 20v-8M21 20H3"/>',
+  cal:'<rect x="3" y="5" width="18" height="16" rx="2.5"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+  hard:'<path d="M4 15a8 8 0 0 1 16 0"/><path d="M2 15h20v2.5H2z"/><path d="M10 7.5V4h4v3.5"/>',
+  inbox:'<rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3 7l9 6 9-6"/>',
+  pound:'<path d="M17.5 6.5C16.6 5 14.9 4 13 4c-2.8 0-5 2.2-5 5v2H5.5M8 15H5.5M8 11h6.5M8 11v5.5L6.8 20h11"/>',
+  star:'<path d="M12 3.6l2.6 5.3 5.8.8-4.2 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8L3.6 9.7l5.8-.8z"/>',
+  gear:'<circle cx="12" cy="12" r="3.2"/><path d="M12 2.8v3M12 18.2v3M2.8 12h3M18.2 12h3M5.5 5.5l2.1 2.1M16.4 16.4l2.1 2.1M18.5 5.5l-2.1 2.1M7.6 16.4l-2.1 2.1"/>'
+};
+const svgIcon = p => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+
+/* ================= data (from the V12 source; extensions marked) ================= */
+const NAV = [
+  ['overview','grid','Overview'],['analytics','chart','Analytics'],['schedule','cal','Schedule'],
+  ['jobs','hard','Jobs'],['inbox','inbox','Inbox'],['payments','pound','Payments'],
+  ['reviews','star','Reviews'],['settings','gear','Settings']
+];
+const AVG = ['linear-gradient(145deg,#F0562F,#C9330F)','linear-gradient(145deg,#FFB25E,#E4572E)','linear-gradient(145deg,#37c8d9,#1f7f96)','linear-gradient(145deg,#f0b454,#b97e22)','linear-gradient(145deg,#6ee7a0,#2f9e5f)'];
+const gbp = n => '£' + n.toLocaleString('en-GB');
+
+/* Revenue chart — source shows Jun–Nov shape and £964k 6-month total; monthly split derived to match.
+   12-month view extends Dec–May with the same rising trend (extension). */
+const REV = {
+  3:  { labels:['SEP','OCT','NOV'], rev:[165,186,214], costs:[118,131,148], total:'£565k invoiced over the last 3 months', range:'last 3 months' },
+  6:  { labels:['JUN','JUL','AUG','SEP','OCT','NOV'], rev:[122,141,136,165,186,214], costs:[96,105,102,118,131,148], total:'£964k invoiced over the last 6 months', range:'last 6 months' },
+  12: { labels:['DEC','JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV'], rev:[98,104,96,112,118,124,122,141,136,165,186,214], costs:[78,82,76,88,92,97,96,105,102,118,131,148], total:'£1.72m invoiced over the last 12 months', range:'last 12 months' }
+};
+const CHANNELS = [
+  { name:'Website enquiries', pct:40, val:'£386k', color:'#E4572E' },
+  { name:'Referrals',         pct:30, val:'£289k', color:'#F2A93B' },
+  { name:'Repeat clients',    pct:20, val:'£193k', color:'#2FA3B8' },
+  { name:'Partners',          pct:10, val:'£96k',  color:'#C08552' }
+];
+/* Jobs — Maple Court and The Old Bakery are from the source; the rest are reasonable extensions. */
+const JOBS = [
+  { name:'Maple Court',     client:'Mrs Hartley',   type:'Extension',        value:86500,  status:'progress',  label:'In progress' },
+  { name:'The Old Bakery',  client:'Mr Whitfield',  type:'Loft conversion',  value:64200,  status:'progress',  label:'In progress' },
+  { name:'Riverside Barn',  client:'The Akhtar Family', type:'Conversion',   value:128000, status:'quoting',   label:'Quoting' },
+  { name:'Hawthorn House',  client:'Dr Patel',      type:'Renovation',       value:97750,  status:'progress',  label:'In progress' },
+  { name:'Brookfield Farm', client:'Mr & Mrs Cole', type:'New build',        value:214000, status:'quoting',   label:'Quoting' },
+  { name:'Cedar Lodge',     client:'Ms Donnelly',   type:'Garage conversion',value:38900,  status:'progress',  label:'In progress' },
+  { name:'Elm Cottage',     client:'Mr Thompson',   type:'Extension',        value:52300,  status:'completed', label:'Completed' },
+  { name:'The Granary',     client:'Mrs Osei',      type:'Renovation',       value:71400,  status:'completed', label:'Completed' }
+];
+/* Invoices — extension rows, consistent with the jobs above. */
+let INVOICES = [
+  { id:'INV-1042', job:'Maple Court',    desc:'Stage payment 2 of 4', amount:28500, status:'Due' },
+  { id:'INV-1041', job:'The Old Bakery', desc:'Loft conversion · stage 3', amount:12750, status:'Paid' },
+  { id:'INV-1039', job:'Hawthorn House', desc:'Renovation · stage payment', amount:19300, status:'Overdue' },
+  { id:'INV-1038', job:'Elm Cottage',    desc:'Final balance', amount:8200, status:'Paid' },
+  { id:'INV-1036', job:'Cedar Lodge',    desc:'Deposit', amount:9725, status:'Due' }
+];
+/* Week events — Monday is from the source; other days are extensions in the same style. */
+const WEEK = [
+  { d:'M', n:17, name:'Monday',    events:[
+    { t:'09:30', title:'Maple Court visit', sub:'Extension survey with Mrs Hartley', next:true, crew:['JD','MK'] },
+    { t:'13:00', title:'Snagging · The Old Bakery', sub:'Final walk-round, loft conversion', crew:['AS'] } ] },
+  { d:'T', n:18, name:'Tuesday',   events:[
+    { t:'08:00', title:'Hawthorn House · first fix', sub:'Electricians on site, Crew B', crew:['RW','TP'] },
+    { t:'15:30', title:'Quote review · Riverside Barn', sub:'Final numbers with James', crew:['JD'] } ] },
+  { d:'W', n:19, name:'Wednesday', events:[
+    { t:'10:00', title:'Cedar Lodge · garage conversion', sub:'Steel delivery and set-out', crew:['MK','AS'] } ] },
+  { d:'T', n:20, name:'Thursday',  events:[
+    { t:'09:00', title:'Brookfield Farm visit', sub:'New build feasibility walk-round', crew:['JD'] },
+    { t:'14:00', title:'Materials order deadline', sub:'Timber and steels for Hawthorn House', crew:[] } ] },
+  { d:'F', n:21, name:'Friday',    events:[
+    { t:'11:00', title:'Handover · The Granary', sub:'Keys and paperwork with Mrs Osei', crew:['JD','RW'] } ] },
+  { d:'S', n:22, name:'Saturday',  events:[] },
+  { d:'S', n:23, name:'Sunday',    events:[] }
+];
+/* Inbox — 3 unread (matches the source badge); bodies are extensions in the source's voice. */
+let INBOX = [
+  { name:'Mrs Hartley', ini:'MH', grad:0, time:'09:12', sub:'Maple Court · extension survey',
+    body:'Morning, just confirming our survey on Monday at 09:30. We have decided to go ahead with the full-width extension if the numbers still work. See you then.', unread:true },
+  { name:'Mr Whitfield', ini:'MW', grad:1, time:'Yesterday', sub:'The Old Bakery · loft conversion',
+    body:'Thanks for the walk-round photos. The loft is looking great. One snag to add to the list: the Velux in the back bedroom is stiff to open. Everything else is spot on.', unread:true },
+  { name:'The Akhtar Family', ini:'AF', grad:2, time:'Yesterday', sub:'Riverside Barn · quote question',
+    body:'Hello, we received the quote for the barn conversion, thank you. Could we split it into two phases so the annexe is done first? Happy to jump on a call this week.', unread:true },
+  { name:'Ms Donnelly', ini:'MD', grad:3, time:'Mon', sub:'Cedar Lodge · garage conversion',
+    body:'Deposit invoice received and paid this morning. Looking forward to the steel going in on Wednesday.', unread:false }
+];
+/* Reviews — score and count from the source; individual reviews are extensions. */
+const REVIEWS = [
+  { name:'Mrs Hartley', job:'Maple Court · Extension', ini:'MH', grad:0, stars:5,
+    text:'Crew turned up when they said they would, every single day. The extension is finished a week early and the site was left tidy each night. Rare these days.' },
+  { name:'Mr Whitfield', job:'The Old Bakery · Loft conversion', ini:'MW', grad:1, stars:5,
+    text:'Communication was the difference. A message every morning saying what was happening that day. The loft conversion is superb.' },
+  { name:'Dr Patel', job:'Hawthorn House · Renovation', ini:'DP', grad:2, stars:5,
+    text:'Quoted price was the price we paid, not a penny more. Snagging list was handled within the week without any chasing from us.' },
+  { name:'Mrs Osei', job:'The Granary · Renovation', ini:'MO', grad:4, stars:4,
+    text:'Very happy with the work and the finish. One delivery delay in the middle, but they told us straight away and reshuffled the programme.' }
+];
+const DIST = [ ['5',88], ['4',9], ['3',2], ['2',1], ['1',0] ];
+
+/* ================= toast ================= */
+let toastTimer;
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimer); toastTimer = setTimeout(()=>t.classList.remove('show'), 2600);
+}
+
+/* ================= navigation ================= */
+const navEl = document.getElementById('nav');
+navEl.innerHTML = NAV.map(n =>
+  `<button class="nitem" data-page="${n[0]}">${svgIcon(P[n[1]])}${n[2]}${n[0]==='inbox' ? '<span class="bdg" id="inboxBadge">3</span>' : ''}</button>`).join('');
+const countedPages = new Set();
+function goTo(page){
+  document.querySelectorAll('.page').forEach(s => s.classList.toggle('on', s.id === 'page-' + page));
+  document.querySelectorAll('.nitem').forEach(b => b.classList.toggle('on', b.dataset.page === page));
+  document.getElementById('pages').scrollTop = 0;
+  closeSidebar();
+  if (!countedPages.has(page)) { countedPages.add(page); runCountUps(document.getElementById('page-' + page)); }
+}
+navEl.addEventListener('click', e => {
+  const b = e.target.closest('.nitem'); if (b) goTo(b.dataset.page);
+});
+document.querySelectorAll('[data-goto]').forEach(el => el.addEventListener('click', () => {
+  goTo(el.dataset.goto);
+  if (el.dataset.jobsTab) setJobsTab(el.dataset.jobsTab);
+}));
+
+/* mobile sidebar */
+const sidebar = document.getElementById('sidebar'), navscrim = document.getElementById('navscrim');
+function closeSidebar(){ sidebar.classList.remove('open'); navscrim.classList.remove('open'); }
+document.getElementById('burger').addEventListener('click', () => {
+  sidebar.classList.add('open'); navscrim.classList.add('open');
+});
+navscrim.addEventListener('click', closeSidebar);
+
+/* ================= count-up (brief, on first view of each page) ================= */
+function runCountUps(scope){
+  scope.querySelectorAll('[data-count]').forEach(el => {
+    const target = parseFloat(el.dataset.count), dec = el.dataset.dec ? 1 : 0, fmt = el.dataset.fmt;
+    const t0 = performance.now(), dur = 650;
+    (function step(now){
+      const p = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - p, 3), v = target * e;
+      el.textContent = dec ? (v / 10).toFixed(1) : (fmt ? Math.round(v).toLocaleString('en-GB') : Math.round(v));
+      if (p < 1) requestAnimationFrame(step);
+    })(t0);
+  });
+}
+
+/* ================= charts (inline SVG from data) ================= */
+function lineChart(el, labels, rev, costs, height){
+  const W = 700, H = height || 240, padL = 6, padR = 6, padT = 14, padB = 10;
+  const max = Math.ceil(Math.max(...rev, ...costs) * 1.15 / 50) * 50;
+  const x = i => padL + (W - padL - padR) * (labels.length === 1 ? 0.5 : i / (labels.length - 1));
+  const y = v => padT + (H - padT - padB) * (1 - v / max);
+  const pts = arr => arr.map((v,i) => `${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(' ');
+  const area = `M${x(0)},${y(rev[0])} ` + rev.map((v,i)=>`L${x(i)},${y(v)}`).join(' ') + ` L${x(rev.length-1)},${H} L${x(0)},${H} Z`;
+  let grid = '';
+  for (let g = 1; g <= 3; g++) { const gy = padT + (H - padT - padB) * g / 4;
+    grid += `<line x1="0" y1="${gy}" x2="${W}" y2="${gy}" stroke="rgba(146,64,14,.10)"/>`; }
+  el.innerHTML = `
+  <svg class="chartsvg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Revenue versus costs chart">
+    <defs><linearGradient id="rf${el.id}" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#E4572E" stop-opacity=".30"/><stop offset="1" stop-color="#E4572E" stop-opacity="0"/>
+    </linearGradient></defs>
+    ${grid}
+    <path d="${area}" fill="url(#rf${el.id})"/>
+    <polyline points="${pts(rev)}" fill="none" stroke="#E4572E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <polyline points="${pts(costs)}" fill="none" stroke="#C08552" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="${x(rev.length-1)}" cy="${y(rev[rev.length-1])}" r="5" fill="#E4572E" stroke="#FFF6EC" stroke-width="2"/>
+  </svg>`;
+}
+function donut(el, totalEl){
+  const C = 2 * Math.PI * 62; let acc = 0, segs = '';
+  CHANNELS.forEach(ch => {
+    const len = C * ch.pct / 100;
+    segs += `<circle cx="75" cy="75" r="62" fill="none" stroke="${ch.color}" stroke-width="19"
+      stroke-dasharray="${Math.max(0, len - 3)} ${C}" transform="rotate(${-90 + acc * 3.6} 75 75)"/>`;
+    acc += ch.pct;
+  });
+  el.innerHTML = `<svg width="150" height="150" viewBox="0 0 150 150">
+      <circle cx="75" cy="75" r="62" fill="none" stroke="rgba(255,255,255,.45)" stroke-width="19"/>${segs}</svg>
+    <div class="chtotal"><b>£964k</b><span>TOTAL</span></div>`;
+}
+function channelRows(el){
+  el.innerHTML = CHANNELS.map(ch =>
+    `<div class="chrow"><i style="background:${ch.color}"></i><span class="chn">${ch.name}</span><span class="chp">${ch.pct}%</span><span class="chv">${ch.val}</span></div>`).join('');
+}
+lineChart(document.getElementById('overviewChart'), REV[6].labels, REV[6].rev, REV[6].costs, 250);
+donut(document.getElementById('chanviz')); channelRows(document.getElementById('chanrows'));
+donut(document.getElementById('chanviz2')); channelRows(document.getElementById('chanrows2'));
+function renderAnalytics(range){
+  const d = REV[range];
+  lineChart(document.getElementById('analyticsChart'), d.labels, d.rev, d.costs, 260);
+  document.getElementById('anaMonths').innerHTML = d.labels.map(l => `<span>${l}</span>`).join('');
+  document.getElementById('anaChartSub').textContent = d.total;
+  document.getElementById('anaRangeLabel').textContent = d.range;
+}
+renderAnalytics(6);
+document.querySelectorAll('.rpill').forEach(p => p.addEventListener('click', () => {
+  document.querySelectorAll('.rpill').forEach(x => x.classList.toggle('on', x === p));
+  renderAnalytics(parseInt(p.dataset.range, 10));
+}));
+
+/* ================= jobs tables + tabs ================= */
+const statusPill = j => j.status === 'progress' ? '<span class="pill green">In progress</span>'
+  : j.status === 'quoting' ? '<span class="pill amber">Quoting</span>' : '<span class="pill grey">Completed</span>';
+const jobRow = j => `<tr data-search-row><td><b>${j.name}</b></td><td>${j.client}</td><td>${j.type}</td><td><b>${gbp(j.value)}</b></td><td>${statusPill(j)}</td></tr>`;
+function renderJobs(){
+  document.getElementById('overviewJobsBody').innerHTML = JOBS.filter(j => j.status !== 'completed').map(jobRow).join('');
+  renderJobsTab();
+}
+let jobsTab = 'all';
+function renderJobsTab(){
+  const rows = JOBS.filter(j => jobsTab === 'all' || j.status === jobsTab);
+  document.getElementById('jobsBody').innerHTML = rows.map(jobRow).join('');
+  applySearch();
+}
+function setJobsTab(tab){
+  jobsTab = tab;
+  document.querySelectorAll('#jobsTabs .tab2').forEach(b => b.classList.toggle('on', b.dataset.jtab === tab));
+  renderJobsTab();
+}
+document.querySelectorAll('#jobsTabs .tab2').forEach(b => b.addEventListener('click', () => setJobsTab(b.dataset.jtab)));
+renderJobs();
+
+/* ================= payments ================= */
+function renderInvoices(){
+  document.getElementById('invoicesBody').innerHTML = INVOICES.map((inv, i) => {
+    const pill = inv.status === 'Paid' ? '<span class="pill green">Paid</span>'
+      : inv.status === 'Overdue' ? '<span class="pill red">Overdue</span>' : '<span class="pill amber">Due</span>';
+    const act = inv.status === 'Paid' ? '' : `<button class="rowbtn" data-chase="${i}">${inv.status === 'Overdue' ? 'Chase now' : 'Send reminder'}</button>`;
+    return `<tr data-search-row><td><b>${inv.id}</b></td><td>${inv.job}</td><td>${inv.desc}</td><td><b>${gbp(inv.amount)}</b></td><td>${pill}</td><td>${act}</td></tr>`;
+  }).join('');
+  const sum = s => INVOICES.filter(x => x.status === s).reduce((a, x) => a + x.amount, 0);
+  document.getElementById('payOutstanding').textContent = gbp(sum('Due') + sum('Overdue'));
+  document.getElementById('payPaid').textContent = gbp(sum('Paid'));
+  document.getElementById('payOverdue').textContent = gbp(sum('Overdue'));
+  applySearch();
+}
+document.getElementById('invoicesBody').addEventListener('click', e => {
+  const b = e.target.closest('[data-chase]'); if (!b) return;
+  const inv = INVOICES[parseInt(b.dataset.chase, 10)];
+  b.disabled = true; b.textContent = 'Chase sent ✓';
+  toast(`Reminder sent for ${inv.id} · ${inv.job} (${gbp(inv.amount)})`);
+});
+renderInvoices();
+
+/* ================= calendar / schedule ================= */
+function weekStrip(el, onPick){
+  el.innerHTML = WEEK.map((d, i) => `<button class="wd${i === 0 ? ' on' : ''}" data-day="${i}">${d.d}<b>${d.n}</b></button>`).join('');
+  el.addEventListener('click', e => {
+    const b = e.target.closest('.wd'); if (!b) return;
+    el.querySelectorAll('.wd').forEach(x => x.classList.toggle('on', x === b));
+    onPick(parseInt(b.dataset.day, 10));
+  });
+}
+function calEventsHTML(day){
+  if (!day.events.length) return '<div class="cev none">No events this day.</div>';
+  return day.events.map(ev => `<div class="cev"><span class="ct3">${ev.t}</span><div class="cb">
+    <div class="cn2">${ev.title}</div><div class="cs2">${ev.sub}</div></div>${ev.next ? '<span class="next">NEXT</span>' : ''}</div>`).join('');
+}
+function schEventsHTML(day){
+  if (!day.events.length) return '<div class="schev"><div class="sb"><b>Nothing booked</b><span>No visits or site work this day.</span></div></div>';
+  return day.events.map(ev => `<div class="schev"><span class="st">${ev.t}</span><div class="sb"><b>${ev.title}</b><span>${ev.sub}</span></div>
+    <div class="crew">${(ev.crew || []).map((c, i) => `<div class="av" style="width:26px;height:26px;font-size:9px;background:${AVG[(WEEK.indexOf(day) + i) % 5]}">${c}</div>`).join('')}</div></div>`).join('');
+}
+function pickOverviewDay(i){
+  const d = WEEK[i];
+  document.getElementById('calDayNum').textContent = d.n;
+  document.getElementById('calDayName').textContent = d.name;
+  document.getElementById('calEvCount').textContent = d.events.length + (d.events.length === 1 ? ' event' : ' events');
+  document.getElementById('calEvents').innerHTML = calEventsHTML(d);
+}
+function pickScheduleDay(i){
+  const d = WEEK[i];
+  document.getElementById('schDayNum').textContent = d.n;
+  document.getElementById('schDayName').textContent = d.name;
+  document.getElementById('schEvCount').textContent = d.events.length + (d.events.length === 1 ? ' event' : ' events');
+  document.getElementById('schEvents').innerHTML = schEventsHTML(d);
+}
+weekStrip(document.getElementById('weekstrip'), pickOverviewDay);
+weekStrip(document.getElementById('weekstrip2'), pickScheduleDay);
+pickOverviewDay(0); pickScheduleDay(0);
+
+/* ================= inbox ================= */
+function renderInbox(){
+  document.getElementById('inboxList').innerHTML = INBOX.map((m, i) => `
+    <div class="inq${m.unread ? '' : ' read'}" data-inq="${i}" data-search-row>
+      <div class="av" style="width:38px;height:38px;font-size:12px;background:${AVG[m.grad % 5]}">${m.ini}</div>
+      <div class="ib">
+        <div class="in1"><span class="inm">${m.name}</span><span class="itm">${m.time}</span></div>
+        <div class="isb">${m.sub}</div>
+        <div class="ibd">${m.body}</div>
+      </div>
+      <span class="unread"></span>
+    </div>`).join('');
+  updateBadge(); applySearch();
+}
+function updateBadge(){
+  const n = INBOX.filter(m => m.unread).length, b = document.getElementById('inboxBadge');
+  b.textContent = n; b.classList.toggle('hide', n === 0);
+}
+document.getElementById('inboxList').addEventListener('click', e => {
+  const item = e.target.closest('.inq'); if (!item) return;
+  const m = INBOX[parseInt(item.dataset.inq, 10)];
+  item.classList.toggle('open');
+  if (m.unread) { m.unread = false; item.classList.add('read'); updateBadge(); }
+});
+renderInbox();
+
+/* ================= reviews ================= */
+document.getElementById('revDist').innerHTML = DIST.map(d =>
+  `<div class="dr"><span>${d[0]} ★</span><div class="bar"><i style="width:${d[1]}%"></i></div><span>${d[1]}%</span></div>`).join('');
+document.getElementById('revGrid').innerHTML = REVIEWS.map(r => `
+  <div class="rev gcard"><div class="rh">
+    <div class="av" style="width:36px;height:36px;font-size:11px;background:${AVG[r.grad % 5]}">${r.ini}</div>
+    <div class="rn">${r.name}<span>${r.job}</span></div>
+    <span class="stars" style="margin-left:auto;font-size:13px">${'★'.repeat(r.stars)}${'☆'.repeat(5 - r.stars)}</span>
+  </div><div class="rt">${r.text}</div></div>`).join('');
+
+/* ================= search (filters rows on the page you are on) ================= */
+const searchInput = document.getElementById('search');
+function applySearch(){
+  const q = document.getElementById('search').value.trim().toLowerCase();
+  document.querySelectorAll('.page.on [data-search-row]').forEach(row => {
+    row.style.display = (!q || row.textContent.toLowerCase().includes(q)) ? '' : 'none';
+  });
+  document.querySelectorAll('.page.on [data-noresults]').forEach(nr => {
+    const rows = [...nr.closest('.page').querySelectorAll('[data-search-row]')];
+    nr.style.display = (q && rows.length && rows.every(r => r.style.display === 'none')) ? 'block' : 'none';
+  });
+}
+searchInput.addEventListener('input', applySearch);
+
+/* ================= activity panel ================= */
+const actpanel = document.getElementById('actpanel');
+document.getElementById('activityBtn').addEventListener('click', e => { e.stopPropagation(); actpanel.classList.toggle('open'); });
+document.addEventListener('click', e => { if (!actpanel.contains(e.target)) actpanel.classList.remove('open'); });
+
+/* ================= enquiry modal ================= */
+const modal = document.getElementById('enquiryModal'), scrim = document.getElementById('scrim');
+function openModal(type){
+  if (type) document.getElementById('fType').value = type;
+  modal.classList.add('open'); scrim.classList.add('open');
+  setTimeout(() => document.getElementById('fName').focus(), 30);
+}
+function closeModal(){ modal.classList.remove('open'); scrim.classList.remove('open'); }
+document.getElementById('newEnquiryBtn').addEventListener('click', () => openModal());
+document.getElementById('qpBookVisit').addEventListener('click', () => openModal('Site visit'));
+document.getElementById('bookVisitBtn').addEventListener('click', () => openModal('Site visit'));
+document.getElementById('modalCancel').addEventListener('click', closeModal);
+scrim.addEventListener('click', closeModal);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal(); closeSidebar(); } });
+document.getElementById('enquiryForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const name = document.getElementById('fName').value.trim();
+  const type = document.getElementById('fType').value;
+  const details = document.getElementById('fDetails').value.trim();
+  if (!name || !details) return;
+  const ini = name.replace(/^(Mrs|Mr|Ms|Dr)\s+/i, '').split(/\s+/).map(w => w[0]).join('').slice(0, 2).toUpperCase() || 'EN';
+  INBOX.unshift({ name, ini, grad: INBOX.length % 5, time: 'Just now', sub: `New enquiry · ${type}`, body: details, unread: true });
+  renderInbox(); closeModal(); e.target.reset();
+  toast(`Enquiry from ${name} added to your Inbox`);
+  goTo('inbox');
+});
+
+/* ================= record a payment ================= */
+document.getElementById('recordPaymentBtn').addEventListener('click', () => {
+  const next = 1043 + INVOICES.filter(x => x.id > 'INV-1042').length;
+  INVOICES.unshift({ id: 'INV-' + next, job: 'Maple Court', desc: 'Payment recorded in app', amount: 5000, status: 'Paid' });
+  renderInvoices();
+  toast('Payment of £5,000 recorded · Maple Court');
+  goTo('payments');
+});
+
+/* ================= quick pill: download report (real CSV of the jobs table) ================= */
+document.getElementById('qpDownload').addEventListener('click', () => {
+  const csv = 'Job,Client,Type,Value,Status\n' + JOBS.map(j => `"${j.name}","${j.client}","${j.type}",${j.value},"${j.label}"`).join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+  a.download = 'northbeam-jobs-report.csv'; a.click();
+  URL.revokeObjectURL(a.href);
+  toast('Report downloaded · northbeam-jobs-report.csv');
+});
+
+/* ================= settings toggles + save ================= */
+function bindToggle(id, onChange){
+  const el = document.getElementById(id);
+  el.addEventListener('click', () => {
+    const on = el.getAttribute('aria-checked') !== 'true';
+    el.setAttribute('aria-checked', on);
+    if (onChange) onChange(on);
+  });
+}
+bindToggle('tgAI', on => {
+  const card = document.getElementById('aicard');
+  card.classList.toggle('off', !on);
+  document.getElementById('aicard-msg').textContent = on ? 'Live · answered 14 enquiries today' : 'Off · enquiries go to the inbox unanswered';
+  toast(on ? 'AI receptionist is live' : 'AI receptionist switched off');
+});
+bindToggle('tgEmail', on => toast(on ? 'Email notifications on' : 'Email notifications off'));
+bindToggle('tgSms', on => toast(on ? 'SMS alerts on' : 'SMS alerts off'));
+bindToggle('tgReport', on => toast(on ? 'Weekly summary report on' : 'Weekly summary report off'));
+document.getElementById('saveSettingsBtn').addEventListener('click', () => {
+  const biz = document.getElementById('setBiz').value.trim();
+  toast(biz ? `Settings saved for ${biz}` : 'Settings saved');
+});
+
+/* ================= start ================= */
+goTo('overview');
+</script>
+</body>
+</html>

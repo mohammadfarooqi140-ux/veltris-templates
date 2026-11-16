@@ -889,21 +889,21 @@
           </div>
         </div>
         <div class="kanban">
-          <div class="kcol">
-            <h3>Applied <span>1</span></h3>
-            <div class="kcard"><div class="kn">Casa Mirlo</div><div class="km">Boutique stay · Marfa, TX<br>Borrower: June Okafor</div><div class="kv">$1.25m</div></div>
+          <div class="kcol k-applied">
+            <h3><span class="kdot"></span>Applied <span>1</span><span class="ktot">$1.25m</span></h3>
+            <div class="kcard"><div class="kn">Casa Mirlo</div><div class="km">Boutique stay · Marfa, TX<br>Borrower: June Okafor</div><div class="kv">$1.25m</div><div class="ksteps"><i class="on"></i><i></i><i></i><i></i></div></div>
           </div>
-          <div class="kcol">
-            <h3>In review <span>2</span></h3>
-            <div class="kcard"><div class="kn">Juniper Hollow</div><div class="km">Ranch stay · Bend, OR<br>Borrower: Tom Reilly</div><div class="kv">$860k</div></div>
-            <div class="kcard"><div class="kn">Villa Saguaro</div><div class="km">Desert villa · Scottsdale, AZ<br>Borrower: Lena Ortiz</div><div class="kv">$640k</div></div>
+          <div class="kcol k-review">
+            <h3><span class="kdot"></span>In review <span>2</span><span class="ktot">$1.50m</span></h3>
+            <div class="kcard"><div class="kn">Juniper Hollow</div><div class="km">Ranch stay · Bend, OR<br>Borrower: Tom Reilly</div><div class="kv">$860k</div><div class="ksteps"><i class="on"></i><i class="on"></i><i></i><i></i></div></div>
+            <div class="kcard"><div class="kn">Villa Saguaro</div><div class="km">Desert villa · Scottsdale, AZ<br>Borrower: Lena Ortiz</div><div class="kv">$640k</div><div class="ksteps"><i class="on"></i><i class="on"></i><i></i><i></i></div></div>
           </div>
-          <div class="kcol">
-            <h3>Approved <span>1</span></h3>
-            <div class="kcard"><div class="kn">Dune House No. 9</div><div class="km">Beach house · Outer Banks, NC<br>Borrower: Hale Properties</div><div class="kv">$2.10m</div></div>
+          <div class="kcol k-approved">
+            <h3><span class="kdot"></span>Approved <span>1</span><span class="ktot">$2.10m</span></h3>
+            <div class="kcard"><div class="kn">Dune House No. 9</div><div class="km">Beach house · Outer Banks, NC<br>Borrower: Hale Properties</div><div class="kv">$2.10m</div><div class="ksteps"><i class="on"></i><i class="on"></i><i class="on"></i><i></i></div></div>
           </div>
-          <div class="kcol">
-            <h3>Funded <span>0</span></h3>
+          <div class="kcol k-funded">
+            <h3><span class="kdot"></span>Funded <span>0</span><span class="ktot">$0</span></h3>
             <div class="kcard" style="border-style:dashed; background:none"><div class="km" style="margin-top:0">Nothing funded this month yet. Dune House No. 9 is next.</div></div>
           </div>
         </div>
@@ -1098,51 +1098,39 @@
             <p class="sub">Income, growth and mix — the last twelve months in numbers.</p>
           </div>
         </div>
-        <div class="stats-row">
-          <div class="card stat">
-            <div class="sl">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M16.5 6.8c-.8-1-2.4-1.6-4.5-1.6-2.9 0-4.7 1.4-4.7 3.4 0 4.9 9.7 2.6 9.7 7.2 0 2.1-2 3.6-5 3.6-2.2 0-4-.7-4.9-1.9"/></svg>
-              Interest collected
+                <div class="card hero-an">
+          <div class="hero-an-top">
+            <div>
+              <div class="hero-an-label">Interest collected · Last 12 months</div>
+              <div class="hero-an-num" data-count="612" data-dec="0" data-pre="$" data-suf="k">$612k</div>
+              <div class="hero-an-sub">Collected from the 11 loans on the book, December to November.</div>
+              <span class="pill-big">▲ +60% year on year</span>
             </div>
-            <div class="sv" data-count="612" data-dec="0" data-pre="$" data-suf="k">$612k</div>
-            <div class="sb"><span>last 12 months</span><span style="margin-left:auto">to Nov</span></div>
-          </div>
-          <div class="card stat">
-            <div class="sl">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5m0 14h16"/><path d="m7 14 4-4 3 3 5-6"/></svg>
-              New lending this year
-            </div>
-            <div class="sv" data-count="4.62" data-dec="2" data-pre="$" data-suf="m">$4.62m</div>
-            <div class="sb"><span>gross fundings</span><span style="margin-left:auto">4 quarters</span></div>
-          </div>
-          <div class="card stat">
-            <div class="sl">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 5 5 19M6.5 8.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5ZM17.5 20.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z"/></svg>
-              Average rate
-            </div>
-            <div class="sv" data-count="6.88" data-dec="2" data-suf="%">6.88%</div>
-            <div class="sb"><span>balance-weighted</span><span style="margin-left:auto">11 loans</span></div>
-          </div>
-          <div class="card stat">
-            <div class="sl">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4 2.8 20h18.4L12 4Z"/><path d="M12 10v4.5M12 17.4v.1"/></svg>
-              In arrears
-            </div>
-            <div class="sv" data-count="3923" data-dec="0" data-pre="$" data-group="1">$3,923</div>
-            <div class="sb"><span>2 payments</span><span style="margin-left:auto">Linden + Palmera</span></div>
-          </div>
-        </div>
-        <div class="grid-an">
-          <div class="card chart-card">
-            <div style="display:flex; align-items:flex-start; gap:12px">
-              <div>
-                <div class="card-title">Interest income</div>
-                <div class="card-sub">Collected each month, last 12 months</div>
+            <div class="hero-an-donut">
+              <svg width="172" height="172" viewBox="0 0 180 180" aria-label="Portfolio mix donut chart" style="flex:0 0 172px">
+                <g transform="rotate(-90 90 90)" fill="none" stroke-width="21">
+                  <circle class="an-seg" cx="90" cy="90" r="70" pathLength="100" stroke="#c9f158" stroke-dasharray="0 100" data-seg="29.36" data-off="0"/>
+                  <circle class="an-seg" cx="90" cy="90" r="70" pathLength="100" stroke="#e3b959" stroke-dasharray="0 100" data-seg="27.22" data-off="-29.36"/>
+                  <circle class="an-seg" cx="90" cy="90" r="70" pathLength="100" stroke="#8a9a4b" stroke-dasharray="0 100" data-seg="21.05" data-off="-56.58"/>
+                  <circle class="an-seg" cx="90" cy="90" r="70" pathLength="100" stroke="#c96f4a" stroke-dasharray="0 100" data-seg="13.57" data-off="-77.63"/>
+                  <circle class="an-seg" cx="90" cy="90" r="70" pathLength="100" stroke="#d8d2bd" stroke-dasharray="0 100" data-seg="8.8" data-off="-91.2"/>
+                </g>
+                <text x="90" y="86" text-anchor="middle" font-size="19" font-weight="750" fill="#f3f0e4">$12.16m</text>
+                <text x="90" y="106" text-anchor="middle" font-size="10.5" fill="#7e7765">book outstanding</text>
+              </svg>
+              <div style="min-width:172px">
+                <div class="hero-an-cap">Portfolio mix · by property type</div>
+                <div class="mix-row"><span class="mix-dot" style="background:#c9f158"></span><span class="mix-name">Courts &amp; suites</span><span class="mix-val">$3.57m · 29.4%</span></div>
+                <div class="mix-row"><span class="mix-dot" style="background:#e3b959"></span><span class="mix-name">Boutique stays</span><span class="mix-val">$3.31m · 27.2%</span></div>
+                <div class="mix-row"><span class="mix-dot" style="background:#8a9a4b"></span><span class="mix-name">Lodges</span><span class="mix-val">$2.56m · 21.1%</span></div>
+                <div class="mix-row"><span class="mix-dot" style="background:#c96f4a"></span><span class="mix-name">Villas &amp; houses</span><span class="mix-val">$1.65m · 13.6%</span></div>
+                <div class="mix-row" style="border-bottom:none"><span class="mix-dot" style="background:#d8d2bd"></span><span class="mix-name">Farmhouses</span><span class="mix-val">$1.07m · 8.8%</span></div>
               </div>
-              <span class="pill green" style="margin-left:auto"><span class="pdot"></span>Up 60% year on year</span>
             </div>
-            <div class="chart-big"><span data-count="612" data-dec="0" data-pre="$" data-suf="k">$612k</span><span class="note">collected this year</span></div>
-            <svg width="100%" height="168" viewBox="0 0 640 168" preserveAspectRatio="none" style="margin-top:8px" aria-label="Interest income by month chart">
+          </div>
+          <div class="hero-an-chart">
+            <div class="cap"><span><b>Interest income</b> · collected each month</span><span><b>$612k</b> collected this year</span></div>
+            <svg width="100%" height="118" viewBox="0 0 640 168" preserveAspectRatio="none" style="margin-top:6px" aria-label="Interest income by month chart">
               <g stroke="rgba(255,255,255,.13)" stroke-width="1" stroke-dasharray="3 5">
                 <line x1="46" y1="42" x2="640" y2="42"/><line x1="46" y1="98" x2="640" y2="98"/><line x1="46" y1="154" x2="640" y2="154"/>
               </g>
@@ -1157,32 +1145,8 @@
               <span>Dec</span><span>Feb</span><span>Apr</span><span>Jun</span><span>Aug</span><span>Oct</span><span>Nov</span>
             </div>
           </div>
-          <div class="card chart-card">
-            <div class="card-title">Portfolio mix</div>
-            <div class="card-sub">Book by property type</div>
-            <div style="display:flex; align-items:center; gap:16px; margin-top:14px">
-              <svg width="148" height="148" viewBox="0 0 180 180" aria-label="Portfolio mix donut chart" style="flex:0 0 148px">
-                <g transform="rotate(-90 90 90)" fill="none" stroke-width="21">
-                  <circle class="an-seg" cx="90" cy="90" r="70" pathLength="100" stroke="#c9f158" stroke-dasharray="0 100" data-seg="29.36" data-off="0"/>
-                  <circle class="an-seg" cx="90" cy="90" r="70" pathLength="100" stroke="#e3b959" stroke-dasharray="0 100" data-seg="27.22" data-off="-29.36"/>
-                  <circle class="an-seg" cx="90" cy="90" r="70" pathLength="100" stroke="#8a9a4b" stroke-dasharray="0 100" data-seg="21.05" data-off="-56.58"/>
-                  <circle class="an-seg" cx="90" cy="90" r="70" pathLength="100" stroke="#c96f4a" stroke-dasharray="0 100" data-seg="13.57" data-off="-77.63"/>
-                  <circle class="an-seg" cx="90" cy="90" r="70" pathLength="100" stroke="#d8d2bd" stroke-dasharray="0 100" data-seg="8.8" data-off="-91.2"/>
-                </g>
-                <text x="90" y="86" text-anchor="middle" font-size="19" font-weight="750" fill="#f3f0e4">$12.16m</text>
-                <text x="90" y="106" text-anchor="middle" font-size="10.5" fill="#7e7765">book outstanding</text>
-              </svg>
-              <div style="flex:1; min-width:0">
-                <div class="mix-row"><span class="mix-dot" style="background:#c9f158"></span><span class="mix-name">Courts &amp; suites</span><span class="mix-val">$3.57m · 29.4%</span></div>
-                <div class="mix-row"><span class="mix-dot" style="background:#e3b959"></span><span class="mix-name">Boutique stays</span><span class="mix-val">$3.31m · 27.2%</span></div>
-                <div class="mix-row"><span class="mix-dot" style="background:#8a9a4b"></span><span class="mix-name">Lodges</span><span class="mix-val">$2.56m · 21.1%</span></div>
-                <div class="mix-row"><span class="mix-dot" style="background:#c96f4a"></span><span class="mix-name">Villas &amp; houses</span><span class="mix-val">$1.65m · 13.6%</span></div>
-                <div class="mix-row" style="border-bottom:none"><span class="mix-dot" style="background:#d8d2bd"></span><span class="mix-name">Farmhouses</span><span class="mix-val">$1.07m · 8.8%</span></div>
-              </div>
-            </div>
-          </div>
         </div>
-        <div class="grid-an2">
+<div class="grid-an2">
           <div class="card chart-card">
             <div style="display:flex; align-items:flex-start; gap:12px">
               <div>
@@ -1304,6 +1268,43 @@
   .mix-val{margin-left:auto; font-weight:650; white-space:nowrap}
   .ltv-row{display:flex; justify-content:space-between; font-size:12px; margin-bottom:6px}
   .ltv-row .ltv-val{color:var(--muted); font-weight:600}
+  /* ---------- Analytics hero (v6) ---------- */
+  .hero-an{
+    margin-top:20px; padding:24px 26px 16px; border-radius:20px;
+    background:linear-gradient(130deg, rgba(201,241,88,.18), rgba(201,241,88,.05) 58%, rgba(255,255,255,.02));
+    border:1px solid rgba(201,241,88,.30);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.06), 0 14px 30px rgba(0,0,0,.22);
+  }
+  .hero-an-top{display:flex; align-items:center; gap:28px}
+  .hero-an-label{font-size:12px; text-transform:uppercase; letter-spacing:.1em; color:#d7ec96; font-weight:750}
+  .hero-an-num{font-size:66px; font-weight:800; letter-spacing:-.025em; line-height:1.02; color:#f2f9d2; margin-top:5px}
+  .hero-an-sub{font-size:12.5px; color:var(--muted); margin-top:7px}
+  .pill-big{
+    display:inline-flex; align-items:center; gap:8px; margin-top:16px;
+    background:linear-gradient(150deg,#d9f873,#b7e53a); color:var(--lime-ink);
+    font-size:16.5px; font-weight:800; padding:9px 18px; border-radius:99px;
+    box-shadow:0 8px 22px rgba(183,229,58,.32), inset 0 1px 0 rgba(255,255,255,.5);
+  }
+  .hero-an-donut{margin-left:auto; flex:0 0 auto; display:flex; align-items:center; gap:20px}
+  .hero-an-cap{font-size:11.5px; color:var(--muted); font-weight:700; text-transform:uppercase; letter-spacing:.08em; margin-bottom:5px}
+  .hero-an-chart{margin-top:20px; border-top:1px solid rgba(201,241,88,.16); padding-top:13px}
+  .hero-an-chart .cap{display:flex; justify-content:space-between; font-size:11.5px; color:var(--muted)}
+  .hero-an-chart .cap b{color:var(--ink); font-weight:700}
+  /* ---------- Pipeline stages (v6) ---------- */
+  .kcol{--stage:#d8d2bd}
+  .kcol.k-review{--stage:#e3b959}
+  .kcol.k-approved{--stage:#c9f158}
+  .kcol.k-funded{--stage:#8fe388}
+  .kcol h3{justify-content:flex-start; align-items:center; gap:7px}
+  .kcol h3 .kdot{width:8px; height:8px; border-radius:50%; background:var(--stage); flex:0 0 8px}
+  .kcol h3 .ktot{margin-left:auto; font-size:11.5px; font-weight:700; letter-spacing:0; text-transform:none; color:var(--ink); background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.09); padding:2px 9px; border-radius:99px}
+  .kcol .kcard{border-left:3px solid var(--stage)}
+  .kcard .kv{display:inline-block; font-size:13.5px; font-weight:750; padding:4px 11px; border-radius:99px; background:rgba(216,210,189,.12); border:1px solid rgba(216,210,189,.35); color:#efe9d6}
+  .kcol.k-review .kcard .kv{background:rgba(227,185,89,.13); border-color:rgba(227,185,89,.42); color:#f3d894}
+  .kcol.k-approved .kcard .kv{background:rgba(201,241,88,.13); border-color:rgba(201,241,88,.42); color:#e6f5ae}
+  .ksteps{display:flex; gap:4px; margin-top:11px}
+  .ksteps i{height:4px; flex:1; border-radius:99px; background:rgba(255,255,255,.10)}
+  .ksteps i.on{background:var(--stage)}
   #anBars .an-bar{transform-box:fill-box; transform-origin:50% 100%}
   .play-bars .an-bar{animation:bargrow .8s cubic-bezier(.22,.8,.3,1) both}
   .play-bars .an-bar:nth-of-type(2){animation-delay:.08s}

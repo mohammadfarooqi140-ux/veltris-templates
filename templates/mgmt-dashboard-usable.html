@@ -157,6 +157,8 @@
   .rise{animation:rise .5s cubic-bezier(.22,.8,.3,1) both}
   @keyframes pop{from{opacity:0; transform:scale(.82)} to{opacity:1; transform:scale(1)}}
   .pop{animation:pop .45s cubic-bezier(.22,.8,.3,1) both}
+  @keyframes rowin{from{opacity:0} to{opacity:1}}
+  .prow{animation:rowin .5s ease both}
   .page-head{display:flex; align-items:flex-end; gap:16px}
   .eyebrow{font-size:11.5px; color:var(--muted); letter-spacing:.03em; margin-bottom:7px}
   h1{font-size:27px; font-weight:700; letter-spacing:-.01em; line-height:1.1}
@@ -1013,18 +1015,51 @@
             </button>
           </div>
         </div>
-                <div class="card" style="margin-top:20px; overflow:hidden">
-          <table>
-            <thead><tr><th>Due</th><th>Loan</th><th>Detail</th><th>Amount</th><th>Status</th></tr></thead>
+        <div class="stats-row" style="grid-template-columns:repeat(3,1fr)">
+          <div class="card stat">
+            <div class="sl">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="2.5"/><path d="M16 12.5h.01M3 10h18" opacity=".7"/></svg>
+              Collected this month
+            </div>
+            <div class="sv" data-count="28826" data-dec="0" data-pre="$" data-group="1">$28,826</div>
+            <div class="sb"><span>4 payments received</span></div>
+          </div>
+          <div class="card stat">
+            <div class="sl">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3.2 2"/></svg>
+              Due this week
+            </div>
+            <div class="sv" data-count="6590" data-dec="0" data-pre="$" data-group="1">$6,590</div>
+            <div class="sb"><span>2 payments · by Nov 15</span></div>
+          </div>
+          <div class="card stat">
+            <div class="sl">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4 2.8 20h18.4L12 4Z"/><path d="M12 10v4.5M12 17.4v.1"/></svg>
+              In arrears
+            </div>
+            <div class="sv" data-count="3923" data-dec="0" data-pre="$" data-group="1">$3,923</div>
+            <div class="sb"><span>2 payments</span><span class="chase">Chase →</span></div>
+          </div>
+        </div>
+        <div class="card" style="margin-top:16px; overflow:hidden">
+          <div style="padding:16px 18px 2px">
+            <div class="card-title">November ledger</div>
+            <div class="card-sub">Every loan on the book, by due date.</div>
+          </div>
+          <table id="payLedger">
+            <thead><tr><th>Due</th><th>Property</th><th>Borrower</th><th>Detail</th><th>Amount</th><th>Status</th></tr></thead>
             <tbody>
-              <tr><td>Nov 4</td><td style="font-weight:600">Linden House</td><td>6 days late · second miss this year</td><td>$2,410</td><td><span class="status late">Chase</span></td></tr>
-              <tr><td>Nov 8</td><td style="font-weight:600">Palmera Court</td><td>2 days late · first miss</td><td>$1,513</td><td><span class="status late">Chase</span></td></tr>
-              <tr><td>Nov 6</td><td style="font-weight:600">Mesquite Court</td><td>Paid early · direct debit</td><td>$7,915</td><td><span class="status ok">Received</span></td></tr>
-              <tr><td>Nov 8</td><td style="font-weight:600">Casa Duna</td><td>Paid on time · direct debit</td><td>$18,240</td><td><span class="status ok">Received</span></td></tr>
-              <tr><td>Nov 25</td><td style="font-weight:600">Olivar Farmhouse</td><td>Direct debit scheduled</td><td>$9,860</td><td><span class="status ok">Scheduled</span></td></tr>
-              <tr><td>Nov 27</td><td style="font-weight:600">Solstice Lodge</td><td>Direct debit scheduled</td><td>$12,305</td><td><span class="status ok">Scheduled</span></td></tr>
-              <tr><td>Nov 28</td><td style="font-weight:600">Palmera Court</td><td>Next regular payment</td><td>$16,420</td><td><span class="status ok">Scheduled</span></td></tr>
-              <tr><td>Dec 5</td><td style="font-weight:600">Casa Alba</td><td>Direct debit scheduled</td><td>$11,240</td><td><span class="status ok">Scheduled</span></td></tr>
+              <tr><td>Nov 1</td><td style="font-weight:600">Casa Duna</td><td>Marisol Vega</td><td>Paid on time · direct debit</td><td>$9,085</td><td><span class="status ok">Paid</span></td></tr>
+              <tr><td>Nov 3</td><td style="font-weight:600">Cedar Ridge Lodge</td><td>Northgate Stays LLC</td><td>Paid on time · direct debit</td><td>$8,520</td><td><span class="status ok">Paid</span></td></tr>
+              <tr><td>Nov 4</td><td style="font-weight:600">Linden House</td><td>Priya Shah</td><td>6 days late · second miss this year</td><td>$2,410</td><td><span class="status late">Overdue</span></td></tr>
+              <tr><td>Nov 5</td><td style="font-weight:600">Casa Alba</td><td>Marco Reyes</td><td>Paid on time · direct debit</td><td>$6,252</td><td><span class="status ok">Paid</span></td></tr>
+              <tr><td>Nov 8</td><td style="font-weight:600">Palmera Court</td><td>Dario Fuentes</td><td>2 days late · first miss</td><td>$1,513</td><td><span class="status late">Overdue</span></td></tr>
+              <tr><td>Nov 8</td><td style="font-weight:600">Arroyo Suites</td><td>Rosa Delgado</td><td>Paid on time · direct debit</td><td>$4,969</td><td><span class="status ok">Paid</span></td></tr>
+              <tr><td>Nov 10</td><td style="font-weight:600">Mesquite Court</td><td>Wade Callahan</td><td>Due today · direct debit</td><td>$3,947</td><td><span class="status watch">Due</span></td></tr>
+              <tr><td>Nov 12</td><td style="font-weight:600">Casa Verde</td><td>Marisol Vega</td><td>Direct debit scheduled</td><td>$2,643</td><td><span class="status watch">Due</span></td></tr>
+              <tr><td>Nov 21</td><td style="font-weight:600">Brisa Mar Villas</td><td>Ines Duarte</td><td>Direct debit scheduled</td><td>$3,685</td><td><span class="status watch">Due</span></td></tr>
+              <tr><td>Nov 25</td><td style="font-weight:600">Olivar Farmhouse</td><td>Ana Beltrán</td><td>Direct debit scheduled</td><td>$5,796</td><td><span class="status watch">Due</span></td></tr>
+              <tr><td>Nov 27</td><td style="font-weight:600">Solstice Lodge</td><td>Erik Lindqvist</td><td>Direct debit scheduled</td><td>$6,533</td><td><span class="status watch">Due</span></td></tr>
             </tbody>
           </table>
         </div>
@@ -1449,6 +1484,13 @@
         t.classList.remove("pop"); void t.offsetWidth;
         t.style.animationDelay = (i * 28) + "ms";
         t.classList.add("pop");
+      });
+    }
+    if(key === "payments"){
+      page.querySelectorAll("#payLedger tbody tr").forEach(function(r, i){
+        r.classList.remove("prow"); void r.offsetWidth;
+        r.style.animationDelay = (150 + i * 55) + "ms";
+        r.classList.add("prow");
       });
     }
   }

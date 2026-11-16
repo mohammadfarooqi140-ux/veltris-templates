@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Northbeam Builders — CRM · Glassy V9</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html,body { height:100%; }
+  body {
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+    color:#eafaf3; -webkit-font-smoothing:antialiased; overflow:hidden;
+    background:linear-gradient(160deg,#0a1a12,#07120d 70%);
+  }
+  /* ---------- colourful backdrop behind the glass (from the V9 source) ---------- */
+  .backdrop { position:fixed; inset:0; overflow:hidden; z-index:0; }
+  .blob { position:absolute; border-radius:50%; filter:blur(70px); }
+  .blob.b1 { width:55vw; height:55vw; background:#2DD4BF; left:-14vw; top:-20vw; opacity:.8; }
+  .blob.b2 { width:52vw; height:52vw; background:#10B981; right:-13vw; top:2vh; opacity:.6; }
+  .blob.b3 { width:44vw; height:44vw; background:#0E7A5F; left:26vw; bottom:-24vw; opacity:.55; }
+
+  /* ---------- app shell — one big glass window filling the browser ---------- */
+  .app {
+    position:relative; z-index:1; display:flex; height:100dvh; margin:14px;
+    border-radius:26px; overflow:hidden;
+    background:linear-gradient(155deg, rgba(255,255,255,.13), rgba(255,255,255,.05) 55%, rgba(255,255,255,.08));
+    border:1px solid rgba(255,255,255,.26);
+    box-shadow:0 40px 90px rgba(2,10,6,.55), inset 0 1px 0 rgba(255,255,255,.22);
+    backdrop-filter:blur(22px) saturate(140%); -webkit-backdrop-filter:blur(22px) saturate(140%);
+  }
+
+  /* ---------- sidebar ---------- */
+  .sidebar {
+    width:236px; flex:0 0 236px; display:flex; flex-direction:column; padding:22px 16px 18px;
+    background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+    border-right:1px solid rgba(45,212,191,.18);
+  }
+  .logo { display:flex; align-items:center; gap:10px; padding:0 6px; }
+  .logo .lg { width:36px; height:36px; border-radius:11px; flex:0 0 36px;
+    background:linear-gradient(145deg,#10B981,#0E7A5F); display:flex; align-items:center; justify-content:center;
+    font-size:18px; font-weight:700; color:#fff; box-shadow:0 6px 14px rgba(16,185,129,.45); }
+  .logo .ln { font-size:16.5px; font-weight:600; color:#fff; line-height:1.1; }
+  .logo .ln span { display:block; font-size:10.5px; font-weight:500; color:rgba(233,246,240,.5); letter-spacing:.8px; margin-top:2px; }
+  .nav { margin-top:26px; display:flex; flex-direction:column; gap:5px; }
+  .nitem {
+    display:flex; align-items:center; gap:11px; padding:10px 12px; border-radius:12px; width:100%;
+    font:inherit; font-size:14.5px; font-weight:500; color:rgba(233,246,240,.62); text-align:left;
+    background:none; border:1px solid transparent; cursor:pointer; transition:background .15s,color .15s;
+  }
+  .nitem:hover { background:rgba(255,255,255,.08); }
+  .nitem svg { width:18px; height:18px; flex:0 0 18px; }
+  .nitem .bdg { margin-left:auto; font-size:10.5px; font-weight:700; background:#10B981; color:#fff; border-radius:999px; padding:1px 7px; }
+  .nitem .bdg.hide { display:none; }
+  .nitem.on {
+    background:linear-gradient(120deg, rgba(16,185,129,.32), rgba(16,185,129,.14));
+    color:#fff; font-weight:600; border-color:rgba(45,212,191,.4);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.14);
+  }
+  .sidebar .sp { flex:1; }
+  .aicard { border-radius:15px; padding:12px 13px; cursor:pointer; text-align:left; font:inherit;
+    background:linear-gradient(150deg, rgba(55,200,217,.16), rgba(16,185,129,.14)); border:1px solid rgba(69,208,224,.3); }
+  .aicard .at { font-size:12.5px; font-weight:600; color:#bdeef5; display:flex; align-items:center; gap:7px; }
+  .aicard .at i { width:7px; height:7px; border-radius:50%; background:#45d0e0; display:block; animation:pulse 2.2s infinite; }
+  .aicard.off .at i { background:rgba(233,246,240,.35); animation:none; }
+  .aicard .am { font-size:11.5px; color:rgba(233,246,240,.6); line-height:1.4; margin-top:4px; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.45} }
+  .userchip { display:flex; align-items:center; gap:10px; margin-top:14px; padding:0 4px; }
+  .userchip .un { font-size:13px; font-weight:600; color:#fff; line-height:1.2; }
+  .userchip .un span { display:block; font-size:11px; color:rgba(233,246,240,.45); font-weight:400; }
+  .av { border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:600; color:#fff; flex:0 0 auto; }
+
+  /* ---------- main column ---------- */
+  .main { flex:1; min-width:0; display:flex; flex-direction:column; }
+  .topbar { flex:0 0 auto; display:flex; align-items:center; gap:12px; padding:14px 22px;
+    border-bottom:1px solid rgba(45,212,191,.15); position:relative; }
+  .burger { display:none; width:38px; height:38px; border-radius:11px; border:1px solid rgba(45,212,191,.25);
+    background:rgba(255,255,255,.08); color:#fff; cursor:pointer; align-items:center; justify-content:center; flex:0 0 auto; }
+  .burger svg { width:19px; height:19px; }
+  .search { flex:1; min-width:0; max-width:380px; height:38px; border-radius:999px;
+    background:rgba(255,255,255,.06); border:1px solid rgba(45,212,191,.18);
+    display:flex; align-items:center; gap:8px; padding:0 14px; }
+  .search svg { width:15px; height:15px; color:rgba(233,246,240,.5); flex:0 0 auto; }
+  .search input { flex:1; min-width:0; border:none; outline:none; background:none; font:inherit; font-size:13.5px; color:#fff; }
+  .search input::placeholder { color:rgba(233,246,240,.45); }
+  .btn { font:inherit; cursor:pointer; border-radius:999px; white-space:nowrap; }
+  .btn.ghost { font-size:13px; font-weight:500; color:rgba(233,246,240,.8);
+    border:1px solid rgba(45,212,191,.25); padding:9px 15px; background:rgba(255,255,255,.06); }
+  .btn.ghost:hover { background:rgba(255,255,255,.14); }
+  .btn.primary { font-size:13px; font-weight:600; color:#fff; border:none; padding:10px 17px;
+    background:linear-gradient(120deg,#10B981,#0E7A5F); box-shadow:0 8px 18px rgba(16,185,129,.4); }
+  .btn.primary:hover { filter:brightness(1.07); }
+
+  /* activity dropdown */
+  .actpanel { position:absolute; top:calc(100% + 8px); right:22px; width:340px; max-width:calc(100vw - 44px); z-index:40;
+    background:rgba(13,26,19,.97); border:1px solid rgba(255,255,255,.2); border-radius:18px;
+    box-shadow:0 24px 50px rgba(2,10,6,.5); padding:14px 16px; display:none; }
+  .actpanel.open { display:block; }
+  .actpanel h4 { font-size:13px; font-weight:700; color:#fff; margin-bottom:8px; }
+  .actpanel .ai { display:flex; gap:9px; padding:7px 0; border-top:1px solid rgba(45,212,191,.14); font-size:12.5px; color:rgba(233,246,240,.75); }
+  .actpanel .ai b { color:#fff; font-weight:600; }
+  .actpanel .ai .when { margin-left:auto; font-size:11px; color:rgba(233,246,240,.45); flex:0 0 auto; }
+
+  /* ---------- pages ---------- */
+  .pages { flex:1; overflow-y:auto; padding:22px 24px 30px; }
+  .page { display:none; flex-direction:column; gap:16px; max-width:1180px; margin:0 auto; width:100%; }
+  .page.on { display:flex; }
+  .gcard { background:rgba(255,255,255,.055); border:1px solid rgba(45,212,191,.16); border-radius:20px;
+    box-shadow:0 12px 26px rgba(2,10,6,.3), inset 0 1px 0 rgba(255,255,255,.09); }
+  .phead { display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+  .phead .pt { font-size:26px; font-weight:600; color:#fff; letter-spacing:.2px; }
+  .phead .pt span { color:#2DD4BF; }
+  .phead .ps { font-size:13px; color:rgba(233,246,240,.5); display:flex; align-items:center; gap:6px; }
+  .phead .ps .livedot { width:7px; height:7px; border-radius:50%; background:#45d0e0; display:inline-block; animation:pulse 2.2s infinite; }
+  .phead .ps b { color:#7fe3f0; font-weight:600; }
+
+  /* ---------- inbox: two-pane chat (from the V9 source) ---------- */
+  .inboxwrap { display:flex; gap:16px; flex:1; min-height:0; }
+  .convolist { width:300px; flex:0 0 300px; padding:11px 9px; display:flex; flex-direction:column; gap:4px; overflow-y:auto; }
+  .citem { display:flex; gap:10px; padding:9px 9px; border-radius:13px; border:1px solid transparent; align-items:flex-start;
+    cursor:pointer; background:none; font:inherit; text-align:left; width:100%; }
+  .citem:hover { background:rgba(255,255,255,.05); }
+  .citem.on { background:rgba(16,185,129,.16); border-color:rgba(45,212,191,.35); }
+  .citem .cmid { flex:1; min-width:0; }
+  .citem .cn { font-size:13px; font-weight:600; color:#fff; display:flex; justify-content:space-between; align-items:baseline; gap:6px; }
+  .citem .cn .ct2 { font-size:10px; font-weight:500; color:rgba(233,246,240,.4); flex:0 0 auto; }
+  .citem .cp { font-size:11.5px; color:rgba(233,246,240,.5); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:2px; }
+  .citem .ub { flex:0 0 auto; min-width:18px; height:18px; border-radius:999px; background:#10B981; color:#fff; font-size:10.5px; font-weight:700; display:flex; align-items:center; justify-content:center; padding:0 5px; margin-top:2px; }
+  .citem .ub.sp { background:transparent; }
+  .thread { flex:1; min-width:0; display:flex; flex-direction:column; overflow:hidden; }
+  .thhead { display:flex; align-items:center; gap:11px; padding:13px 16px; border-bottom:1px solid rgba(45,212,191,.13); }
+  .thhead .tn { font-size:14.5px; font-weight:600; color:#fff; line-height:1.2; }
+  .thhead .tn span { display:block; font-size:11px; font-weight:400; color:rgba(233,246,240,.45); margin-top:1px; }
+  .thhead .chan { margin-left:auto; font-size:10px; font-weight:700; letter-spacing:.5px; padding:3px 9px; border-radius:999px; background:rgba(69,208,224,.15); color:#7fe3f0; border:1px solid rgba(69,208,224,.35); }
+  .msgs { flex:1; padding:15px 16px 10px; display:flex; flex-direction:column; gap:9px; min-height:0; overflow-y:auto; }
+  .msg { max-width:76%; font-size:13px; line-height:1.5; padding:9px 13px; border-radius:15px; }
+  .msg.in { align-self:flex-start; background:rgba(255,255,255,.09); border:1px solid rgba(45,212,191,.14); border-bottom-left-radius:5px; color:#eafaf3; }
+  .msg.out { align-self:flex-end; background:linear-gradient(130deg,#10B981,#0E7A5F); border-bottom-right-radius:5px; color:#fff; box-shadow:0 6px 14px rgba(16,185,129,.3); }
+  .msg .mt { display:block; font-size:9.5px; opacity:.6; margin-top:4px; font-weight:500; }
+  .bookchip {
+    align-self:flex-end; display:flex; align-items:center; gap:8px;
+    background:rgba(69,208,224,.12); border:1px solid rgba(69,208,224,.4);
+    border-radius:12px; padding:8px 12px; font-size:12px; font-weight:600; color:#bdeef5;
+  }
+  .bookchip svg { width:14px; height:14px; }
+  .bookchip span { font-weight:400; color:rgba(189,238,245,.7); }
+  .aidraft { margin:0 16px 14px; border-radius:14px; padding:11px 13px; background:linear-gradient(150deg, rgba(55,200,217,.13), rgba(16,185,129,.12)); border:1px solid rgba(69,208,224,.32); }
+  .aidraft .adt { font-size:10.5px; font-weight:700; letter-spacing:.8px; color:#7fe3f0; display:flex; align-items:center; gap:6px; }
+  .aidraft .adt i { width:6px; height:6px; border-radius:50%; background:#45d0e0; display:block; }
+  .aidraft .adm { font-size:12px; color:rgba(233,246,240,.88); line-height:1.45; margin-top:5px; outline:none; }
+  .aidraft .adm[contenteditable="true"] { background:rgba(255,255,255,.07); border-radius:8px; padding:6px 8px; margin-left:-8px; margin-right:-8px; }
+  .aidraft .adrow { display:flex; gap:8px; margin-top:9px; }
+  .aidraft .send { font:inherit; font-size:11.5px; font-weight:600; background:#45d0e0; color:#0b2430; padding:6px 13px; border-radius:999px; border:none; cursor:pointer; }
+  .aidraft .edit { font:inherit; font-size:11.5px; font-weight:500; color:rgba(233,246,240,.7); border:1px solid rgba(45,212,191,.35); padding:6px 13px; border-radius:999px; background:none; cursor:pointer; }
+  .sentchip { margin:0 16px 14px; border-radius:14px; padding:10px 13px; background:rgba(16,185,129,.14); border:1px solid rgba(45,212,191,.35);
+    font-size:12px; color:#bdeef5; display:flex; align-items:center; gap:8px; }
+
+  /* ---------- calendar: week board (from the V9 source) ---------- */
+  .calstats, .kpirow { display:flex; gap:16px; }
+  .cstat { flex:1; padding:14px 17px 12px; display:flex; flex-direction:column; overflow:hidden; min-width:0; }
+  .cstat .lab { font-size:12px; color:rgba(233,246,240,.5); font-weight:500; }
+  .cstat .val { font-size:24px; font-weight:600; color:#fff; line-height:1.25; margin-top:2px; }
+  .cstat .val em { font-style:normal; font-size:12px; color:#7fe3f0; font-weight:600; }
+  .cstat.acc { background:linear-gradient(140deg, rgba(16,185,129,.4), rgba(16,185,129,.25)); border-color:rgba(45,212,191,.45); }
+  .week { flex:1; display:flex; gap:12px; min-height:0; }
+  .day { flex:1; border-radius:16px; padding:11px 9px; background:rgba(255,255,255,.04); border:1px solid rgba(45,212,191,.12);
+    display:flex; flex-direction:column; gap:8px; min-width:0; overflow:hidden; cursor:pointer; }
+  .day.today { background:rgba(16,185,129,.13); border-color:rgba(45,212,191,.45); }
+  .day.sel { border-color:rgba(69,208,224,.6); box-shadow:0 0 0 1px rgba(69,208,224,.4); }
+  .day .dh2 { text-align:center; padding-bottom:8px; border-bottom:1px solid rgba(45,212,191,.13); }
+  .day .dw { font-size:10.5px; font-weight:700; letter-spacing:1.2px; color:rgba(233,246,240,.45); }
+  .day.today .dw { color:#7EF0D4; }
+  .day .dn3 { font-size:17px; font-weight:600; color:#fff; line-height:1.15; }
+  .ev { border-radius:10px; padding:8px 9px; font-size:11px; line-height:1.35; cursor:pointer; }
+  .ev b { display:block; font-size:11.5px; font-weight:600; color:#fff; }
+  .ev .et { font-weight:600; font-size:10px; letter-spacing:.3px; }
+  .ev.v { background:rgba(16,185,129,.28); border:1px solid rgba(45,212,191,.4); color:rgba(233,246,240,.75); }
+  .ev.v .et { color:#7EF0D4; }
+  .ev.c { background:rgba(55,200,217,.16); border:1px solid rgba(69,208,224,.35); color:rgba(233,246,240,.75); }
+  .ev.c .et { color:#7fe3f0; }
+  .ev.p { background:rgba(16,185,129,.16); border:1px solid rgba(16,185,129,.38); color:rgba(233,246,240,.75); }
+  .ev.p .et { color:#8FF0B3; }
+  .ev.a { background:rgba(240,180,84,.14); border:1px solid rgba(240,180,84,.35); color:rgba(233,246,240,.75); }
+  .ev.a .et { color:#f5cf8f; }
+  .calnote { display:flex; align-items:center; gap:10px; padding:11px 15px; border-radius:14px;
+    background:rgba(69,208,224,.09); border:1px solid rgba(69,208,224,.28); font-size:12.5px; color:rgba(233,246,240,.75); line-height:1.45; }
+  .calnote i { width:7px; height:7px; border-radius:50%; background:#45d0e0; display:block; flex:0 0 7px; }
+  .calnote b { color:#bdeef5; }
+
+  /* ---------- analytics ---------- */
+  .chartcard { flex:1; padding:18px 20px 12px; display:flex; flex-direction:column; overflow:hidden; min-height:0; }
+  .chartcard .ct { font-size:15px; font-weight:600; color:#fff; display:flex; align-items:flex-start; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+  .chartcard .ct .csub2 { font-size:11.5px; color:rgba(233,246,240,.45); font-weight:500; margin-top:2px; }
+  .chartcard .ct .cup { font-size:11px; font-weight:700; color:#7fe3f0; background:rgba(69,208,224,.13); border:1px solid rgba(69,208,224,.3); padding:3px 9px; border-radius:999px; white-space:nowrap; }
+  .rangewrap { display:flex; align-items:center; gap:8px; margin-top:13px; flex-wrap:wrap; }
+  .rpill { font:inherit; font-size:11.5px; font-weight:500; color:rgba(233,246,240,.6); background:rgba(255,255,255,.07);
+    border:1px solid rgba(45,212,191,.2); padding:6px 13px; border-radius:999px; cursor:pointer; }
+  .rpill.on { background:linear-gradient(120deg,#10B981,#0E7A5F); color:#fff; border-color:transparent; font-weight:600; }
+  .hmonths { display:flex; justify-content:space-between; font-size:11px; color:rgba(233,246,240,.4); font-weight:500; padding:4px 2px 2px; }
+  .chartsvg { width:100%; height:auto; display:block; margin-top:10px; }
+  .chanrow { display:flex; gap:16px; }
+  .chancard { flex:1; padding:16px 18px 12px; display:flex; flex-direction:column; overflow:hidden; min-width:0; }
+  .chancard .ct { font-size:14px; font-weight:600; color:#fff; margin-bottom:8px; }
+  .brow { display:flex; align-items:center; gap:10px; margin-top:7px; }
+  .brow .bl { font-size:11.5px; font-weight:500; color:rgba(233,246,240,.6); width:72px; flex:0 0 72px; }
+  .brow .btrack { flex:1; height:9px; border-radius:999px; background:rgba(255,255,255,.08); overflow:hidden; }
+  .brow .bfill { height:100%; border-radius:999px; transition:width .5s ease; }
+  .brow .bv { font-size:11.5px; font-weight:600; color:#fff; width:32px; flex:0 0 32px; text-align:right; }
+  .srcnote { width:250px; flex:0 0 250px; padding:16px 17px; display:flex; flex-direction:column; overflow:hidden; }
+  .srcnote .st4 { font-size:13px; font-weight:600; color:#fff; }
+  .srcnote .sm4 { font-size:11.5px; color:rgba(233,246,240,.55); line-height:1.5; margin-top:5px; }
+  .srcnote .sm4 b { color:#7fe3f0; }
+
+  /* ---------- reviews ---------- */
+  .revtop { display:flex; gap:16px; }
+  .scorecard { width:270px; flex:0 0 270px; padding:16px 19px 14px; display:flex; flex-direction:column; overflow:hidden; }
+  .scorecard .big { font-size:42px; font-weight:600; color:#fff; line-height:1; display:flex; align-items:baseline; gap:9px; }
+  .scorecard .big span { font-size:14px; color:rgba(233,246,240,.45); font-weight:500; }
+  .stars { color:#f0b454; font-size:16px; letter-spacing:2px; margin-top:6px; }
+  .scorecard .sc2 { font-size:11.5px; color:rgba(233,246,240,.5); margin-top:4px; }
+  .distcard { flex:1; padding:16px 19px 14px; display:flex; flex-direction:column; overflow:hidden; min-width:0; }
+  .distcard .ct { font-size:14px; font-weight:600; color:#fff; margin-bottom:8px; }
+  .drow { display:flex; align-items:center; gap:10px; margin-top:5px; }
+  .drow .dl4 { font-size:11.5px; color:rgba(233,246,240,.6); width:28px; flex:0 0 28px; font-weight:600; }
+  .drow .dtrack { flex:1; height:8px; border-radius:999px; background:rgba(255,255,255,.08); overflow:hidden; }
+  .drow .dfill { height:100%; border-radius:999px; background:linear-gradient(90deg,#f5cf8f,#f0b454); }
+  .drow .dv4 { font-size:11.5px; font-weight:600; color:#fff; width:34px; flex:0 0 34px; text-align:right; }
+  .revlist { flex:1; display:flex; flex-direction:column; gap:12px; min-height:0; }
+  .rev { padding:14px 17px; display:flex; flex-direction:column; justify-content:center; overflow:hidden; }
+  .rev .rh { display:flex; align-items:center; gap:10px; }
+  .rev .rn { font-size:13.5px; font-weight:600; color:#fff; }
+  .rev .rstars { color:#f0b454; font-size:12px; letter-spacing:1.5px; margin-left:2px; }
+  .rev .rt2 { margin-left:auto; font-size:11px; color:rgba(233,246,240,.4); white-space:nowrap; }
+  .rev .rtx { font-size:12.5px; color:rgba(233,246,240,.72); line-height:1.45; margin-top:6px; }
+  .rev .rfoot { display:flex; gap:7px; margin-top:8px; }
+  .tag { font-size:9.5px; font-weight:700; letter-spacing:.4px; padding:3px 9px; border-radius:999px; white-space:nowrap; }
+  .tag.ai { background:rgba(69,208,224,.13); color:#7fe3f0; border:1px solid rgba(69,208,224,.32); }
+  .tag.g { background:rgba(255,255,255,.07); color:rgba(233,246,240,.55); border:1px solid rgba(45,212,191,.2); }
+
+  /* ---------- overview: pipeline + payments ---------- */
+  .ovmid { flex:1; display:flex; gap:16px; min-height:0; }
+  .ovcard { flex:1; padding:16px 19px 14px; display:flex; flex-direction:column; overflow:hidden; min-width:0; }
+  .ovcard.wide { flex:1.18; }
+  .ovcard .ct { font-size:14.5px; font-weight:600; color:#fff; display:flex; align-items:center; justify-content:space-between; margin-bottom:9px; }
+  .ovcard .ct .ovtag { font-size:10.5px; font-weight:700; letter-spacing:.5px; color:#7fe3f0; background:rgba(69,208,224,.13); border:1px solid rgba(69,208,224,.3); padding:3px 9px; border-radius:999px; }
+  .ovcard .brow { margin-top:10px; }
+  .ovcard .brow .bl { width:104px; flex:0 0 104px; }
+  .ovfoot { margin-top:auto; padding-top:11px; border-top:1px solid rgba(255,255,255,.09); font-size:11.5px; color:rgba(233,246,240,.55); line-height:1.5; }
+  .ovfoot b { color:#7fe3f0; font-weight:600; }
+  .payrow { display:flex; align-items:center; gap:11px; padding:9px 0; border-bottom:1px solid rgba(255,255,255,.07); }
+  .payrow .pmid { flex:1; min-width:0; }
+  .payrow .pn2 { font-size:13px; font-weight:600; color:#fff; }
+  .payrow .ps2 { font-size:11px; color:rgba(233,246,240,.5); margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .payrow .pamt { font-size:13px; font-weight:600; color:#fff; white-space:nowrap; }
+  .pstat { font-size:9px; font-weight:700; letter-spacing:.6px; padding:3px 9px; border-radius:999px; white-space:nowrap; }
+  .pstat.ok { background:rgba(110,231,160,.14); color:#8ff0b3; border:1px solid rgba(110,231,160,.35); }
+  .pstat.due { background:rgba(240,180,84,.14); color:#f5cf8f; border:1px solid rgba(240,180,84,.38); }
+  .paytot { margin-top:auto; padding-top:11px; display:flex; align-items:baseline; justify-content:space-between; font-size:12.5px; color:rgba(233,246,240,.6); }
+  .paytot b { color:#fff; font-size:15.5px; font-weight:600; }
+
+  /* ---------- stat cards (payments summary) ---------- */
+  .statrow { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
+  .statrow.three { grid-template-columns:repeat(3,1fr); }
+  .stat { padding:16px 18px 14px; display:flex; flex-direction:column; min-height:112px; }
+  .stat .sval { font-size:32px; font-weight:700; color:#fff; line-height:1.1; }
+  .stat .slab { font-size:13.5px; font-weight:600; color:#fff; margin-top:3px; }
+  .stat .ssub { font-size:11.5px; color:rgba(233,246,240,.5); margin-top:2px; }
+
+  /* ---------- tables ---------- */
+  .tablecard { padding:18px 20px 10px; }
+  .tablecard .tt { font-size:16px; font-weight:600; color:#fff; display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+  .tablecard .tt .tsub { font-size:11.5px; color:rgba(233,246,240,.45); font-weight:500; }
+  .tabs { display:flex; gap:8px; margin-top:13px; flex-wrap:wrap; }
+  .tab2 { font:inherit; font-size:12px; font-weight:500; color:rgba(233,246,240,.6); background:rgba(255,255,255,.07);
+    border:1px solid rgba(45,212,191,.2); padding:6px 14px; border-radius:999px; cursor:pointer; }
+  .tab2.on { background:linear-gradient(120deg,#10B981,#0E7A5F); color:#fff; border-color:transparent; font-weight:600; }
+  .tscroll { overflow-x:auto; margin-top:8px; }
+  table { width:100%; border-collapse:collapse; font-size:13.5px; min-width:560px; }
+  th { text-align:left; font-size:11px; font-weight:700; letter-spacing:.6px; color:rgba(233,246,240,.45);
+    padding:10px 10px 8px; border-bottom:1px solid rgba(45,212,191,.16); white-space:nowrap; }
+  td { padding:11px 10px; border-bottom:1px solid rgba(45,212,191,.08); color:rgba(233,246,240,.8); vertical-align:middle; }
+  td b { color:#fff; font-weight:600; }
+  tr:last-child td { border-bottom:none; }
+  .pill { display:inline-block; font-size:11px; font-weight:700; padding:3px 10px; border-radius:999px; white-space:nowrap; }
+  .pill.green { color:#8ff0b3; background:rgba(110,231,160,.14); border:1px solid rgba(110,231,160,.35); }
+  .pill.amber { color:#f5cf8f; background:rgba(240,180,84,.14); border:1px solid rgba(240,180,84,.38); }
+  .pill.red { color:#f5a8c4; background:rgba(224,86,139,.14); border:1px solid rgba(224,86,139,.38); }
+  .pill.grey { color:rgba(233,246,240,.6); background:rgba(255,255,255,.07); border:1px solid rgba(45,212,191,.2); }
+  .rowbtn { font:inherit; font-size:11.5px; font-weight:600; color:#7fe3f0; background:rgba(69,208,224,.12);
+    border:1px solid rgba(69,208,224,.35); padding:5px 12px; border-radius:999px; cursor:pointer; white-space:nowrap; }
+  .rowbtn:hover { background:rgba(69,208,224,.22); }
+  .rowbtn:disabled { opacity:.55; cursor:default; }
+  .noresults { display:none; padding:16px 10px; font-size:13px; color:rgba(233,246,240,.5); }
+  .cellwho { display:flex; align-items:center; gap:10px; }
+  .cellwho b { display:block; }
+
+  /* ---------- modal + toast ---------- */
+  .scrim { position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:55; display:none; }
+  .scrim.open { display:block; }
+  .modal { position:fixed; z-index:60; left:50%; top:50%; transform:translate(-50%,-50%); width:420px; max-width:calc(100vw - 32px);
+    background:rgba(13,26,19,.97); border:1px solid rgba(255,255,255,.2); border-radius:22px; padding:22px 24px;
+    box-shadow:0 30px 70px rgba(2,10,6,.6); display:none; }
+  .modal.open { display:block; }
+  .modal h3 { font-size:18px; font-weight:600; color:#fff; }
+  .modal .msub { font-size:12.5px; color:rgba(233,246,240,.55); margin-top:3px; }
+  .modal .mrow { display:flex; gap:10px; margin-top:18px; justify-content:flex-end; }
+  .modal select { width:100%; font:inherit; font-size:13.5px; color:#fff; padding:9px 13px; border-radius:12px;
+    border:1px solid rgba(45,212,191,.22); background:rgba(255,255,255,.07); outline:none; }
+  .modal select option { color:#111; }
+  .fld { margin-top:12px; }
+  .fld label { display:block; font-size:11.5px; font-weight:700; letter-spacing:.4px; color:rgba(233,246,240,.5); margin-bottom:5px; }
+  .fld input { width:100%; font:inherit; font-size:13.5px; color:#fff; padding:9px 13px; border-radius:12px;
+    border:1px solid rgba(45,212,191,.22); background:rgba(255,255,255,.07); outline:none; }
+  .fld input:focus { border-color:#2DD4BF; }
+  .toast { position:fixed; z-index:70; left:50%; bottom:26px; transform:translate(-50%,80px); opacity:0;
+    background:#fff; color:#07120d; font-size:13.5px; font-weight:500; padding:12px 20px; border-radius:999px;
+    box-shadow:0 16px 36px rgba(0,0,0,.45); transition:transform .3s,opacity .3s; pointer-events:none; max-width:calc(100vw - 32px); text-align:center; }
+  .toast.show { transform:translate(-50%,0); opacity:1; }
+
+  .navscrim { position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:44; display:none; }
+
+  /* ---------- responsive ---------- */
+  @media (max-width:1080px) {
+    .statrow { grid-template-columns:repeat(2,1fr); }
+    .inboxwrap { flex-direction:column; }
+    .convolist { width:100%; flex:none; max-height:250px; }
+    .thread { min-height:420px; }
+    .week { flex-direction:column; }
+    .day { flex-direction:row; flex-wrap:wrap; align-items:flex-start; }
+    .day .dh2 { flex:0 0 64px; text-align:left; padding-bottom:0; border-bottom:none; }
+    .day .ev { flex:1 1 160px; }
+    .chanrow { flex-direction:column; }
+    .srcnote { width:auto; flex:none; }
+    .revtop { flex-direction:column; }
+    .scorecard { width:auto; flex:none; }
+    .ovmid { flex-direction:column; }
+    .calstats, .kpirow { flex-wrap:wrap; }
+    .cstat { flex:1 1 40%; }
+  }
+  @media (max-width:860px) {
+    .app { margin:0; border-radius:0; border:none; }
+    .sidebar { position:fixed; z-index:50; top:0; left:0; bottom:0; width:262px; flex:none;
+      transform:translateX(-105%); transition:transform .28s ease;
+      background:linear-gradient(180deg, rgba(13,26,19,.97), rgba(13,26,19,.97));
+      box-shadow:20px 0 50px rgba(0,0,0,.5); }
+    .sidebar.open { transform:translateX(0); }
+    .navscrim.open { display:block; }
+    .burger { display:flex; }
+    .topbar { padding:12px 14px; }
+    .topbar .btn.ghost { display:none; }
+    .pages { padding:16px 14px 24px; }
+  }
+  @media (max-width:560px) {
+    .topbar .av { display:none; }
+    .topbar .btn.primary { padding:9px 12px; font-size:12.5px; }
+    .statrow, .statrow.three { grid-template-columns:1fr; }
+    .phead .pt { font-size:22px; }
+    .msg { max-width:92%; }
+    .calstats, .kpirow { flex-direction:column; }
+    .cstat { flex:none; }
+  }
+</style>
+</head>
+<body>
+<div class="backdrop"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+
+<div class="app">
+  <!-- ================= SIDEBAR ================= -->
+  <aside class="sidebar" id="sidebar">
+    <div class="logo"><div class="lg">N</div><div class="ln">Northbeam<span>BUILDERS</span></div></div>
+    <nav class="nav" id="nav"></nav>
+    <div class="sp"></div>
+    <button class="aicard" id="aicard" aria-pressed="true">
+      <div class="at"><i></i><span>AI receptionist</span></div>
+      <div class="am" id="aicard-msg">Live · answered 14 enquiries today</div>
+    </button>
+    <div class="userchip">
+      <div class="av" style="width:34px;height:34px;font-size:12px;background:linear-gradient(145deg,#10B981,#0E7A5F)">JD</div>
+      <div class="un">James Doyle<span>Owner</span></div>
+    </div>
+  </aside>
+  <div class="navscrim" id="navscrim"></div>
+
+  <!-- ================= MAIN ================= -->
+  <div class="main">
+    <div class="topbar">
+      <button class="burger" id="burger" aria-label="Open menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+      <div class="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.8-3.8"/></svg>
+        <input id="search" type="text" placeholder="Search clients, jobs, invoices…" autocomplete="off">
+      </div>
+      <button class="btn ghost" id="activityBtn">Activity log</button>
+      <button class="btn primary" id="newEnquiryBtn">+ New enquiry</button>
+      <div class="av" style="width:36px;height:36px;font-size:12px;background:linear-gradient(145deg,#37c8d9,#1f7f96)">JD</div>
+      <div class="actpanel" id="actpanel">
+        <h4>Activity log</h4>
+        <div class="ai"><span><b>AI receptionist</b> answered an enquiry from Harriet Cole</span><span class="when">3 min</span></div>
+        <div class="ai"><span><b>Visit booked</b> · Harriet Cole, Thu 10:30</span><span class="when">12 min</span></div>
+        <div class="ai"><span><b>Deposit received</b> · Lucy Hart, £6,200</span><span class="when">1 hr</span></div>
+        <div class="ai"><span><b>Quote call booked</b> · Shaw, Barnes, Tue 10:00</span><span class="when">2 hrs</span></div>
+        <div class="ai"><span><b>New review</b> · 5 stars on Google</span><span class="when">Yesterday</span></div>
+      </div>
+    </div>
+
+    <div class="pages" id="pages">
+
+      <!-- ================= INBOX ================= -->
+      <section class="page" id="page-inbox">
+        <div class="phead"><div class="pt">Inbox <span>· every enquiry, one place</span></div><div class="ps"><span class="livedot"></span>AI receptionist <b>live</b> · replies in 28s</div></div>
+        <div class="inboxwrap">
+          <div class="convolist gcard" id="convoList"></div>
+          <div class="thread gcard" id="threadCard"></div>
+        </div>
+        <div class="noresults" data-noresults>No conversations match your search.</div>
+      </section>
+
+      <!-- ================= CALENDAR ================= -->
+      <section class="page" id="page-calendar">
+        <div class="phead"><div class="pt">Calendar <span>· week 24</span></div><div class="ps">Synced with <b>Google Calendar</b> · no double-bookings</div></div>
+        <div class="calstats">
+          <div class="cstat gcard acc"><div class="lab">Visits this week</div><div class="val"><span data-count="14">0</span></div></div>
+          <div class="cstat gcard"><div class="lab">Booked by AI</div><div class="val"><span data-count="9">0</span> <em>of 14</em></div></div>
+          <div class="cstat gcard"><div class="lab">Quote calls</div><div class="val"><span data-count="6">0</span></div></div>
+          <div class="cstat gcard"><div class="lab">No-shows</div><div class="val"><span data-count="0">0</span> <em>reminders on</em></div></div>
+        </div>
+        <div class="week" id="weekBoard"></div>
+        <div class="calnote" id="calNote"><i></i><div><b>AI scheduling</b> — Thursday&rsquo;s visit was booked from the Inbox at 09:41 and landed here on its own. Travel time to Richmond added automatically.</div></div>
+        <button class="btn primary" id="calBookBtn" style="align-self:flex-start">+ Book a visit</button>
+        <div class="noresults" data-noresults>No events match your search.</div>
+      </section>
+
+      <!-- ================= ANALYTICS ================= -->
+      <section class="page" id="page-analytics">
+        <div class="phead"><div class="pt">Analytics <span>· what is working</span></div><div class="ps">Updated <b>just now</b> · June so far</div></div>
+        <div class="kpirow">
+          <div class="cstat gcard acc"><div class="lab">Revenue, June</div><div class="val">£<span data-count="96400" data-fmt="1">0</span></div></div>
+          <div class="cstat gcard"><div class="lab">Enquiry → visit</div><div class="val"><span data-count="38">0</span>% <em>▲ 6 pts</em></div></div>
+          <div class="cstat gcard"><div class="lab">Average job</div><div class="val">£<span data-count="52400" data-fmt="1">0</span></div></div>
+          <div class="cstat gcard"><div class="lab">Reviews</div><div class="val"><span data-count="212">0</span> <em>★ 4.9</em></div></div>
+        </div>
+        <div class="chartcard gcard">
+          <div class="ct"><div>Revenue — last 6 months<div class="csub2" id="anaChartSub">£442k invoiced over the last 6 months</div></div>
+            <span class="cup">▲ 41% vs last year</span></div>
+          <div class="rangewrap">
+            <button class="rpill" data-range="3">3 months</button>
+            <button class="rpill on" data-range="6">6 months</button>
+            <button class="rpill" data-range="12">12 months</button>
+          </div>
+          <div id="analyticsChart"></div>
+          <div class="hmonths" id="anaMonths"></div>
+        </div>
+        <div class="chanrow">
+          <div class="chancard gcard">
+            <div class="ct">Enquiries by channel</div>
+            <div id="chanBars"></div>
+          </div>
+          <div class="srcnote gcard">
+            <div class="st4">Where June came from</div>
+            <div class="sm4">Website enquiries convert best — <b>38%</b> reach a booked visit. Instagram is small but growing <b>+12</b> this month.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= REVIEWS ================= -->
+      <section class="page" id="page-reviews">
+        <div class="phead"><div class="pt">Reviews <span>· reputation on autopilot</span></div><div class="ps">Requests sent by <b>AI</b> after every job</div></div>
+        <div class="revtop">
+          <div class="scorecard gcard">
+            <div class="big"><span data-count="49" data-dec="1">0</span><span>/ 5 average</span></div>
+            <div class="stars">★★★★★</div>
+            <div class="sc2"><span data-count="212">0</span> Google reviews · 96% five-star</div>
+          </div>
+          <div class="distcard gcard">
+            <div class="ct">Rating breakdown</div>
+            <div id="revDist"></div>
+          </div>
+        </div>
+        <div class="revlist" id="revList"></div>
+        <button class="btn primary" id="reqReviewsBtn" style="align-self:flex-start">Request reviews from recent clients</button>
+        <div class="noresults" data-noresults>No reviews match your search.</div>
+      </section>
+
+      <!-- ================= OVERVIEW ================= -->
+      <section class="page" id="page-overview">
+        <div class="phead"><div class="pt">Overview <span>· the whole business, one screen</span></div><div class="ps"><span class="livedot"></span>Live <b>sync</b> · updated just now</div></div>
+        <div class="kpirow">
+          <div class="cstat gcard acc"><div class="lab">Pipeline value</div><div class="val">£<span data-count="212500" data-fmt="1">0</span></div></div>
+          <div class="cstat gcard"><div class="lab">Revenue, June</div><div class="val">£<span data-count="96400" data-fmt="1">0</span></div></div>
+          <div class="cstat gcard"><div class="lab">Deposits paid</div><div class="val">£<span data-count="48200" data-fmt="1">0</span></div></div>
+          <div class="cstat gcard"><div class="lab">Reviews</div><div class="val"><span data-count="49" data-dec="1">0</span> <em>★ · 212 total</em></div></div>
+        </div>
+        <div class="ovmid">
+          <div class="ovcard gcard wide">
+            <div class="ct">Enquiry pipeline <span class="ovtag">JUNE</span></div>
+            <div id="pipeBars"></div>
+            <div class="ovfoot"><b>38%</b> of enquiries reach a booked visit — up 6 points on May. Every stage updates itself from the Inbox and Calendar.</div>
+          </div>
+          <div class="ovcard gcard">
+            <div class="ct">Payments <span class="ovtag">AUTO-CHASED</span></div>
+            <div id="ovPayments"></div>
+            <div class="paytot"><span>Collected in June</span><b>£48,200</b></div>
+          </div>
+        </div>
+        <div class="calnote"><i></i><div><b>Revenue up 41% on last year</b> — pipeline, payments and reviews feed this one screen. Nothing typed twice, nothing chased by hand.</div></div>
+      </section>
+
+      <!-- ================= PAYMENTS (extension: source shows only the 3-row card) ================= -->
+      <section class="page" id="page-payments">
+        <div class="phead"><div class="pt">Payments</div><div class="ps">Collected in June · <b>£48,200</b></div></div>
+        <div class="statrow three">
+          <div class="stat gcard"><div class="sval" id="payCollected">£48,200</div><div class="slab">Collected in June</div><div class="ssub">Paid invoices, June</div></div>
+          <div class="stat gcard"><div class="sval" id="payOutstanding">£17,200</div><div class="slab">Outstanding</div><div class="ssub">Due or overdue</div></div>
+          <div class="stat gcard"><div class="sval" id="payOverdue">£8,900</div><div class="slab">Overdue</div><div class="ssub">Needs chasing</div></div>
+        </div>
+        <div class="tablecard gcard">
+          <div class="tt"><span>Invoices</span><span class="tsub">Search above filters this table</span></div>
+          <div class="tabs" id="payTabs">
+            <button class="tab2 on" data-ptab="all">All</button>
+            <button class="tab2" data-ptab="Paid">Paid</button>
+            <button class="tab2" data-ptab="Due">Due</button>
+            <button class="tab2" data-ptab="Overdue">Overdue</button>
+          </div>
+          <div class="tscroll"><table>
+            <thead><tr><th>Client</th><th>Description</th><th>Amount</th><th>Status</th><th></th></tr></thead>
+            <tbody id="payBody"></tbody>
+          </table></div>
+          <div class="noresults" data-noresults>No invoices match.</div>
+        </div>
+      </section>
+
+      <!-- ================= CLIENTS (extension: built from the names in the source) ================= -->
+      <section class="page" id="page-clients">
+        <div class="phead"><div class="pt">Clients</div><div class="ps">9 clients · from Inbox, Calendar and Reviews</div></div>
+        <div class="tablecard gcard">
+          <div class="tt"><span>All clients</span><span class="tsub">Search above filters this table</span></div>
+          <div class="tabs" id="clientTabs">
+            <button class="tab2 on" data-ctab="all">All</button>
+            <button class="tab2" data-ctab="Active">Active</button>
+            <button class="tab2" data-ctab="Lead">Lead</button>
+            <button class="tab2" data-ctab="Completed">Completed</button>
+          </div>
+          <div class="tscroll"><table>
+            <thead><tr><th>Client</th><th>Job</th><th>Location</th><th>Status</th><th>Last contact</th></tr></thead>
+            <tbody id="clientsBody"></tbody>
+          </table></div>
+          <div class="noresults" data-noresults>No clients match.</div>
+        </div>
+      </section>
+
+    </div><!-- /pages -->
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<!-- ================= MODAL + TOAST ================= -->
+<div class="scrim" id="scrim"></div>
+<div class="modal" id="enquiryModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <h3 id="modalTitle">New enquiry</h3>
+  <div class="msub">It lands in your Inbox straight away.</div>
+  <form id="enquiryForm">
+    <div class="fld"><label>CLIENT NAME</label><input id="fName" type="text" required placeholder="e.g. Mrs Hartley"></div>
+    <div class="fld"><label>TYPE</label>
+      <select id="fType">
+        <option>Extension</option><option>Loft conversion</option><option>Renovation</option>
+        <option>New build</option><option>Site visit</option><option>Other</option>
+      </select></div>
+    <div class="fld"><label>DETAILS</label><input id="fDetails" type="text" required placeholder="What do they need?"></div>
+    <div class="mrow">
+      <button type="button" class="btn ghost" id="modalCancel">Cancel</button>
+      <button type="submit" class="btn primary">Add enquiry</button>
+    </div>
+  </form>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ================= icons ================= */
+const P = {
+  grid:'<rect x="3" y="3" width="7.5" height="7.5" rx="1.8"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.8"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.8"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.8"/>',
+  chart:'<path d="M4 20V10M10 20V4M16 20v-8M21 20H3"/>',
+  cal:'<rect x="3" y="5" width="18" height="16" rx="2.5"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+  inbox:'<rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3 7l9 6 9-6"/>',
+  pound:'<path d="M17.5 6.5C16.6 5 14.9 4 13 4c-2.8 0-5 2.2-5 5v2H5.5M8 15H5.5M8 11h6.5M8 11v5.5L6.8 20h11"/>',
+  star:'<path d="M12 3.6l2.6 5.3 5.8.8-4.2 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8L3.6 9.7l5.8-.8z"/>',
+  users:'<circle cx="9" cy="8" r="3.5"/><path d="M3.5 20c.6-3.2 2.8-5 5.5-5s4.9 1.8 5.5 5"/><path d="M16 5.2a3.5 3.5 0 0 1 0 5.9M18.5 15.4c1 .8 1.7 2 2 4.6"/>'
+};
+const svgIcon = p => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+
+/* ================= data — from the V9 source; extensions marked ================= */
+const NAV = [
+  ['inbox','inbox','Inbox'],['calendar','cal','Calendar'],['analytics','chart','Analytics'],
+  ['reviews','star','Reviews'],['overview','grid','Overview'],['payments','pound','Payments'],['clients','users','Clients']
+];
+const AVG = ['linear-gradient(145deg,#10B981,#0E7A5F)','linear-gradient(145deg,#37c8d9,#1f7f96)','linear-gradient(145deg,#2DD4BF,#0E7A5F)','linear-gradient(145deg,#f0b454,#b97e22)','linear-gradient(145deg,#6ee7a0,#2f9e5f)'];
+const gbp = n => '£' + n.toLocaleString('en-GB');
+
+/* Inbox — 6 conversations from the source; Harriet's thread is verbatim.
+   The other five threads are extensions: the source gives only their preview
+   line, so each thread below is written to match that preview. */
+let CONVOS = [
+  { name:'Harriet Cole', ini:'HC', grad:0, time:'09:41', prev:'Thursday morning would be perfect…', unread:2,
+    sub:'Kitchen extension · Richmond · via website', chan:'WEBSITE',
+    msgs:[
+      { c:'in', t:'Hi, we are planning a kitchen extension in Richmond. Could someone come and look this week?', time:'09:38' },
+      { c:'out', t:'Hello Harriet, thanks for getting in touch. We have Thursday 10:30 or Friday 14:00 for a first visit — which suits you better?', time:'09:38 · AI replied in 24s' },
+      { c:'in', t:'Thursday morning would be perfect, thank you.', time:'09:41' } ],
+    booked:true,
+    draft:'“Lovely, you are booked in for Thursday at 10:30. James will bring samples and a tape measure — no need to prepare anything.”' },
+  { name:'Marcus Webb', ini:'MW', grad:1, time:'09:12', prev:'Thanks, the quote looks fair. When…', unread:0,
+    sub:'Structure · Kew · via email', chan:'EMAIL',
+    msgs:[
+      { c:'in', t:'Hi, thanks for the quote on the Kew job. It looks fair — when could we start?', time:'09:12' },
+      { c:'out', t:'Thanks Marcus — we could start the week of the 23rd. I will hold the crew for you until Friday.', time:'09:14 · AI replied in 31s' },
+      { c:'in', t:'That works. Let us lock it in.', time:'09:20' } ] },
+  { name:'Priya Nair', ini:'PN', grad:2, time:'08:57', prev:'Can we move the snagging visit to…', unread:1,
+    sub:'Snagging · Richmond · via website', chan:'WEBSITE',
+    msgs:[
+      { c:'in', t:'Hi, can we move the snagging visit to Friday? Something has come up on Wednesday.', time:'08:57' },
+      { c:'out', t:'Of course — Friday 14:00 works for the crew. I have moved it and updated your calendar invite.', time:'08:58 · AI replied in 19s' },
+      { c:'in', t:'Perfect, Friday it is. Thank you.', time:'09:02' } ] },
+  { name:'Tom Beckett', ini:'TB', grad:3, time:'Yesterday', prev:'The extension is looking great, tha…', unread:0,
+    sub:'Extension · Kew · via Google', chan:'GOOGLE',
+    msgs:[
+      { c:'in', t:'Hi James, the extension is looking great, thanks to the crew. Really pleased with how tidy they keep the site.', time:'Yesterday' },
+      { c:'out', t:'Really glad to hear it, Tom — I will pass that on to the crew. We will see you at the snagging visit next week.', time:'Yesterday · AI replied in 26s' } ] },
+  { name:'Ellen Shaw', ini:'ES', grad:4, time:'Yesterday', prev:'Do you cover Barnes? We would…', unread:0,
+    sub:'Loft enquiry · Barnes · via Instagram', chan:'INSTAGRAM',
+    msgs:[
+      { c:'in', t:'Hi, do you cover Barnes? We would love a quote for a loft conversion.', time:'Yesterday' },
+      { c:'out', t:'Yes, we cover Barnes — happy to help. Would Thursday 10:00 suit for a first visit?', time:'Yesterday · AI replied in 22s' } ] },
+  { name:'Lucy Hart', ini:'LH', grad:1, time:'Mon', prev:'Perfect, deposit sent this morning…', unread:0,
+    sub:'Deposit paid · via website', chan:'WEBSITE',
+    msgs:[
+      { c:'in', t:'Perfect, deposit sent this morning. Thanks for the clear breakdown!', time:'Mon' },
+      { c:'out', t:'Received, thank you Lucy — you are booked in. James will call the day before the visit to confirm.', time:'Mon · AI replied in 28s' } ] }
+];
+/* Calendar — week 24 board, verbatim from the source (Wednesday is today). */
+const WEEK = [
+  { dw:'MON', dn:9, today:false, events:[
+    { t:'09:00', cls:'v', name:'Site visit', sub:'Cole · Richmond' },
+    { t:'13:30', cls:'c', name:'Scaffold drop', sub:'Webb · Kew' } ] },
+  { dw:'TUE', dn:10, today:false, events:[
+    { t:'10:00', cls:'p', name:'Quote call', sub:'Shaw · Barnes' },
+    { t:'15:00', cls:'v', name:'Site visit', sub:'Osei · Putney' } ] },
+  { dw:'WED', dn:11, today:true, events:[
+    { t:'10:30', cls:'v', name:'Site visit', sub:'Hart · Chiswick' },
+    { t:'14:00', cls:'a', name:'Snagging', sub:'Nair · Richmond' },
+    { t:'16:30', cls:'c', name:'Delivery', sub:'Tiles · Webb' } ] },
+  { dw:'THU', dn:12, today:false, events:[
+    { t:'10:30', cls:'v', name:'Site visit', sub:'Cole · Richmond' },
+    { t:'12:00', cls:'p', name:'Quote call', sub:'Beckett · Kew' } ] },
+  { dw:'FRI', dn:13, today:false, events:[
+    { t:'09:30', cls:'a', name:'Handover', sub:'Palmer · Putney' },
+    { t:'14:00', cls:'v', name:'Site visit', sub:'Doyle · Barnes' } ] }
+];
+/* Analytics chart — monthly values read off the source line shape (June £96,400
+   is the source KPI); the 3-month and 12-month ranges are extensions. */
+const REV = {
+  3:  { labels:['MAY','JUN','JUL'], rev:[77400,96400,109500], total:'£283k invoiced over the last 3 months' },
+  6:  { labels:['JAN','FEB','MAR','APR','MAY','JUN','JUL'], rev:[24800,39400,33600,61300,77400,96400,109500], total:'£442k invoiced over the last 6 months' },
+  12: { labels:['AUG','SEP','OCT','NOV','DEC','JAN','FEB','MAR','APR','MAY','JUN','JUL'], rev:[19800,21500,20200,23600,24100,24800,39400,33600,61300,77400,96400,109500], total:'£552k invoiced over the last 12 months' }
+};
+const CHANNELS = [
+  { name:'Website', pct:82, val:'96', color:'#10B981' },
+  { name:'Referrals', pct:64, val:'74', color:'#37c8d9' },
+  { name:'Google', pct:47, val:'55', color:'#2DD4BF' },
+  { name:'Instagram', pct:29, val:'34', color:'#f0b454' }
+];
+/* Reviews — score, count, distribution and all three reviews from the source. */
+const REVIEWS = [
+  { name:'George Palmer', ini:'GP', grad:4, when:'2h ago', stars:5,
+    text:'“Extension finished a week early. Every message answered within the hour, even on Sundays.”' },
+  { name:'Anita Desai', ini:'AD', grad:2, when:'Yesterday', stars:5,
+    text:'“Booked the visit from my sofa at 10pm. The quote arrived two days later, clear and itemised.”' },
+  { name:'Megan Doyle', ini:'MD', grad:1, when:'Yesterday', stars:5,
+    text:'“Clean, punctual and honest about costs from day one. The kitchen is exactly what we pictured.”' }
+];
+const DIST = [ ['5★',92,'196'], ['4★',6,'12'], ['3★',1.5,'3'], ['2★',0.5,'1'] ];
+/* Overview pipeline — from the source. */
+const PIPELINE = [
+  { lab:'New enquiries', pct:100, color:'#10B981', val:'12' },
+  { lab:'Visits booked', pct:75, color:'#37c8d9', val:'9' },
+  { lab:'Quotes sent', pct:58, color:'#10B981', val:'7' },
+  { lab:'Jobs won', pct:42, color:'#f0b454', val:'5' },
+  { lab:'On site now', pct:33, color:'#6ee7a0', val:'4' }
+];
+/* Payments — the first three rows are the source Overview card; the rest are
+   extensions, sized so paid invoices total exactly the source £48,200. */
+const OVPAY = [
+  { ini:'HC', grad:0, name:'Harriet Cole', sub:'Deposit · kitchen extension', amt:'£7,500', st:'PAID', cls:'ok' },
+  { ini:'MW', grad:1, name:'Marcus Webb', sub:'Stage 2 · structure', amt:'£12,300', st:'PAID', cls:'ok' },
+  { ini:'PN', grad:2, name:'Priya Nair', sub:'Final invoice · snagging', amt:'£4,850', st:'DUE FRI', cls:'due' }
+];
+let INVOICES = [
+  { client:'Harriet Cole', ini:'HC', grad:0, desc:'Deposit · kitchen extension', amount:7500, status:'Paid' },
+  { client:'Marcus Webb', ini:'MW', grad:1, desc:'Stage 2 · structure', amount:12300, status:'Paid' },
+  { client:'George Palmer', ini:'GP', grad:4, desc:'Final balance · extension', amount:12400, status:'Paid' },
+  { client:'Tom Beckett', ini:'TB', grad:3, desc:'Stage 1 · extension', amount:9800, status:'Paid' },
+  { client:'Lucy Hart', ini:'LH', grad:1, desc:'Deposit', amount:6200, status:'Paid' },
+  { client:'Priya Nair', ini:'PN', grad:2, desc:'Final invoice · snagging', amount:4850, status:'Due' },
+  { client:'Ellen Shaw', ini:'ES', grad:4, desc:'Final invoice · loft survey', amount:3450, status:'Due' },
+  { client:'Megan Doyle', ini:'MD', grad:1, desc:'Stage 2 · kitchen', amount:8900, status:'Overdue' }
+];
+/* Clients — extension page built from the names, jobs and places in the source. */
+const CLIENTS = [
+  { name:'Harriet Cole', ini:'HC', grad:0, job:'Kitchen extension', loc:'Richmond', status:'Active', last:'Today' },
+  { name:'Marcus Webb', ini:'MW', grad:1, job:'Structure', loc:'Kew', status:'Active', last:'Today' },
+  { name:'Priya Nair', ini:'PN', grad:2, job:'Snagging', loc:'Richmond', status:'Active', last:'Today' },
+  { name:'Tom Beckett', ini:'TB', grad:3, job:'Extension', loc:'Kew', status:'Completed', last:'Yesterday' },
+  { name:'Ellen Shaw', ini:'ES', grad:4, job:'Loft enquiry', loc:'Barnes', status:'Lead', last:'Yesterday' },
+  { name:'Lucy Hart', ini:'LH', grad:1, job:'Deposit paid', loc:'—', status:'Active', last:'Mon' },
+  { name:'George Palmer', ini:'GP', grad:4, job:'Extension', loc:'Putney', status:'Completed', last:'2h ago' },
+  { name:'Anita Desai', ini:'AD', grad:2, job:'Visit booked', loc:'—', status:'Lead', last:'Yesterday' },
+  { name:'Megan Doyle', ini:'MD', grad:1, job:'Kitchen', loc:'—', status:'Active', last:'Yesterday' }
+];
+
+/* ================= toast ================= */
+let toastTimer;
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimer); toastTimer = setTimeout(()=>t.classList.remove('show'), 2600);
+}
+
+/* ================= navigation ================= */
+const navEl = document.getElementById('nav');
+navEl.innerHTML = NAV.map(n =>
+  `<button class="nitem" data-page="${n[0]}">${svgIcon(P[n[1]])}${n[2]}${n[0]==='inbox' ? '<span class="bdg" id="inboxBadge">3</span>' : ''}</button>`).join('');
+const countedPages = new Set();
+function goTo(page){
+  document.querySelectorAll('.page').forEach(s => s.classList.toggle('on', s.id === 'page-' + page));
+  document.querySelectorAll('.nitem').forEach(b => b.classList.toggle('on', b.dataset.page === page));
+  document.getElementById('pages').scrollTop = 0;
+  closeSidebar();
+  if (!countedPages.has(page)) { countedPages.add(page); runCountUps(document.getElementById('page-' + page)); }
+}
+navEl.addEventListener('click', e => {
+  const b = e.target.closest('.nitem'); if (b) goTo(b.dataset.page);
+});
+
+/* mobile sidebar */
+const sidebar = document.getElementById('sidebar'), navscrim = document.getElementById('navscrim');
+function closeSidebar(){ sidebar.classList.remove('open'); navscrim.classList.remove('open'); }
+document.getElementById('burger').addEventListener('click', () => {
+  sidebar.classList.add('open'); navscrim.classList.add('open');
+});
+navscrim.addEventListener('click', closeSidebar);
+
+/* ================= count-up (brief, on first view of each page) ================= */
+function runCountUps(scope){
+  scope.querySelectorAll('[data-count]').forEach(el => {
+    const target = parseFloat(el.dataset.count), dec = el.dataset.dec ? 1 : 0, fmt = el.dataset.fmt;
+    const t0 = performance.now(), dur = 650;
+    (function step(now){
+      const p = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - p, 3), v = target * e;
+      el.textContent = dec ? (v / 10).toFixed(1) : (fmt ? Math.round(v).toLocaleString('en-GB') : Math.round(v));
+      if (p < 1) requestAnimationFrame(step);
+    })(t0);
+  });
+}
+
+/* ================= chart (inline SVG from data) ================= */
+function lineChart(el, labels, rev, costs){
+  const W = 700, H = 240, padL = 6, padR = 6, padT = 14, padB = 10;
+  const max = Math.ceil(Math.max(...rev, ...costs) * 1.15 / 5000) * 5000;
+  const x = i => padL + (W - padL - padR) * (labels.length === 1 ? 0.5 : i / (labels.length - 1));
+  const y = v => padT + (H - padT - padB) * (1 - v / max);
+  const pts = arr => arr.map((v,i) => `${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(' ');
+  const area = `M${x(0)},${y(rev[0])} ` + rev.map((v,i)=>`L${x(i)},${y(v)}`).join(' ') + ` L${x(rev.length-1)},${H} L${x(0)},${H} Z`;
+  let grid = '';
+  for (let g = 1; g <= 3; g++) { const gy = padT + (H - padT - padB) * g / 4;
+    grid += `<line x1="0" y1="${gy}" x2="${W}" y2="${gy}" stroke="rgba(45,212,191,.12)"/>`; }
+  el.innerHTML = `
+  <svg class="chartsvg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Revenue versus costs chart">
+    <defs><linearGradient id="rf${el.id}" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#10B981" stop-opacity=".38"/><stop offset="1" stop-color="#10B981" stop-opacity="0"/>
+    </linearGradient></defs>
+    ${grid}
+    <path d="${area}" fill="url(#rf${el.id})"/>
+    <polyline points="${pts(rev)}" fill="none" stroke="#2DD4BF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <polyline points="${pts(costs)}" fill="none" stroke="rgba(255,255,255,.45)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="${x(rev.length-1)}" cy="${y(rev[rev.length-1])}" r="5" fill="#2DD4BF" stroke="#07120d" stroke-width="2"/>
+  </svg>`;
+}
+function renderAnalytics(range){
+  const d = REV[range];
+  const costs = d.rev.map(v => Math.round(v * 0.72 / 100) * 100);
+  lineChart(document.getElementById('analyticsChart'), d.labels, d.rev, costs);
+  document.getElementById('anaMonths').innerHTML = d.labels.map(l => `<span>${l}</span>`).join('');
+  document.getElementById('anaChartSub').textContent = d.total;
+}
+renderAnalytics(6);
+document.querySelectorAll('.rpill').forEach(p => p.addEventListener('click', () => {
+  document.querySelectorAll('.rpill').forEach(x => x.classList.toggle('on', x === p));
+  renderAnalytics(parseInt(p.dataset.range, 10));
+}));
+
+/* ================= inbox ================= */
+let activeConvo = 0;
+function renderConvos(){
+  document.getElementById('convoList').innerHTML = CONVOS.map((c, i) => `
+    <button class="citem${i === activeConvo ? ' on' : ''}" data-convo="${i}" data-search-row>
+      <div class="av" style="width:32px;height:32px;font-size:11px;background:${AVG[c.grad % 5]}">${c.ini}</div>
+      <div class="cmid"><div class="cn">${c.name}<span class="ct2">${c.time}</span></div><div class="cp">${c.prev}</div></div>
+      ${c.unread ? `<span class="ub">${c.unread}</span>` : '<span class="ub sp"></span>'}
+    </button>`).join('');
+  updateBadge(); applySearch();
+}
+function updateBadge(){
+  const n = CONVOS.reduce((a, c) => a + c.unread, 0), b = document.getElementById('inboxBadge');
+  if (!b) return;
+  b.textContent = n; b.classList.toggle('hide', n === 0);
+}
+function renderThread(){
+  const c = CONVOS[activeConvo];
+  const msgs = c.msgs.map(m => `<div class="msg ${m.c}">${m.t}<span class="mt">${m.time}</span></div>`).join('');
+  const book = c.booked ? `<div class="bookchip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2.5"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Visit booked · Thu 10:30 <span>· added to Calendar</span></div>` : '';
+  const draft = c.draft
+    ? `<div class="aidraft" id="aidraft">
+         <div class="adt"><i></i>AI DRAFT — READY TO SEND</div>
+         <div class="adm" id="draftText">${c.draft}</div>
+         <div class="adrow"><button class="send" id="draftSend">Send reply</button><button class="edit" id="draftEdit">Edit first</button></div>
+       </div>`
+    : (c.sent ? `<div class="sentchip">✓ Reply sent to ${c.name}</div>` : '');
+  document.getElementById('threadCard').innerHTML = `
+    <div class="thhead">
+      <div class="av" style="width:36px;height:36px;font-size:12px;background:${AVG[c.grad % 5]}">${c.ini}</div>
+      <div class="tn">${c.name}<span>${c.sub}</span></div>
+      <span class="chan">${c.chan}</span>
+    </div>
+    <div class="msgs" id="threadMsgs">${msgs}${book}</div>
+    ${draft}`;
+  const send = document.getElementById('draftSend');
+  if (send) send.addEventListener('click', () => {
+    const text = document.getElementById('draftText').textContent.trim();
+    c.msgs.push({ c:'out', t:text, time:'Just now · sent' });
+    c.draft = null; c.sent = true;
+    renderThread();
+    toast(`Reply sent to ${c.name}`);
+  });
+  const edit = document.getElementById('draftEdit');
+  if (edit) edit.addEventListener('click', () => {
+    const d = document.getElementById('draftText');
+    d.contentEditable = 'true'; d.focus();
+    document.execCommand('selectAll', false, null);
+    d.addEventListener('blur', () => { c.draft = d.textContent.trim(); d.contentEditable = 'false'; }, { once:true });
+  });
+}
+document.getElementById('convoList').addEventListener('click', e => {
+  const item = e.target.closest('[data-convo]'); if (!item) return;
+  activeConvo = parseInt(item.dataset.convo, 10);
+  const c = CONVOS[activeConvo];
+  if (c.unread) { c.unread = 0; }
+  renderConvos(); renderThread();
+});
+renderConvos(); renderThread();
+
+/* ================= calendar ================= */
+let selectedDay = 2;
+function renderWeek(){
+  document.getElementById('weekBoard').innerHTML = WEEK.map((d, i) => `
+    <div class="day${d.today ? ' today' : ''}${i === selectedDay ? ' sel' : ''}" data-day="${i}">
+      <div class="dh2"><div class="dw">${d.dw}</div><div class="dn3">${d.dn}</div></div>
+      ${d.events.map(ev => `<div class="ev ${ev.cls}" data-search-row data-ev="${ev.name} · ${ev.sub} · ${ev.t}"><span class="et">${ev.t}</span><b>${ev.name}</b>${ev.sub}</div>`).join('')}
+    </div>`).join('');
+  applySearch();
+}
+function updateCalNote(i){
+  const d = WEEK[i];
+  const list = d.events.length ? d.events.map(ev => `${ev.name} ${ev.t}`).join(', ') : 'nothing booked';
+  document.getElementById('calNote').innerHTML = `<i></i><div><b>${d.dw} ${d.dn} June</b> — ${d.events.length} event${d.events.length === 1 ? '' : 's'}: ${list}.</div>`;
+}
+document.getElementById('weekBoard').addEventListener('click', e => {
+  const day = e.target.closest('.day'); if (!day) return;
+  selectedDay = parseInt(day.dataset.day, 10);
+  document.querySelectorAll('.day').forEach(x => x.classList.toggle('sel', parseInt(x.dataset.day, 10) === selectedDay));
+  updateCalNote(selectedDay);
+  const ev = e.target.closest('.ev');
+  if (ev) toast(ev.dataset.ev);
+});
+renderWeek();
+
+/* ================= analytics channel bars ================= */
+document.getElementById('chanBars').innerHTML = CHANNELS.map(ch =>
+  `<div class="brow"><span class="bl">${ch.name}</span><div class="btrack"><div class="bfill" style="width:${ch.pct}%;background:${ch.color}"></div></div><span class="bv">${ch.val}</span></div>`).join('');
+
+/* ================= reviews ================= */
+document.getElementById('revDist').innerHTML = DIST.map(d =>
+  `<div class="drow"><span class="dl4">${d[0]}</span><div class="dtrack"><div class="dfill" style="width:${d[1]}%"></div></div><span class="dv4">${d[2]}</span></div>`).join('');
+document.getElementById('revList').innerHTML = REVIEWS.map(r => `
+  <div class="rev gcard" data-search-row><div class="rh">
+    <div class="av" style="width:32px;height:32px;font-size:11px;background:${AVG[r.grad % 5]}">${r.ini}</div>
+    <span class="rn">${r.name}</span><span class="rstars">${'★'.repeat(r.stars)}</span><span class="rt2">${r.when}</span>
+  </div><div class="rtx">${r.text}</div><div class="rfoot"><span class="tag ai">AI REPLIED</span><span class="tag g">GOOGLE</span></div></div>`).join('');
+document.getElementById('reqReviewsBtn').addEventListener('click', () => {
+  toast('Review requests sent to 3 recent clients');
+});
+
+/* ================= overview ================= */
+document.getElementById('pipeBars').innerHTML = PIPELINE.map(p =>
+  `<div class="brow"><span class="bl">${p.lab}</span><div class="btrack"><div class="bfill" style="width:${p.pct}%;background:${p.color}"></div></div><span class="bv">${p.val}</span></div>`).join('');
+document.getElementById('ovPayments').innerHTML = OVPAY.map(p => `
+  <div class="payrow">
+    <div class="av" style="width:28px;height:28px;font-size:10px;background:${AVG[p.grad % 5]}">${p.ini}</div>
+    <div class="pmid"><div class="pn2">${p.name}</div><div class="ps2">${p.sub}</div></div>
+    <div class="pamt">${p.amt}</div><span class="pstat ${p.cls}">${p.st}</span>
+  </div>`).join('');
+
+/* ================= payments page ================= */
+let payTab = 'all';
+function renderInvoices(){
+  const rows = INVOICES.filter(inv => payTab === 'all' || inv.status === payTab);
+  document.getElementById('payBody').innerHTML = rows.map((inv, i) => {
+    const idx = INVOICES.indexOf(inv);
+    const pill = inv.status === 'Paid' ? '<span class="pill green">Paid</span>'
+      : inv.status === 'Overdue' ? '<span class="pill red">Overdue</span>' : '<span class="pill amber">Due</span>';
+    const act = inv.status === 'Paid' ? '' : `<button class="rowbtn" data-chase="${idx}">${inv.status === 'Overdue' ? 'Chase now' : 'Send reminder'}</button>`;
+    return `<tr data-search-row><td><div class="cellwho"><div class="av" style="width:28px;height:28px;font-size:10px;background:${AVG[inv.grad % 5]}">${inv.ini}</div><b>${inv.client}</b></div></td><td>${inv.desc}</td><td><b>${gbp(inv.amount)}</b></td><td>${pill}</td><td>${act}</td></tr>`;
+  }).join('');
+  const sum = s => INVOICES.filter(x => x.status === s).reduce((a, x) => a + x.amount, 0);
+  document.getElementById('payCollected').textContent = gbp(sum('Paid'));
+  document.getElementById('payOutstanding').textContent = gbp(sum('Due') + sum('Overdue'));
+  document.getElementById('payOverdue').textContent = gbp(sum('Overdue'));
+  applySearch();
+}
+document.querySelectorAll('#payTabs .tab2').forEach(b => b.addEventListener('click', () => {
+  payTab = b.dataset.ptab;
+  document.querySelectorAll('#payTabs .tab2').forEach(x => x.classList.toggle('on', x === b));
+  renderInvoices();
+}));
+document.getElementById('payBody').addEventListener('click', e => {
+  const b = e.target.closest('[data-chase]'); if (!b) return;
+  const inv = INVOICES[parseInt(b.dataset.chase, 10)];
+  b.disabled = true; b.textContent = 'Sent ✓';
+  toast(`Reminder sent to ${inv.client} (${gbp(inv.amount)})`);
+});
+renderInvoices();
+
+/* ================= clients page ================= */
+let clientTab = 'all';
+function renderClients(){
+  const rows = CLIENTS.filter(c => clientTab === 'all' || c.status === clientTab);
+  document.getElementById('clientsBody').innerHTML = rows.map(c => {
+    const pill = c.status === 'Active' ? '<span class="pill green">Active</span>'
+      : c.status === 'Lead' ? '<span class="pill amber">Lead</span>' : '<span class="pill grey">Completed</span>';
+    return `<tr data-search-row><td><div class="cellwho"><div class="av" style="width:28px;height:28px;font-size:10px;background:${AVG[c.grad % 5]}">${c.ini}</div><b>${c.name}</b></div></td><td>${c.job}</td><td>${c.loc}</td><td>${pill}</td><td>${c.last}</td></tr>`;
+  }).join('');
+  applySearch();
+}
+document.querySelectorAll('#clientTabs .tab2').forEach(b => b.addEventListener('click', () => {
+  clientTab = b.dataset.ctab;
+  document.querySelectorAll('#clientTabs .tab2').forEach(x => x.classList.toggle('on', x === b));
+  renderClients();
+}));
+renderClients();
+
+/* ================= search (filters rows on the page you are on) ================= */
+const searchInput = document.getElementById('search');
+function applySearch(){
+  const q = document.getElementById('search').value.trim().toLowerCase();
+  document.querySelectorAll('.page.on [data-search-row]').forEach(row => {
+    row.style.display = (!q || row.textContent.toLowerCase().includes(q)) ? '' : 'none';
+  });
+  document.querySelectorAll('.page.on [data-noresults]').forEach(nr => {
+    const rows = [...nr.closest('.page').querySelectorAll('[data-search-row]')];
+    nr.style.display = (q && rows.length && rows.every(r => r.style.display === 'none')) ? 'block' : 'none';
+  });
+}
+searchInput.addEventListener('input', applySearch);
+
+/* ================= activity panel ================= */
+const actpanel = document.getElementById('actpanel');
+document.getElementById('activityBtn').addEventListener('click', e => { e.stopPropagation(); actpanel.classList.toggle('open'); });
+document.addEventListener('click', e => { if (!actpanel.contains(e.target)) actpanel.classList.remove('open'); });
+
+/* ================= AI receptionist toggle (sidebar card) ================= */
+let aiOn = true;
+document.getElementById('aicard').addEventListener('click', () => {
+  aiOn = !aiOn;
+  const card = document.getElementById('aicard');
+  card.classList.toggle('off', !aiOn);
+  card.setAttribute('aria-pressed', String(aiOn));
+  document.getElementById('aicard-msg').textContent = aiOn ? 'Live · answered 14 enquiries today' : 'Off · enquiries go to the inbox unanswered';
+  toast(aiOn ? 'AI receptionist is live' : 'AI receptionist switched off');
+});
+
+/* ================= enquiry modal ================= */
+const modal = document.getElementById('enquiryModal'), scrim = document.getElementById('scrim');
+function openModal(type){
+  if (type) document.getElementById('fType').value = type;
+  modal.classList.add('open'); scrim.classList.add('open');
+  setTimeout(() => document.getElementById('fName').focus(), 30);
+}
+function closeModal(){ modal.classList.remove('open'); scrim.classList.remove('open'); }
+document.getElementById('newEnquiryBtn').addEventListener('click', () => openModal());
+document.getElementById('calBookBtn').addEventListener('click', () => openModal('Site visit'));
+document.getElementById('modalCancel').addEventListener('click', closeModal);
+scrim.addEventListener('click', closeModal);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal(); closeSidebar(); } });
+document.getElementById('enquiryForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const name = document.getElementById('fName').value.trim();
+  const type = document.getElementById('fType').value;
+  const details = document.getElementById('fDetails').value.trim();
+  if (!name || !details) return;
+  const ini = name.replace(/^(Mrs|Mr|Ms|Dr)\s+/i, '').split(/\s+/).map(w => w[0]).join('').slice(0, 2).toUpperCase() || 'EN';
+  CONVOS.unshift({ name, ini, grad: CONVOS.length % 5, time:'Just now', prev:details.length > 34 ? details.slice(0, 34) + '…' : details,
+    unread:0, sub:`${type} · via website`, chan:'WEBSITE',
+    msgs:[ { c:'in', t:details, time:'Just now' } ] });
+  activeConvo = 0;
+  renderConvos(); renderThread(); closeModal(); e.target.reset();
+  toast(`Enquiry from ${name} added to your Inbox`);
+  goTo('inbox');
+});
+
+/* ================= start ================= */
+goTo('inbox');
+</script>
+</body>
+</html>

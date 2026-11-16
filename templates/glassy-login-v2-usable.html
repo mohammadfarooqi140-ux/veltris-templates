@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Glassy Login Form V2 — working demo</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html,body { min-height:100%; }
+  body {
+    font-family:-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+    -webkit-font-smoothing:antialiased; background:#0A0A0A; color:#fff;
+    min-height:100dvh; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    padding:32px 16px; position:relative; overflow:hidden;
+  }
+  /* ---------- facet diamond backdrop (from the source) ---------- */
+  .facet-bg { position:fixed; inset:0; z-index:0; overflow:hidden; }
+  .facet-bg svg { width:100%; height:100%; display:block; }
+  .brand { position:relative; z-index:1; text-align:center; margin-bottom:26px; }
+  .brand h1 { font-size:30px; font-weight:700; letter-spacing:.5px; }
+  .brand h1 span { color:#FF6A00; }
+  .brand p { margin-top:6px; font-size:13.5px; color:#9CA3AF; }
+
+  /* ---------- LOGIN CARD (from the source) ---------- */
+  #card {
+    position:relative; z-index:1; width:918px; max-width:100%; height:420px;
+    border-radius:18px; overflow:hidden;
+    background:rgba(31,41,55,0.30);
+    backdrop-filter:blur(14px) saturate(120%);
+    -webkit-backdrop-filter:blur(14px) saturate(120%);
+    border:1px solid rgba(255,255,255,0.20);
+    box-shadow:0 30px 80px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.12);
+  }
+  .state { position:absolute; inset:0; transition:clip-path .55s cubic-bezier(.22,.8,.3,1); }
+  .statebg { position:absolute; inset:0; background:rgba(31,41,55,0.55);
+    backdrop-filter:blur(12px) saturate(120%); -webkit-backdrop-filter:blur(12px) saturate(120%); }
+  .clipL { position:absolute; inset:0; overflow:hidden; clip-path:polygon(0 0, 60% 0, 40% 100%, 0 100%); }
+  .clipR { position:absolute; inset:0; overflow:hidden; clip-path:polygon(60% 0, 100% 0, 100% 100%, 40% 100%); }
+  #stateA { clip-path:polygon(0 0, 100% 0, 100% 100%, 0 100%); }
+  #stateB { clip-path:polygon(125% 0, 100% 0, 100% 100%, 105% 100%); }
+  #card.show-login #stateA { clip-path:polygon(0 0, -25% 0, -45% 100%, 0 100%); }
+  #card.show-login #stateB { clip-path:polygon(0 0, 100% 0, 100% 100%, 0 100%); }
+
+  .zoneL { position:absolute; left:0; top:0; width:560px; max-width:62%; height:420px; padding:0 30px 0 40px; }
+  .zoneR { position:absolute; right:0; top:0; width:560px; max-width:62%; height:420px; padding:0 40px 0 96px; }
+  .zoneR2 { padding-left:158px; }
+
+  .msg { height:100%; display:flex; flex-direction:column; justify-content:center; }
+  .msg h2 { font-size:46px; font-weight:700; color:#fff; line-height:1.12; letter-spacing:.5px; }
+  .msg p { margin-top:18px; font-size:24px; line-height:1.45; color:#D1D5DB; max-width:400px; }
+  .btn-outline {
+    margin-top:28px; align-self:flex-start; padding:13px 34px; border-radius:999px;
+    border:1.5px solid rgba(255,255,255,0.55); background:rgba(10,12,16,0.35);
+    color:#fff; font-size:22px; font-weight:600; white-space:nowrap; font-family:inherit; cursor:pointer;
+    transition:background .15s;
+  }
+  .btn-outline:hover { background:rgba(255,255,255,0.14); }
+
+  .form { height:100%; display:flex; flex-direction:column; justify-content:center; }
+  .form h2 { font-size:38px; font-weight:700; color:#fff; margin-bottom:16px; }
+  .field {
+    display:flex; align-items:center; gap:12px; padding:7px 2px 9px;
+    border-bottom:2px solid #4B5563; margin-bottom:6px; position:relative;
+  }
+  .field.err { border-bottom-color:#F87171; }
+  .field svg { flex:0 0 26px; display:block; }
+  .field input {
+    flex:1; min-width:0; background:none; border:none; outline:none;
+    font:inherit; font-size:22px; color:#E5E7EB;
+  }
+  .field input::placeholder { color:#9CA3AF; }
+  .field input:-webkit-autofill { -webkit-text-fill-color:#E5E7EB; transition:background-color 9999s; }
+  .eye { background:none; border:none; cursor:pointer; padding:4px; margin-left:auto; display:flex; }
+  .eye svg { flex:0 0 26px; }
+  .errmsg { font-size:13px; color:#F87171; min-height:17px; margin-bottom:6px; }
+  .btn-solid {
+    margin-top:8px; padding:12px 0; border-radius:999px; text-align:center;
+    background:#6B7280; color:#fff; font-size:22px; font-weight:600; border:none;
+    font-family:inherit; cursor:pointer; width:100%; transition:background .15s, filter .15s;
+  }
+  .btn-solid:hover { background:#7d8590; }
+  .btn-solid:disabled { opacity:.6; cursor:default; }
+  .small { margin-top:13px; font-size:18px; color:#9CA3AF; text-align:center; }
+  .small button { background:none; border:none; color:#fff; font-weight:700; text-decoration:underline;
+    font:inherit; cursor:pointer; padding:0; }
+  .forgot { margin-top:11px; text-align:center; font-size:18px; color:#9CA3AF; background:none; border:none;
+    font:inherit; cursor:pointer; padding:0; }
+  .forgot:hover { color:#fff; }
+  .forgot.sent { color:#34D399; }
+
+  #divider { position:absolute; top:-10px; bottom:-10px; left:59%; width:2px; z-index:40;
+    background:rgba(255,255,255,0.35); transform:rotate(11deg); pointer-events:none; }
+
+  /* ---------- success state (extension: the source has no submit result) ---------- */
+  #success { position:absolute; inset:0; z-index:50; display:none; flex-direction:column;
+    align-items:center; justify-content:center; text-align:center; padding:24px;
+    background:rgba(16,20,26,0.72); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); }
+  #success.show { display:flex; }
+  #success .tick { width:74px; height:74px; border-radius:50%; border:3px solid #34D399;
+    display:flex; align-items:center; justify-content:center; margin-bottom:18px; }
+  #success h2 { font-size:30px; font-weight:700; }
+  #success p { margin-top:8px; font-size:16px; color:#D1D5DB; max-width:420px; line-height:1.5; }
+  #success .btn-solid { width:auto; padding:11px 30px; margin-top:22px; font-size:17px; background:#FF6A00; }
+  #success .btn-solid:hover { filter:brightness(1.1); }
+
+  .hint { position:relative; z-index:1; margin-top:22px; font-size:12.5px; color:#6B7280; text-align:center; line-height:1.6; }
+  .hint b { color:#9CA3AF; font-weight:600; }
+  .toast { position:fixed; z-index:70; left:50%; bottom:26px; transform:translate(-50%,80px); opacity:0;
+    background:#fff; color:#111; font-size:13.5px; font-weight:500; padding:12px 20px; border-radius:999px;
+    box-shadow:0 16px 36px rgba(0,0,0,.5); transition:transform .3s,opacity .3s; pointer-events:none;
+    max-width:calc(100vw - 32px); text-align:center; }
+  .toast.show { transform:translate(-50%,0); opacity:1; }
+
+  /* ---------- responsive ---------- */
+  @media (max-width:720px) {
+    body { justify-content:flex-start; padding-top:28px; }
+    .brand h1 { font-size:24px; }
+    #card { height:auto; min-height:480px; }
+    .state { clip-path:none !important; }
+    .clipL, .clipR { clip-path:none !important; }
+    #signupForm h2, #signupForm .field, #signupForm .errmsg, #signupForm .small { margin-left:0 !important; }
+    #signupForm .btn-solid { margin-left:0 !important; width:100% !important; }
+    #card.show-login #stateA { display:none; }
+    #card:not(.show-login) #stateB { display:none; }
+    .msg { display:none; }
+    .zoneL, .zoneR, .zoneR2 { position:relative; width:100%; max-width:100%; height:auto; min-height:480px; padding:28px 26px; }
+    .form h2 { font-size:30px; }
+    .msg h2 { font-size:34px; }
+    #divider { display:none; }
+    .field input { font-size:18px; }
+    .btn-solid { font-size:19px; }
+    .small, .forgot { font-size:16px; }
+  }
+</style>
+</head>
+<body>
+  <div class="facet-bg" aria-hidden="true">
+    <svg viewBox="0 0 1080 768" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <pattern id="dia" width="216" height="216" patternUnits="userSpaceOnUse">
+          <rect width="216" height="216" fill="#101010"/>
+          <polygon points="108,4 212,108 108,212 4,108" fill="#171717" stroke="rgba(255,255,255,0.02)" stroke-width="1.5"/>
+          <polygon points="0,0 108,0 0,108" fill="#1D1D1D" stroke="rgba(255,255,255,0.02)" stroke-width="1.5"/>
+          <polygon points="216,0 216,108 108,0" fill="#131313" stroke="rgba(255,255,255,0.02)" stroke-width="1.5"/>
+          <polygon points="0,216 0,108 108,216" fill="#1E1E1E" stroke="rgba(255,255,255,0.02)" stroke-width="1.5"/>
+          <polygon points="216,216 108,216 216,108" fill="#161616" stroke="rgba(255,255,255,0.02)" stroke-width="1.5"/>
+        </pattern>
+      </defs>
+      <rect width="1080" height="768" fill="url(#dia)"/>
+      <rect width="1080" height="768" fill="rgba(0,0,0,0.38)"/>
+    </svg>
+  </div>
+
+  <div class="brand">
+    <h1>Glassy login form <span>V2</span></h1>
+    <p>The working demo from the reel. It actually works — try it.</p>
+  </div>
+
+  <div id="card">
+    <!-- STATE A : message left / create-account form right -->
+    <div class="state" id="stateA">
+      <div class="statebg"></div>
+      <div class="clipL">
+        <div class="zoneL">
+          <div class="msg">
+            <h2>WELCOME BACK!</h2>
+            <p>Already a Member? Please Login with your credentials.</p>
+            <button class="btn-outline" id="goLoginBtn" type="button">Sign In &#8594;</button>
+          </div>
+        </div>
+      </div>
+      <div class="clipR">
+        <div class="zoneR">
+          <form class="form" id="signupForm" novalidate>
+            <h2 style="margin-left:104px;">Create Account</h2>
+            <div class="field" style="margin-left:56px;">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5"/></svg>
+              <input id="suName" type="text" placeholder="Full Name" autocomplete="name">
+            </div>
+            <div class="errmsg" id="suNameErr" style="margin-left:56px;"></div>
+            <div class="field" style="margin-left:56px;">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+              <input id="suEmail" type="email" placeholder="Work Email" autocomplete="email">
+            </div>
+            <div class="errmsg" id="suEmailErr" style="margin-left:56px;"></div>
+            <div class="field" style="margin-left:56px;">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.8" stroke-linecap="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+              <input id="suPass" type="password" placeholder="Create Password" autocomplete="new-password">
+              <button class="eye" type="button" data-eye="suPass" aria-label="Show password">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-6.5 10-6.5S22 12 22 12s-3.5 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+            <div class="errmsg" id="suPassErr" style="margin-left:56px;"></div>
+            <button class="btn-solid" type="submit" style="margin-left:56px;width:calc(100% - 56px);">Sign Up</button>
+            <div class="small" style="margin-left:56px;">Already a Member? <button type="button" id="goLoginLink">Login</button></div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- STATE B : login form left / message right -->
+    <div class="state" id="stateB">
+      <div class="statebg"></div>
+      <div class="clipL">
+        <div class="zoneL">
+          <form class="form" id="loginForm" novalidate>
+            <h2>Login</h2>
+            <div class="field" style="width:330px;max-width:100%;">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5"/></svg>
+              <input id="liUser" type="text" placeholder="Username" value="coder_admin" autocomplete="username">
+            </div>
+            <div class="errmsg" id="liUserErr"></div>
+            <div class="field" style="width:330px;max-width:100%;">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.8" stroke-linecap="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+              <input id="liPass" type="password" placeholder="Password" value="veltris-demo" autocomplete="current-password">
+              <button class="eye" type="button" data-eye="liPass" aria-label="Show password">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-6.5 10-6.5S22 12 22 12s-3.5 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+            <div class="errmsg" id="liPassErr"></div>
+            <button class="btn-solid" type="submit" style="width:330px;max-width:100%;">Login</button>
+            <div class="small" style="width:330px;max-width:100%;">Don&#8217;t have an account? <button type="button" id="goSignupLink">Sign Up</button></div>
+            <button class="forgot" type="button" id="forgotBtn" style="width:330px;max-width:100%;">Forgot Password?</button>
+          </form>
+        </div>
+      </div>
+      <div class="clipR">
+        <div class="zoneR zoneR2">
+          <div class="msg">
+            <h2>HELLO,<br>FRIEND!</h2>
+            <p>Enter your personal details and start your journey with us.</p>
+            <button class="btn-outline" id="goSignupBtn" type="button">Create Account &#8594;</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="divider" aria-hidden="true"></div>
+
+    <!-- SUCCESS (extension) -->
+    <div id="success" role="status">
+      <div class="tick">
+        <svg width="36" height="36" viewBox="0 0 24 24"><path d="M4 12.5 L9.5 18 L20 6.5" fill="none" stroke="#34D399" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <h2 id="successTitle">Welcome back!</h2>
+      <p id="successText">You are signed in. This is a front-end demo — no account was created and nothing was sent anywhere.</p>
+      <button class="btn-solid" type="button" id="backBtn">Back to sign in</button>
+    </div>
+  </div>
+
+  <p class="hint">Demo only — sign in with the pre-filled account, or create one.<br>Nothing you type leaves this page.</p>
+  <div class="toast" id="toast"></div>
+
+<script>
+  const card = document.getElementById('card');
+  const toastEl = document.getElementById('toast');
+  let toastTimer;
+  function toast(msg){
+    toastEl.textContent = msg; toastEl.classList.add('show');
+    clearTimeout(toastTimer); toastTimer = setTimeout(()=>toastEl.classList.remove('show'), 2600);
+  }
+
+  /* ---------- panel switching (the slide from the source, driven by clicks) ---------- */
+  function showLogin(){ card.classList.add('show-login'); }
+  function showSignup(){ card.classList.remove('show-login'); }
+  document.getElementById('goLoginBtn').addEventListener('click', showLogin);
+  document.getElementById('goLoginLink').addEventListener('click', showLogin);
+  document.getElementById('goSignupBtn').addEventListener('click', showSignup);
+  document.getElementById('goSignupLink').addEventListener('click', showSignup);
+
+  /* ---------- show / hide password ---------- */
+  document.querySelectorAll('[data-eye]').forEach(btn => btn.addEventListener('click', () => {
+    const input = document.getElementById(btn.dataset.eye);
+    const show = input.type === 'password';
+    input.type = show ? 'text' : 'password';
+    btn.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+    btn.style.opacity = show ? '1' : '.75';
+    input.focus();
+  }));
+
+  /* ---------- validation helpers ---------- */
+  function setErr(inputId, errId, msg){
+    const input = document.getElementById(inputId);
+    document.getElementById(errId).textContent = msg || '';
+    input.closest('.field').classList.toggle('err', !!msg);
+    return !msg;
+  }
+  const emailOk = v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+  ['suName','suEmail','suPass','liUser','liPass'].forEach(id => {
+    document.getElementById(id).addEventListener('input', e => e.target.closest('.field').classList.remove('err'));
+  });
+
+  /* ---------- success state ---------- */
+  const success = document.getElementById('success');
+  function showSuccess(title, text){
+    document.getElementById('successTitle').textContent = title;
+    document.getElementById('successText').textContent = text;
+    success.classList.add('show');
+  }
+  document.getElementById('backBtn').addEventListener('click', () => {
+    success.classList.remove('show');
+    showLogin();
+    document.getElementById('liPass').value = '';
+    document.getElementById('liPass').focus();
+  });
+
+  /* ---------- create account ---------- */
+  document.getElementById('signupForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const name = document.getElementById('suName').value.trim();
+    const email = document.getElementById('suEmail').value.trim();
+    const pass = document.getElementById('suPass').value;
+    let ok = true;
+    ok = setErr('suName', 'suNameErr', name ? '' : 'Please enter your full name.') && ok;
+    ok = setErr('suEmail', 'suEmailErr', !email ? 'Please enter your work email.' : (!emailOk(email) ? 'That email does not look right.' : '')) && ok;
+    ok = setErr('suPass', 'suPassErr', pass.length < 6 ? 'Password needs at least 6 characters.' : '') && ok;
+    if (!ok) return;
+    const first = name.split(/\s+/)[0];
+    showSuccess(`Welcome, ${first}!`, `Your account for ${email} is ready. This is a front-end demo — no account was created and nothing was sent anywhere.`);
+    toast(`Account created for ${name}`);
+  });
+
+  /* ---------- login ---------- */
+  document.getElementById('loginForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const user = document.getElementById('liUser').value.trim();
+    const pass = document.getElementById('liPass').value;
+    let ok = true;
+    ok = setErr('liUser', 'liUserErr', user ? '' : 'Please enter your username.') && ok;
+    ok = setErr('liPass', 'liPassErr', pass ? '' : 'Please enter your password.') && ok;
+    if (!ok) return;
+    showSuccess(`Welcome back, ${user}!`, 'You are signed in. This is a front-end demo — no account was created and nothing was sent anywhere.');
+    toast(`Signed in as ${user}`);
+  });
+
+  /* ---------- forgot password ---------- */
+  document.getElementById('forgotBtn').addEventListener('click', e => {
+    const btn = e.currentTarget;
+    btn.textContent = 'Reset link sent ✓';
+    btn.classList.add('sent');
+    toast('Password reset link sent — check your inbox');
+    setTimeout(() => { btn.textContent = 'Forgot Password?'; btn.classList.remove('sent'); }, 4000);
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Adminly — Admin Console</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html,body { height:100%; }
+  body {
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+    color:#131c38; -webkit-font-smoothing:antialiased; overflow:hidden;
+    background:linear-gradient(165deg,#d9f2ff 0%,#e3e9ff 42%,#f6e3ff 74%,#ffe4f1 100%);
+  }
+  /* ---------- aurora backdrop ---------- */
+  .backdrop { position:fixed; inset:0; overflow:hidden; z-index:0; }
+  .blob { position:absolute; border-radius:50%; filter:blur(70px); }
+  .blob.b1 { width:55vw; height:55vw; background:#22d3ee; left:-14vw; top:-20vw; opacity:.55; }
+  .blob.b2 { width:52vw; height:52vw; background:#818cf8; right:-13vw; top:2vh; opacity:.5; }
+  .blob.b3 { width:44vw; height:44vw; background:#f472b6; left:26vw; bottom:-24vw; opacity:.45; }
+  .blob.b4 { width:34vw; height:34vw; background:#c084fc; right:14vw; bottom:-18vw; opacity:.5; }
+
+  /* ---------- app shell ---------- */
+  .app {
+    position:relative; z-index:1; display:flex; height:100dvh; margin:14px;
+    border-radius:26px; overflow:hidden;
+    background:linear-gradient(155deg, rgba(255,255,255,.68), rgba(255,255,255,.48) 55%, rgba(255,255,255,.58));
+    border:1px solid rgba(255,255,255,.85);
+    box-shadow:0 40px 90px rgba(76,29,149,.35), inset 0 1px 0 rgba(255,255,255,.9);
+    backdrop-filter:blur(22px) saturate(150%); -webkit-backdrop-filter:blur(22px) saturate(150%);
+  }
+
+  /* ---------- sidebar ---------- */
+  .sidebar {
+    width:236px; flex:0 0 236px; display:flex; flex-direction:column; padding:22px 16px 18px;
+    background:linear-gradient(180deg, rgba(255,255,255,.42), rgba(255,255,255,.18));
+    border-right:1px solid rgba(255,255,255,.65);
+  }
+  .logo { display:flex; align-items:center; gap:10px; padding:0 6px; }
+  .logo .lg { width:36px; height:36px; border-radius:11px; flex:0 0 36px;
+    background:linear-gradient(145deg,#38bdf8,#8b5cf6); display:flex; align-items:center; justify-content:center;
+    font-size:18px; font-weight:700; color:#fff; box-shadow:0 6px 14px rgba(139,92,246,.45); }
+  .logo .ln { font-size:16.5px; font-weight:600; color:#131c38; line-height:1.1; }
+  .logo .ln span { display:block; font-size:10.5px; font-weight:600; color:#7c8aa5; letter-spacing:1.1px; margin-top:2px; }
+  .nav { margin-top:26px; display:flex; flex-direction:column; gap:5px; }
+  .nitem {
+    display:flex; align-items:center; gap:11px; padding:10px 12px; border-radius:12px; width:100%;
+    font:inherit; font-size:14.5px; font-weight:500; color:#5b6b8c; text-align:left;
+    background:none; border:1px solid transparent; cursor:pointer; transition:background .15s,color .15s;
+  }
+  .nitem:hover { background:rgba(255,255,255,.55); }
+  .nitem svg { width:18px; height:18px; flex:0 0 18px; }
+  .nitem .bdg { margin-left:auto; font-size:10.5px; font-weight:700; background:#f43f5e; color:#fff; border-radius:999px; padding:1px 7px; }
+  .nitem .bdg.hide { display:none; }
+  .nitem.on {
+    background:linear-gradient(120deg,#8b5cf6,#ec4899); color:#fff; font-weight:600;
+    box-shadow:0 8px 18px rgba(168,85,247,.4), inset 0 1px 0 rgba(255,255,255,.35);
+  }
+  .sidebar .sp { flex:1; }
+  .syscard { border-radius:15px; padding:12px 13px; background:rgba(255,255,255,.5); border:1px solid rgba(255,255,255,.75); }
+  .syscard .at { font-size:12.5px; font-weight:600; color:#065f46; display:flex; align-items:center; gap:7px; }
+  .syscard .at i { width:7px; height:7px; border-radius:50%; background:#10b981; display:block; animation:pulse 2.2s infinite; }
+  .syscard.off .at i { background:rgba(19,28,56,.35); animation:none; }
+  .syscard .am { font-size:11.5px; color:#5b6b8c; line-height:1.4; margin-top:4px; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.45} }
+  .userchip { display:flex; align-items:center; gap:10px; margin-top:14px; padding:0 4px; }
+  .userchip .un { font-size:13px; font-weight:600; color:#131c38; line-height:1.2; }
+  .userchip .un span { display:block; font-size:11px; color:#7c8aa5; font-weight:400; }
+  .av { border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:600; color:#fff; flex:0 0 auto; }
+
+  /* ---------- main column ---------- */
+  .main { flex:1; min-width:0; display:flex; flex-direction:column; }
+  .topbar { flex:0 0 auto; display:flex; align-items:center; gap:12px; padding:14px 22px;
+    border-bottom:1px solid rgba(255,255,255,.65); position:relative; }
+  .burger { display:none; width:38px; height:38px; border-radius:11px; border:1px solid rgba(19,28,56,.2);
+    background:rgba(255,255,255,.5); color:#131c38; cursor:pointer; align-items:center; justify-content:center; flex:0 0 auto; }
+  .burger svg { width:19px; height:19px; }
+  .search { flex:1; min-width:0; max-width:380px; height:38px; border-radius:999px;
+    background:rgba(255,255,255,.55); border:1px solid rgba(255,255,255,.8);
+    display:flex; align-items:center; gap:8px; padding:0 14px; }
+  .search svg { width:15px; height:15px; color:#7c8aa5; flex:0 0 auto; }
+  .search input { flex:1; min-width:0; border:none; outline:none; background:none; font:inherit; font-size:13.5px; color:#131c38; }
+  .search input::placeholder { color:#7c8aa5; }
+  .btn { font:inherit; cursor:pointer; border-radius:999px; white-space:nowrap; }
+  .btn.ghost { font-size:13px; font-weight:500; color:#5b6b8c;
+    border:1px solid rgba(19,28,56,.2); padding:9px 15px; background:rgba(255,255,255,.4); }
+  .btn.ghost:hover { background:rgba(255,255,255,.7); }
+  .btn.primary { font-size:13px; font-weight:600; color:#fff; border:none; padding:10px 17px;
+    background:linear-gradient(120deg,#8b5cf6,#ec4899); box-shadow:0 8px 18px rgba(168,85,247,.4); }
+  .btn.primary:hover { filter:brightness(1.07); }
+
+  /* ---------- pages ---------- */
+  .pages { flex:1; overflow-y:auto; padding:22px 24px 30px; }
+  .page { display:none; flex-direction:column; gap:16px; max-width:1180px; margin:0 auto; width:100%; }
+  .page.on { display:flex; }
+  .gcard { background:rgba(255,255,255,.55); border:1px solid rgba(255,255,255,.78); border-radius:20px;
+    box-shadow:0 14px 30px rgba(76,29,149,.13), inset 0 1px 0 rgba(255,255,255,.85); }
+  .phead { display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+  .phead .pt { font-size:26px; font-weight:600; color:#131c38; letter-spacing:.2px; }
+  .phead .pt span { color:#8b5cf6; }
+  .phead .ps { font-size:13px; color:#5b6b8c; display:flex; align-items:center; gap:6px; }
+  .phead .ps .livedot { width:7px; height:7px; border-radius:50%; background:#10b981; display:inline-block; animation:pulse 2.2s infinite; }
+  .phead .ps b { color:#059669; font-weight:600; }
+
+  /* stat cards */
+  .statrow { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
+  .stat { padding:16px 18px 14px; display:flex; flex-direction:column; position:relative; min-height:132px; }
+  .stat .stop { display:flex; align-items:flex-start; justify-content:space-between; }
+  .stat .sic { width:33px; height:33px; border-radius:11px; background:rgba(255,255,255,.65); border:1px solid rgba(255,255,255,.7);
+    display:flex; align-items:center; justify-content:center; }
+  .stat .sic svg { width:17px; height:17px; }
+  .stat .chg { font-size:11px; font-weight:700; border-radius:999px; padding:2px 8px; }
+  .stat .chg.up { color:#047857; background:#d1fae5; }
+  .stat .chg.down { color:#be123c; background:#ffe4e6; }
+  .stat .sl { font-size:11.5px; font-weight:600; color:#7c8aa5; letter-spacing:.4px; margin-top:10px; text-transform:uppercase; }
+  .stat .sv { font-size:30px; font-weight:700; color:#131c38; line-height:1.15; }
+  .stat .ssub { font-size:11.5px; color:#5b6b8c; margin-top:2px; }
+  .stat.hot { background:linear-gradient(140deg,#8b5cf6,#ec4899); border-color:rgba(255,255,255,.4);
+    box-shadow:0 18px 36px rgba(168,85,247,.35), inset 0 1px 0 rgba(255,255,255,.3); }
+  .stat.hot .sl, .stat.hot .sv { color:#fff; }
+  .stat.hot .ssub { color:rgba(255,255,255,.7); }
+  .stat.hot .sic { background:rgba(255,255,255,.22); border-color:rgba(255,255,255,.3); color:#fff; }
+  .stat.hot .chg.up { color:#d1fae5; background:rgba(255,255,255,.18); }
+
+  /* chart card */
+  .chartcard { padding:18px 20px 12px; }
+  .chartcard .ct { font-size:16px; font-weight:600; color:#131c38; display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+  .chartcard .ct span { color:#7c8aa5; font-weight:500; font-size:12px; margin-left:6px; }
+  .legend { display:flex; gap:14px; font-size:11.5px; color:#5b6b8c; font-weight:500; }
+  .legend i { width:8px; height:8px; border-radius:50%; display:inline-block; margin-right:5px; }
+  .rangewrap { display:flex; align-items:center; gap:8px; margin-top:12px; flex-wrap:wrap; }
+  .rpill { font:inherit; font-size:11.5px; font-weight:500; color:#5b6b8c; background:rgba(255,255,255,.55);
+    border:1px solid rgba(255,255,255,.7); padding:6px 13px; border-radius:999px; cursor:pointer; }
+  .rpill.on { background:#131c38; color:#fff; border-color:#131c38; font-weight:600; }
+  .chartsvg { width:100%; height:auto; display:block; margin-top:10px; }
+  .days { display:flex; justify-content:space-between; font-size:11px; color:#7c8aa5; font-weight:500; padding:2px 2px 0; }
+
+  /* tables */
+  .tablecard { padding:18px 20px 10px; }
+  .tablecard .tt { font-size:16px; font-weight:600; color:#131c38; display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+  .tablecard .tt .tsub { font-size:11.5px; color:#7c8aa5; font-weight:500; }
+  .tablecard .tt .va { font-size:12px; font-weight:600; color:#8b5cf6; cursor:pointer; background:none; border:none; font-family:inherit; }
+  .tabs { display:flex; gap:8px; margin-top:13px; flex-wrap:wrap; }
+  .tab2 { font:inherit; font-size:12px; font-weight:500; color:#5b6b8c; background:rgba(255,255,255,.55);
+    border:1px solid rgba(255,255,255,.7); padding:6px 14px; border-radius:999px; cursor:pointer; }
+  .tab2.on { background:#131c38; color:#fff; border-color:#131c38; font-weight:600; }
+  .tscroll { overflow-x:auto; margin-top:8px; }
+  table { width:100%; border-collapse:collapse; font-size:13.5px; min-width:560px; }
+  th { text-align:left; font-size:11px; font-weight:700; letter-spacing:.6px; color:#7c8aa5;
+    padding:10px 10px 8px; border-bottom:1px solid rgba(19,28,56,.12); white-space:nowrap; }
+  td { padding:11px 10px; border-bottom:1px solid rgba(19,28,56,.06); color:#5b6b8c; vertical-align:middle; }
+  td b { color:#131c38; font-weight:600; }
+  tr:last-child td { border-bottom:none; }
+  .who { display:flex; align-items:center; gap:11px; min-width:0; }
+  .who .wn { font-size:13.5px; font-weight:600; color:#131c38; line-height:1.15; }
+  .who .we { font-size:11px; color:#7c8aa5; }
+  .pill { display:inline-block; font-size:11px; font-weight:700; padding:3px 10px; border-radius:999px; white-space:nowrap; }
+  .pill i { width:5.5px; height:5.5px; border-radius:50%; display:inline-block; margin-right:5px; vertical-align:1px; }
+  .pill.act { background:#d1fae5; color:#047857; } .pill.act i { background:#10b981; }
+  .pill.pen { background:#fef3c7; color:#b45309; } .pill.pen i { background:#f59e0b; }
+  .pill.blo { background:#ffe4e6; color:#be123c; } .pill.blo i { background:#f43f5e; }
+  .pill.ship { background:#dbeafe; color:#1d4ed8; } .pill.ship i { background:#3b82f6; }
+  .pill.proc { background:#ede9fe; color:#6d28d9; } .pill.proc i { background:#8b5cf6; }
+  .pill.del { background:#d1fae5; color:#047857; } .pill.del i { background:#10b981; }
+  .pill.can { background:#f1f5f9; color:#64748b; } .pill.can i { background:#94a3b8; }
+  .rowbtn { font:inherit; font-size:11.5px; font-weight:600; color:#8b5cf6; background:rgba(139,92,246,.1);
+    border:1px solid rgba(139,92,246,.35); padding:5px 12px; border-radius:999px; cursor:pointer; white-space:nowrap; }
+  .rowbtn:hover { background:rgba(139,92,246,.2); }
+  .rowbtn:disabled { opacity:.55; cursor:default; }
+  .noresults { display:none; padding:16px 10px; font-size:13px; color:#7c8aa5; }
+
+  /* product grid */
+  .prodgrid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:16px; }
+  .prod { padding:18px 19px; display:flex; flex-direction:column; gap:6px; }
+  .prod .pic { height:84px; border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:30px; }
+  .prod .pn { font-size:15px; font-weight:600; color:#131c38; }
+  .prod .pc { font-size:12px; color:#7c8aa5; }
+  .prod .pr { display:flex; align-items:baseline; justify-content:space-between; margin-top:4px; }
+  .prod .pp { font-size:19px; font-weight:700; color:#131c38; }
+  .prod .ps2 { font-size:11.5px; color:#5b6b8c; }
+  .prod .pfoot { display:flex; align-items:center; justify-content:space-between; margin-top:8px; }
+  .stock { font-size:11.5px; font-weight:600; }
+  .stock.low { color:#be123c; } .stock.ok { color:#047857; }
+
+  /* settings */
+  .setgrid { display:grid; grid-template-columns:1fr 1fr; gap:16px; align-items:start; }
+  .setcard { padding:19px 21px; }
+  .setcard h3 { font-size:15.5px; font-weight:600; color:#131c38; margin-bottom:6px; }
+  .fld { margin-top:12px; }
+  .fld label { display:block; font-size:11.5px; font-weight:700; letter-spacing:.4px; color:#7c8aa5; margin-bottom:5px; }
+  .fld input, .fld select { width:100%; font:inherit; font-size:13.5px; color:#131c38; padding:9px 13px; border-radius:12px;
+    border:1px solid rgba(19,28,56,.2); background:rgba(255,255,255,.55); outline:none; }
+  .fld input:focus, .fld select:focus { border-color:#8b5cf6; }
+  .togglerow { display:flex; align-items:center; gap:12px; padding:13px 0; border-top:1px solid rgba(19,28,56,.08); }
+  .togglerow:first-of-type { border-top:none; }
+  .togglerow .tl { flex:1; }
+  .togglerow .tl b { display:block; font-size:13.5px; font-weight:600; color:#131c38; }
+  .togglerow .tl span { font-size:11.5px; color:#7c8aa5; }
+  .switch { position:relative; width:46px; height:26px; flex:0 0 auto; border:none; cursor:pointer; border-radius:999px;
+    background:rgba(19,28,56,.25); transition:background .18s; padding:0; }
+  .switch::after { content:''; position:absolute; top:3px; left:3px; width:20px; height:20px; border-radius:50%;
+    background:#fff; box-shadow:0 2px 6px rgba(0,0,0,.25); transition:left .18s; }
+  .switch[aria-checked="true"] { background:linear-gradient(120deg,#8b5cf6,#ec4899); }
+  .switch[aria-checked="true"]::after { left:23px; }
+
+  /* modal + toast */
+  .scrim { position:fixed; inset:0; background:rgba(19,28,56,.45); z-index:55; display:none; }
+  .scrim.open { display:block; }
+  .modal { position:fixed; z-index:60; left:50%; top:50%; transform:translate(-50%,-50%); width:420px; max-width:calc(100vw - 32px);
+    background:rgba(255,250,255,.98); border:1px solid rgba(255,255,255,.85); border-radius:22px; padding:22px 24px;
+    box-shadow:0 30px 70px rgba(19,28,56,.5); display:none; }
+  .modal.open { display:block; }
+  .modal h3 { font-size:18px; font-weight:600; color:#131c38; }
+  .modal .msub { font-size:12.5px; color:#7c8aa5; margin-top:3px; }
+  .modal .mrow { display:flex; gap:10px; margin-top:18px; justify-content:flex-end; }
+  .toast { position:fixed; z-index:70; left:50%; bottom:26px; transform:translate(-50%,80px); opacity:0;
+    background:#131c38; color:#fff; font-size:13.5px; font-weight:500; padding:12px 20px; border-radius:999px;
+    box-shadow:0 16px 36px rgba(19,28,56,.45); transition:transform .3s,opacity .3s; pointer-events:none; max-width:calc(100vw - 32px); text-align:center; }
+  .toast.show { transform:translate(-50%,0); opacity:1; }
+
+  .navscrim { position:fixed; inset:0; background:rgba(19,28,56,.4); z-index:44; display:none; }
+
+  /* ---------- responsive ---------- */
+  @media (max-width:1080px) {
+    .statrow { grid-template-columns:repeat(2,1fr); }
+    .setgrid { grid-template-columns:1fr; }
+  }
+  @media (max-width:860px) {
+    .app { margin:0; border-radius:0; border:none; }
+    .sidebar { position:fixed; z-index:50; top:0; left:0; bottom:0; width:262px; flex:none;
+      transform:translateX(-105%); transition:transform .28s ease;
+      background:linear-gradient(180deg, rgba(255,255,255,.97), rgba(240,235,255,.95));
+      box-shadow:20px 0 50px rgba(19,28,56,.35); }
+    .sidebar.open { transform:translateX(0); }
+    .navscrim.open { display:block; }
+    .burger { display:flex; }
+    .topbar { padding:12px 14px; }
+    .topbar .btn.ghost { display:none; }
+    .pages { padding:16px 14px 24px; }
+  }
+  @media (max-width:560px) {
+    .topbar .av { display:none; }
+    .topbar .btn.primary { padding:9px 12px; font-size:12.5px; }
+    .statrow { grid-template-columns:1fr; }
+    .phead .pt { font-size:22px; }
+  }
+</style>
+</head>
+<body>
+<div class="backdrop"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div></div>
+
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="logo"><div class="lg">A</div><div class="ln">Adminly<span>ADMIN CONSOLE</span></div></div>
+    <nav class="nav" id="nav"></nav>
+    <div class="sp"></div>
+    <div class="syscard" id="syscard">
+      <div class="at"><i></i>System status</div>
+      <div class="am" id="sysmsg">All systems live · 99.99% uptime</div>
+    </div>
+    <div class="userchip">
+      <div class="av" style="width:34px;height:34px;font-size:12px;background:linear-gradient(145deg,#f472b6,#8b5cf6)">SC</div>
+      <div class="un">Sarah Chen<span>Super Admin</span></div>
+    </div>
+  </aside>
+  <div class="navscrim" id="navscrim"></div>
+
+  <div class="main">
+    <div class="topbar">
+      <button class="burger" id="burger" aria-label="Open menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+      <div class="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.8-3.8"/></svg>
+        <input id="search" type="text" placeholder="Search users, orders, products…" autocomplete="off">
+      </div>
+      <button class="btn ghost" id="exportBtn">Export report</button>
+      <button class="btn primary" id="inviteBtn">+ Invite user</button>
+      <div class="av" style="width:36px;height:36px;font-size:12px;background:linear-gradient(145deg,#38bdf8,#6366f1)">SC</div>
+    </div>
+
+    <div class="pages" id="pages">
+
+      <!-- ================= OVERVIEW ================= -->
+      <section class="page" id="page-overview">
+        <div class="phead"><div class="pt">Overview <span>· welcome back, Sarah</span></div>
+          <div class="ps"><span class="livedot"></span>Live · <b>342</b> active now</div></div>
+        <div class="statrow">
+          <div class="stat gcard">
+            <div class="stop"><div class="sic" style="background:rgba(14,165,233,.14);color:#0284c7"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="8" r="3.4"/><path d="M3.5 19.5c.6-3 2.8-4.5 5.5-4.5s4.9 1.5 5.5 4.5"/><path d="M15.5 5.4a3.4 3.4 0 0 1 0 5.9M17.8 15.3c1.6.7 2.5 2 2.8 4.2"/></svg></div><span class="chg up">↗ 12.5%</span></div>
+            <div class="sl">Total Users</div><div class="sv" data-count="48290">0</div><div class="ssub">2,314 joined this month</div>
+          </div>
+          <div class="stat gcard">
+            <div class="stop"><div class="sic" style="background:rgba(16,185,129,.14);color:#059669"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v18M16.5 6.5c-.8-1-2.4-1.5-4.5-1.5-2.8 0-4.5 1.3-4.5 3.2 0 4.6 9.3 2.4 9.3 7 0 1.9-2 3.3-4.8 3.3-2.2 0-4-.7-4.9-1.9"/></svg></div><span class="chg up">↗ 8.2%</span></div>
+            <div class="sl">Revenue</div><div class="sv">$<span data-count="86400">0</span></div><div class="ssub">This month, all channels</div>
+          </div>
+          <div class="stat gcard">
+            <div class="stop"><div class="sic" style="background:rgba(245,158,11,.16);color:#d97706"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h2.2l2.3 11h10.6l2-8H7"/><circle cx="10" cy="20" r="1.4"/><circle cx="17.5" cy="20" r="1.4"/></svg></div><span class="chg up">↗ 3.9%</span></div>
+            <div class="sl">Orders</div><div class="sv" data-count="12847">0</div><div class="ssub">312 orders today</div>
+          </div>
+          <div class="stat gcard hot">
+            <div class="stop"><div class="sic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 4v16h16"/><path d="M8 16v-5M12 16V8M16 16v-8M20 16V6"/></svg></div><span class="chg up">↗ 18.6%</span></div>
+            <div class="sl">Active Now</div><div class="sv" data-count="342">0</div><div class="ssub">Users online right now</div>
+          </div>
+        </div>
+        <div class="chartcard gcard">
+          <div class="ct"><div>Revenue overview<span>Last 7 days</span></div>
+            <div class="legend"><span><i style="background:#a855f7"></i>This week</span><span><i style="background:#38bdf8"></i>Last week</span></div></div>
+          <div id="overviewChart"></div>
+          <div class="days"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+        </div>
+        <div class="tablecard gcard">
+          <div class="tt"><span>Recent users</span><button class="va" data-goto="users">View all →</button></div>
+          <div class="tscroll"><table>
+            <thead><tr><th>User</th><th>Role</th><th>Status</th><th>Joined</th></tr></thead>
+            <tbody id="recentUsersBody"></tbody>
+          </table></div>
+          <div class="noresults" data-noresults>No users match your search.</div>
+        </div>
+      </section>
+
+      <!-- ================= USERS ================= -->
+      <section class="page" id="page-users">
+        <div class="phead"><div class="pt">Users</div><div class="ps"><b id="usersCount">12</b> accounts · 3 pending review</div></div>
+        <div class="tablecard gcard">
+          <div class="tt"><span>All users</span><span class="tsub">Search above filters this table</span></div>
+          <div class="tabs" id="usersTabs">
+            <button class="tab2 on" data-utab="all">All</button>
+            <button class="tab2" data-utab="act">Active</button>
+            <button class="tab2" data-utab="pen">Pending</button>
+            <button class="tab2" data-utab="blo">Blocked</button>
+          </div>
+          <div class="tscroll"><table>
+            <thead><tr><th>User</th><th>Role</th><th>Status</th><th>Joined</th><th></th></tr></thead>
+            <tbody id="usersBody"></tbody>
+          </table></div>
+          <div class="noresults" data-noresults>No users match.</div>
+        </div>
+      </section>
+
+      <!-- ================= ORDERS ================= -->
+      <section class="page" id="page-orders">
+        <div class="phead"><div class="pt">Orders</div><div class="ps"><b>12,847</b> orders · $86,400 this month</div></div>
+        <div class="tablecard gcard">
+          <div class="tt"><span>Recent orders</span><span class="tsub">Search above filters this table</span></div>
+          <div class="tabs" id="ordersTabs">
+            <button class="tab2 on" data-otab="all">All</button>
+            <button class="tab2" data-otab="proc">Processing</button>
+            <button class="tab2" data-otab="ship">Shipped</button>
+            <button class="tab2" data-otab="del">Delivered</button>
+            <button class="tab2" data-otab="can">Cancelled</button>
+          </div>
+          <div class="tscroll"><table>
+            <thead><tr><th>Order</th><th>Customer</th><th>Product</th><th>Date</th><th>Amount</th><th>Status</th><th></th></tr></thead>
+            <tbody id="ordersBody"></tbody>
+          </table></div>
+          <div class="noresults" data-noresults>No orders match.</div>
+        </div>
+      </section>
+
+      <!-- ================= PRODUCTS ================= -->
+      <section class="page" id="page-products">
+        <div class="phead"><div class="pt">Products</div><div class="ps"><b>6</b> products · 2 low on stock</div></div>
+        <div class="prodgrid" id="prodGrid"></div>
+      </section>
+
+      <!-- ================= ANALYTICS ================= -->
+      <section class="page" id="page-analytics">
+        <div class="phead"><div class="pt">Analytics</div><div class="ps"><span class="livedot"></span>Updated <b>just now</b> · <span id="anaRangeLabel">last 7 days</span></div></div>
+        <div class="statrow">
+          <div class="stat gcard">
+            <div class="stop"><div class="sic" style="background:rgba(14,165,233,.14);color:#0284c7"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="8" r="3.4"/><path d="M3.5 19.5c.6-3 2.8-4.5 5.5-4.5s4.9 1.5 5.5 4.5"/></svg></div><span class="chg up">↗ 12.5%</span></div>
+            <div class="sl">New users</div><div class="sv" data-count="2314">0</div><div class="ssub">Joined in the last 7 days</div>
+          </div>
+          <div class="stat gcard">
+            <div class="stop"><div class="sic" style="background:rgba(245,158,11,.16);color:#d97706"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h2.2l2.3 11h10.6l2-8H7"/><circle cx="10" cy="20" r="1.4"/><circle cx="17.5" cy="20" r="1.4"/></svg></div><span class="chg up">↗ 6.1%</span></div>
+            <div class="sl">Conversion rate</div><div class="sv"><span data-count="38" data-dec="1">0</span>%</div><div class="ssub">Visitors who placed an order</div>
+          </div>
+          <div class="stat gcard hot">
+            <div class="stop"><div class="sic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v18M16.5 6.5c-.8-1-2.4-1.5-4.5-1.5-2.8 0-4.5 1.3-4.5 3.2 0 4.6 9.3 2.4 9.3 7 0 1.9-2 3.3-4.8 3.3-2.2 0-4-.7-4.9-1.9"/></svg></div><span class="chg up">↗ 8.2%</span></div>
+            <div class="sl">Revenue</div><div class="sv">$<span data-count="86400">0</span></div><div class="ssub">This month, all channels</div>
+          </div>
+          <div class="stat gcard">
+            <div class="stop"><div class="sic" style="background:rgba(244,63,94,.13);color:#e11d48"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 4v16h16"/><path d="M8 16v-5M12 16V8M16 16v-8M20 16V6"/></svg></div><span class="chg down">↘ 1.4%</span></div>
+            <div class="sl">Bounce rate</div><div class="sv"><span data-count="324" data-dec="1">0</span>%</div><div class="ssub">Single-page visits, last 7 days</div>
+          </div>
+        </div>
+        <div class="chartcard gcard">
+          <div class="ct"><div>Revenue<div class="ct2" id="anaChartSub" style="font-size:12px;color:#7c8aa5;font-weight:500;margin-top:2px">$486 this week · up on last week</div></div>
+            <div class="legend"><span><i style="background:#a855f7"></i>This period</span><span><i style="background:#38bdf8"></i>Previous</span></div></div>
+          <div class="rangewrap">
+            <button class="rpill on" data-range="7">7 days</button>
+            <button class="rpill" data-range="30">30 days</button>
+            <button class="rpill" data-range="90">90 days</button>
+          </div>
+          <div id="analyticsChart"></div>
+          <div class="days" id="anaDays"></div>
+        </div>
+        <div class="tablecard gcard">
+          <div class="tt"><span>Top products</span><span class="tsub">By revenue this month</span></div>
+          <div class="tscroll"><table>
+            <thead><tr><th>Product</th><th>Category</th><th>Units sold</th><th>Revenue</th></tr></thead>
+            <tbody id="topProductsBody"></tbody>
+          </table></div>
+        </div>
+      </section>
+
+      <!-- ================= SETTINGS ================= -->
+      <section class="page" id="page-settings">
+        <div class="phead"><div class="pt">Settings</div><div class="ps">Adminly account · Sarah Chen</div></div>
+        <div class="setgrid">
+          <div class="setcard gcard">
+            <h3>Profile</h3>
+            <div class="fld"><label>FULL NAME</label><input id="setName" type="text" value="Sarah Chen"></div>
+            <div class="fld"><label>EMAIL</label><input id="setEmail" type="email" value="sarah@adminly.io"></div>
+            <div class="fld"><label>ROLE</label>
+              <select id="setRole"><option>Super Admin</option><option>Admin</option><option>Editor</option></select></div>
+            <div class="mrow" style="display:flex;justify-content:flex-end;margin-top:16px">
+              <button class="btn primary" id="saveSettingsBtn">Save changes</button>
+            </div>
+          </div>
+          <div class="setcard gcard">
+            <h3>Notifications &amp; system</h3>
+            <div class="togglerow">
+              <div class="tl"><b>Email notifications</b><span>New sign-ups and order alerts by email</span></div>
+              <button class="switch" id="tgEmail" role="switch" aria-checked="true" aria-label="Email notifications"></button>
+            </div>
+            <div class="togglerow">
+              <div class="tl"><b>Weekly summary report</b><span>Users, revenue and orders every Monday</span></div>
+              <button class="switch" id="tgReport" role="switch" aria-checked="true" aria-label="Weekly summary report"></button>
+            </div>
+            <div class="togglerow">
+              <div class="tl"><b>Two-factor authentication</b><span>Ask for a code on every new sign-in</span></div>
+              <button class="switch" id="tg2fa" role="switch" aria-checked="false" aria-label="Two-factor authentication"></button>
+            </div>
+            <div class="togglerow">
+              <div class="tl"><b>Maintenance mode</b><span>Show the maintenance page to visitors</span></div>
+              <button class="switch" id="tgMaint" role="switch" aria-checked="false" aria-label="Maintenance mode"></button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div><!-- /pages -->
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<div class="scrim" id="scrim"></div>
+<div class="modal" id="inviteModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <h3 id="modalTitle">Invite user</h3>
+  <div class="msub">They get an email with a link to set up their account.</div>
+  <form id="inviteForm">
+    <div class="fld"><label>FULL NAME</label><input id="fName" type="text" required placeholder="e.g. Alex Morgan"></div>
+    <div class="fld"><label>EMAIL</label><input id="fEmail" type="email" required placeholder="name@company.com"></div>
+    <div class="fld"><label>ROLE</label>
+      <select id="fRole"><option>Customer</option><option>Editor</option><option>Admin</option></select></div>
+    <div class="mrow">
+      <button type="button" class="btn ghost" id="modalCancel">Cancel</button>
+      <button type="submit" class="btn primary">Send invite</button>
+    </div>
+  </form>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+/* ================= icons ================= */
+const P = {
+  grid:'<rect x="3" y="3" width="7.5" height="7.5" rx="1.8"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.8"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.8"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.8"/>',
+  users:'<circle cx="9" cy="8" r="3.4"/><path d="M3.5 19.5c.6-3 2.8-4.5 5.5-4.5s4.9 1.5 5.5 4.5"/><path d="M15.5 5.4a3.4 3.4 0 0 1 0 5.9M17.8 15.3c1.6.7 2.5 2 2.8 4.2"/>',
+  cart:'<path d="M3 4h2.2l2.3 11h10.6l2-8H7"/><circle cx="10" cy="20" r="1.4"/><circle cx="17.5" cy="20" r="1.4"/>',
+  box:'<path d="M12 3l8 4v10l-8 4-8-4V7z"/><path d="M4 7l8 4 8-4M12 11v10"/>',
+  chart:'<path d="M4 4v16h16"/><path d="M8 16v-5M12 16V8M16 16v-8M20 16V6"/>',
+  gear:'<circle cx="12" cy="12" r="3.2"/><path d="M12 2.8v2.6M12 18.6v2.6M2.8 12h2.6M18.6 12h2.6M5.2 5.2l1.8 1.8M17 17l1.8 1.8M18.8 5.2L17 7M7 17l-1.8 1.8"/>'
+};
+const svgIcon = p => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+
+/* ================= data — source values kept; Users/Orders/Products/Analytics are extensions ================= */
+const NAV = [
+  ['overview','grid','Overview'],['users','users','Users'],['orders','cart','Orders'],
+  ['products','box','Products'],['analytics','chart','Analytics'],['settings','gear','Settings']
+];
+const AVG = ['linear-gradient(145deg,#38bdf8,#8b5cf6)','linear-gradient(145deg,#34d399,#0ea5e9)','linear-gradient(145deg,#fbbf24,#f97316)','linear-gradient(145deg,#fb7185,#a855f7)','linear-gradient(145deg,#a78bfa,#6366f1)','linear-gradient(145deg,#f472b6,#ec4899)'];
+const usd = n => '$' + n.toLocaleString('en-GB');
+/* Users — first four rows are the source's Recent users; the rest extend the list in the same style. */
+let USERS = [
+  { ini:'EW', grad:0, name:'Emma Wilson',  email:'emma@wilson.co',      role:'Admin',    status:'act', label:'Active',  when:'2 min ago' },
+  { ini:'LC', grad:1, name:'Liam Carter',  email:'liam.carter@mail.com', role:'Editor',   status:'act', label:'Active',  when:'18 min ago' },
+  { ini:'SR', grad:2, name:'Sofia Reyes',  email:'sofia.reyes@mail.com', role:'Customer', status:'pen', label:'Pending', when:'42 min ago' },
+  { ini:'NB', grad:3, name:'Noah Bennett', email:'noah.b@mail.com',      role:'Customer', status:'blo', label:'Blocked', when:'1 hr ago' },
+  { ini:'OP', grad:4, name:'Olivia Park',  email:'olivia.park@mail.com',  role:'Customer', status:'act', label:'Active',  when:'2 hrs ago' },
+  { ini:'JK', grad:5, name:'James Kim',    email:'j.kim@studio.io',      role:'Editor',   status:'act', label:'Active',  when:'3 hrs ago' },
+  { ini:'AT', grad:0, name:'Ava Thompson', email:'ava.t@mail.com',        role:'Customer', status:'pen', label:'Pending', when:'Yesterday' },
+  { ini:'MG', grad:1, name:'Mason Green',  email:'mason.green@mail.com',  role:'Customer', status:'act', label:'Active',  when:'Yesterday' },
+  { ini:'IH', grad:2, name:'Isla Hughes',  email:'isla.h@mail.com',       role:'Admin',    status:'act', label:'Active',  when:'Yesterday' },
+  { ini:'LO', grad:3, name:'Leo Ortiz',    email:'leo.ortiz@mail.com',    role:'Customer', status:'blo', label:'Blocked', when:'2 days ago' },
+  { ini:'MB', grad:4, name:'Mia Baker',    email:'mia.baker@mail.com',    role:'Customer', status:'pen', label:'Pending', when:'2 days ago' },
+  { ini:'EC', grad:5, name:'Ethan Cole',   email:'ethan.cole@mail.com',   role:'Customer', status:'act', label:'Active',  when:'3 days ago' }
+];
+/* Orders — extension rows, consistent with the products below. */
+const ORDERS = [
+  { id:'#ORD-9041', customer:'Emma Wilson',  product:'Aurora Desk Lamp',   date:'Today',     amount:89,  status:'proc', label:'Processing' },
+  { id:'#ORD-9040', customer:'Liam Carter',  product:'Glass Keyboard',     date:'Today',     amount:149, status:'ship', label:'Shipped' },
+  { id:'#ORD-9039', customer:'Sofia Reyes',  product:'Nimbus Chair',       date:'Yesterday', amount:299, status:'del',  label:'Delivered' },
+  { id:'#ORD-9038', customer:'Noah Bennett', product:'Aurora Desk Lamp',   date:'Yesterday', amount:89,  status:'can',  label:'Cancelled' },
+  { id:'#ORD-9037', customer:'Olivia Park',  product:'Orbit Monitor Stand',date:'Yesterday', amount:119, status:'del',  label:'Delivered' },
+  { id:'#ORD-9036', customer:'James Kim',    product:'Glass Keyboard',     date:'2 days ago',amount:149, status:'ship', label:'Shipped' },
+  { id:'#ORD-9035', customer:'Ava Thompson', product:'Halo Webcam',       date:'2 days ago',amount:79,  status:'proc', label:'Processing' },
+  { id:'#ORD-9034', customer:'Mason Green',  product:'Nimbus Chair',       date:'3 days ago',amount:299, status:'del',  label:'Delivered' }
+];
+/* Products — extension rows. */
+const PRODUCTS = [
+  { emoji:'💡', tint:'rgba(245,158,11,.16)', name:'Aurora Desk Lamp',  cat:'Lighting',    price:89,  stock:142, sold:1840, rev:163760 },
+  { emoji:'⌨️', tint:'rgba(139,92,246,.14)', name:'Glass Keyboard',    cat:'Accessories', price:149, stock:86,  sold:1210, rev:180290 },
+  { emoji:'🪑', tint:'rgba(56,189,248,.14)', name:'Nimbus Chair',      cat:'Furniture',   price:299, stock:23,  sold:640,  rev:191360 },
+  { emoji:'🖥️', tint:'rgba(16,185,129,.14)',name:'Orbit Monitor Stand',cat:'Accessories',price:119, stock:204, sold:980,  rev:116620 },
+  { emoji:'📷', tint:'rgba(244,63,94,.13)', name:'Halo Webcam',       cat:'Electronics', price:79,  stock:11,  sold:1430, rev:112970 },
+  { emoji:'🎧', tint:'rgba(245,158,11,.16)', name:'Echo Headphones',   cat:'Audio',       price:129, stock:67,  sold:890,  rev:114810 }
+];
+/* Revenue — source 7-day shape; 30/90-day views extend it with the same rising trend. */
+const REV = {
+  7:  { labels:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'], cur:[42,55,48,70,64,86,96], prev:[30,38,36,48,52,60,66], sub:'$486 this week · up on last week', range:'last 7 days' },
+  30: { labels:['Wk 1','Wk 2','Wk 3','Wk 4'], cur:[312,368,402,486], prev:[268,301,330,372], sub:'$1,568 this month · up on last month', range:'last 30 days' },
+  90: { labels:['Oct','Nov','Dec'], cur:[1240,1568,1820], prev:[980,1240,1568], sub:'$4,628 this quarter · up on last quarter', range:'last 90 days' }
+};
+
+/* ================= toast ================= */
+let toastTimer;
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimer); toastTimer = setTimeout(()=>t.classList.remove('show'), 2600);
+}
+
+/* ================= navigation ================= */
+const navEl = document.getElementById('nav');
+navEl.innerHTML = NAV.map(n =>
+  `<button class="nitem" data-page="${n[0]}">${svgIcon(P[n[1]])}${n[2]}${n[0]==='orders' ? '<span class="bdg" id="ordersBadge">8</span>' : ''}</button>`).join('');
+const countedPages = new Set();
+function goTo(page){
+  document.querySelectorAll('.page').forEach(s => s.classList.toggle('on', s.id === 'page-' + page));
+  document.querySelectorAll('.nitem').forEach(b => b.classList.toggle('on', b.dataset.page === page));
+  document.getElementById('pages').scrollTop = 0;
+  closeSidebar();
+  if (!countedPages.has(page)) { countedPages.add(page); runCountUps(document.getElementById('page-' + page)); }
+}
+navEl.addEventListener('click', e => {
+  const b = e.target.closest('.nitem'); if (b) goTo(b.dataset.page);
+});
+document.querySelectorAll('[data-goto]').forEach(el => el.addEventListener('click', () => goTo(el.dataset.goto)));
+
+/* mobile sidebar */
+const sidebar = document.getElementById('sidebar'), navscrim = document.getElementById('navscrim');
+function closeSidebar(){ sidebar.classList.remove('open'); navscrim.classList.remove('open'); }
+document.getElementById('burger').addEventListener('click', () => {
+  sidebar.classList.add('open'); navscrim.classList.add('open');
+});
+navscrim.addEventListener('click', closeSidebar);
+
+/* ================= count-up ================= */
+function runCountUps(scope){
+  scope.querySelectorAll('[data-count]').forEach(el => {
+    const target = parseFloat(el.dataset.count), dec = el.dataset.dec ? 1 : 0;
+    const t0 = performance.now(), dur = 650;
+    (function step(now){
+      const p = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - p, 3), v = target * e;
+      el.textContent = dec ? (v / 10).toFixed(1) : Math.round(v).toLocaleString('en-GB');
+      if (p < 1) requestAnimationFrame(step);
+    })(t0);
+  });
+}
+
+/* ================= charts ================= */
+function lineChart(el, labels, cur, prev){
+  const W = 700, H = 240, padL = 6, padR = 6, padT = 14, padB = 10;
+  const max = Math.ceil(Math.max(...cur, ...prev) * 1.15 / 50) * 50;
+  const x = i => padL + (W - padL - padR) * (labels.length === 1 ? 0.5 : i / (labels.length - 1));
+  const y = v => padT + (H - padT - padB) * (1 - v / max);
+  const pts = arr => arr.map((v,i) => `${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(' ');
+  const area = `M${x(0)},${y(cur[0])} ` + cur.map((v,i)=>`L${x(i)},${y(v)}`).join(' ') + ` L${x(cur.length-1)},${H} L${x(0)},${H} Z`;
+  let grid = '';
+  for (let g = 1; g <= 3; g++) { const gy = padT + (H - padT - padB) * g / 4;
+    grid += `<line x1="0" y1="${gy}" x2="${W}" y2="${gy}" stroke="rgba(19,28,56,.07)"/>`; }
+  el.innerHTML = `
+  <svg class="chartsvg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Revenue chart">
+    <defs>
+      <linearGradient id="ag${el.id}" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#a855f7" stop-opacity=".35"/><stop offset="1" stop-color="#ec4899" stop-opacity=".03"/>
+      </linearGradient>
+      <linearGradient id="lg${el.id}" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#8b5cf6"/><stop offset="1" stop-color="#ec4899"/>
+      </linearGradient>
+    </defs>
+    ${grid}
+    <path d="${area}" fill="url(#ag${el.id})"/>
+    <polyline points="${pts(prev)}" fill="none" stroke="#38bdf8" stroke-width="2.5" stroke-dasharray="6 6" stroke-linecap="round"/>
+    <polyline points="${pts(cur)}" fill="none" stroke="url(#lg${el.id})" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    ${cur.map((v,i)=>`<circle cx="${x(i)}" cy="${y(v)}" r="4" fill="#fff" stroke="#c026d3" stroke-width="2.5"/>`).join('')}
+  </svg>`;
+}
+lineChart(document.getElementById('overviewChart'), REV[7].labels, REV[7].cur, REV[7].prev);
+function renderAnalytics(range){
+  const d = REV[range];
+  lineChart(document.getElementById('analyticsChart'), d.labels, d.cur, d.prev);
+  document.getElementById('anaDays').innerHTML = d.labels.map(l => `<span>${l}</span>`).join('');
+  document.getElementById('anaChartSub').textContent = d.sub;
+  document.getElementById('anaRangeLabel').textContent = d.range;
+}
+renderAnalytics(7);
+document.querySelectorAll('.rpill').forEach(p => p.addEventListener('click', () => {
+  document.querySelectorAll('.rpill').forEach(x => x.classList.toggle('on', x === p));
+  renderAnalytics(parseInt(p.dataset.range, 10));
+}));
+
+/* ================= users ================= */
+const statusPill = u => `<span class="pill ${u.status}"><i></i>${u.label}</span>`;
+function userRow(u, i, withAction){
+  return `<tr data-search-row><td><div class="who">
+    <div class="av" style="width:32px;height:32px;font-size:11px;background:${AVG[u.grad % 6]}">${u.ini}</div>
+    <div><div class="wn">${u.name}</div><div class="we">${u.email}</div></div></div></td>
+    <td>${u.role}</td><td>${statusPill(u)}</td><td>${u.when}</td>
+    ${withAction ? `<td><button class="rowbtn" data-user="${i}">${u.status === 'pen' ? 'Approve' : u.status === 'blo' ? 'Unblock' : 'Message'}</button></td>` : ''}</tr>`;
+}
+function renderUsers(){
+  document.getElementById('recentUsersBody').innerHTML = USERS.slice(0, 4).map(u => userRow(u, 0, false)).join('');
+  renderUsersTab();
+}
+let usersTab = 'all';
+function renderUsersTab(){
+  const rows = USERS.map((u, i) => ({ u, i })).filter(x => usersTab === 'all' || x.u.status === usersTab);
+  document.getElementById('usersBody').innerHTML = rows.map(x => userRow(x.u, x.i, true)).join('');
+  document.getElementById('usersCount').textContent = USERS.length;
+  applySearch();
+}
+function setUsersTab(tab){
+  usersTab = tab;
+  document.querySelectorAll('#usersTabs .tab2').forEach(b => b.classList.toggle('on', b.dataset.utab === tab));
+  renderUsersTab();
+}
+document.querySelectorAll('#usersTabs .tab2').forEach(b => b.addEventListener('click', () => setUsersTab(b.dataset.utab)));
+document.getElementById('usersBody').addEventListener('click', e => {
+  const b = e.target.closest('[data-user]'); if (!b) return;
+  const u = USERS[parseInt(b.dataset.user, 10)];
+  if (u.status === 'pen') { u.status = 'act'; u.label = 'Active'; toast(`${u.name} approved`); }
+  else if (u.status === 'blo') { u.status = 'act'; u.label = 'Active'; toast(`${u.name} unblocked`); }
+  else { toast(`Message sent to ${u.name}`); return; }
+  renderUsers();
+});
+renderUsers();
+
+/* ================= orders ================= */
+const orderPill = o => `<span class="pill ${o.status}"><i></i>${o.label}</span>`;
+let ordersTab = 'all';
+function renderOrdersTab(){
+  const rows = ORDERS.filter(o => ordersTab === 'all' || o.status === ordersTab);
+  document.getElementById('ordersBody').innerHTML = rows.map((o, i) => `<tr data-search-row>
+    <td><b>${o.id}</b></td><td>${o.customer}</td><td>${o.product}</td><td>${o.date}</td>
+    <td><b>${usd(o.amount)}</b></td><td>${orderPill(o)}</td>
+    <td><button class="rowbtn" data-order="${ORDERS.indexOf(o)}">View</button></td></tr>`).join('');
+  applySearch();
+}
+function setOrdersTab(tab){
+  ordersTab = tab;
+  document.querySelectorAll('#ordersTabs .tab2').forEach(b => b.classList.toggle('on', b.dataset.otab === tab));
+  renderOrdersTab();
+}
+document.querySelectorAll('#ordersTabs .tab2').forEach(b => b.addEventListener('click', () => setOrdersTab(b.dataset.otab)));
+document.getElementById('ordersBody').addEventListener('click', e => {
+  const b = e.target.closest('[data-order]'); if (!b) return;
+  const o = ORDERS[parseInt(b.dataset.order, 10)];
+  toast(`${o.id} · ${o.customer} · ${o.product} · ${usd(o.amount)} · ${o.label}`);
+});
+renderOrdersTab();
+
+/* ================= products ================= */
+document.getElementById('prodGrid').innerHTML = PRODUCTS.map((p, i) => `
+  <div class="prod gcard" data-search-row>
+    <div class="pic" style="background:${p.tint}">${p.emoji}</div>
+    <div class="pn">${p.name}</div>
+    <div class="pc">${p.cat} · ${p.sold.toLocaleString('en-GB')} sold</div>
+    <div class="pr"><span class="pp">${usd(p.price)}</span><span class="ps2">${usd(p.rev)} revenue</span></div>
+    <div class="pfoot"><span class="stock ${p.stock < 30 ? 'low' : 'ok'}">${p.stock < 30 ? 'Low stock · ' : ''}${p.stock} in stock</span>
+      <button class="rowbtn" data-restock="${i}">Restock</button></div>
+  </div>`).join('');
+document.getElementById('prodGrid').addEventListener('click', e => {
+  const b = e.target.closest('[data-restock]'); if (!b) return;
+  const p = PRODUCTS[parseInt(b.dataset.restock, 10)];
+  p.stock += 50; b.disabled = true; b.textContent = 'Restocked ✓';
+  b.closest('.prod').querySelector('.stock').textContent = p.stock + ' in stock';
+  b.closest('.prod').querySelector('.stock').className = 'stock ok';
+  toast(`${p.name} restocked · +50 units`);
+});
+document.getElementById('topProductsBody').innerHTML = [...PRODUCTS].sort((a, b) => b.rev - a.rev).map(p => `
+  <tr data-search-row><td><b>${p.name}</b></td><td>${p.cat}</td><td>${p.sold.toLocaleString('en-GB')}</td><td><b>${usd(p.rev)}</b></td></tr>`).join('');
+
+/* ================= search ================= */
+function applySearch(){
+  const q = document.getElementById('search').value.trim().toLowerCase();
+  document.querySelectorAll('.page.on [data-search-row]').forEach(row => {
+    row.style.display = (!q || row.textContent.toLowerCase().includes(q)) ? '' : 'none';
+  });
+  document.querySelectorAll('.page.on [data-noresults]').forEach(nr => {
+    const rows = [...nr.closest('.page').querySelectorAll('[data-search-row]')];
+    nr.style.display = (q && rows.length && rows.every(r => r.style.display === 'none')) ? 'block' : 'none';
+  });
+}
+document.getElementById('search').addEventListener('input', applySearch);
+
+/* ================= invite modal ================= */
+const modal = document.getElementById('inviteModal'), scrim = document.getElementById('scrim');
+function openModal(){ modal.classList.add('open'); scrim.classList.add('open'); setTimeout(() => document.getElementById('fName').focus(), 30); }
+function closeModal(){ modal.classList.remove('open'); scrim.classList.remove('open'); }
+document.getElementById('inviteBtn').addEventListener('click', openModal);
+document.getElementById('modalCancel').addEventListener('click', closeModal);
+scrim.addEventListener('click', closeModal);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal(); closeSidebar(); } });
+document.getElementById('inviteForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const name = document.getElementById('fName').value.trim();
+  const email = document.getElementById('fEmail').value.trim();
+  const role = document.getElementById('fRole').value;
+  if (!name || !email) return;
+  const ini = name.split(/\s+/).map(w => w[0]).join('').slice(0, 2).toUpperCase() || 'U';
+  USERS.unshift({ ini, grad: USERS.length % 6, name, email, role, status:'pen', label:'Pending', when:'Just now' });
+  renderUsers(); closeModal(); e.target.reset();
+  toast(`Invite sent to ${name} · ${role}`);
+  goTo('users');
+});
+
+/* ================= export report ================= */
+document.getElementById('exportBtn').addEventListener('click', () => {
+  const csv = 'Name,Email,Role,Status,Joined\n' + USERS.map(u => `"${u.name}","${u.email}","${u.role}","${u.label}","${u.when}"`).join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+  a.download = 'adminly-users-report.csv'; a.click();
+  URL.revokeObjectURL(a.href);
+  toast('Report downloaded · adminly-users-report.csv');
+});
+
+/* ================= settings toggles + save ================= */
+function bindToggle(id, onChange){
+  const el = document.getElementById(id);
+  el.addEventListener('click', () => {
+    const on = el.getAttribute('aria-checked') !== 'true';
+    el.setAttribute('aria-checked', on);
+    if (onChange) onChange(on);
+  });
+}
+bindToggle('tgEmail', on => toast(on ? 'Email notifications on' : 'Email notifications off'));
+bindToggle('tgReport', on => toast(on ? 'Weekly summary report on' : 'Weekly summary report off'));
+bindToggle('tg2fa', on => toast(on ? 'Two-factor authentication on' : 'Two-factor authentication off'));
+bindToggle('tgMaint', on => {
+  const card = document.getElementById('syscard');
+  card.classList.toggle('off', on);
+  document.getElementById('sysmsg').textContent = on ? 'Maintenance mode on · visitors see the maintenance page' : 'All systems live · 99.99% uptime';
+  toast(on ? 'Maintenance mode on' : 'Maintenance mode off');
+});
+document.getElementById('saveSettingsBtn').addEventListener('click', () => {
+  const name = document.getElementById('setName').value.trim();
+  toast(name ? `Settings saved for ${name}` : 'Settings saved');
+});
+
+/* ================= start ================= */
+goTo('overview');
+</script>
+</body>
+</html>

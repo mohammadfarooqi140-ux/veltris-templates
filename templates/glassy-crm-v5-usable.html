@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Merrick Homes — CRM</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html,body { height:100%; }
+  body {
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+    color:#eceaf2; -webkit-font-smoothing:antialiased; overflow:hidden;
+    background:linear-gradient(160deg,#17131f,#0a0a10 70%);
+  }
+  /* ---------- colourful backdrop behind the glass ---------- */
+  .backdrop { position:fixed; inset:0; overflow:hidden; z-index:0; }
+  .blob { position:absolute; border-radius:50%; filter:blur(70px); }
+  .blob.b1 { width:55vw; height:55vw; background:#7c3aed; left:-14vw; top:-20vw; opacity:.55; }
+  .blob.b2 { width:52vw; height:52vw; background:#4f46e5; right:-13vw; top:2vh; opacity:.45; }
+  .blob.b3 { width:44vw; height:44vw; background:#9333ea; left:26vw; bottom:-24vw; opacity:.4; }
+  .blob.b4 { width:34vw; height:34vw; background:#8b5cf6; right:14vw; bottom:-18vw; opacity:.35; }
+
+  /* ---------- app shell — one big glass window filling the browser ---------- */
+  .app {
+    position:relative; z-index:1; display:flex; height:100dvh; margin:14px;
+    border-radius:26px; overflow:hidden;
+    background:linear-gradient(155deg, rgba(40,38,54,.80), rgba(20,19,28,.84) 55%, rgba(32,29,46,.78));
+    border:1px solid rgba(255,255,255,.13);
+    box-shadow:0 40px 90px rgba(0,0,0,.65), inset 0 1px 0 rgba(255,255,255,.14);
+    backdrop-filter:blur(22px) saturate(140%); -webkit-backdrop-filter:blur(22px) saturate(140%);
+  }
+
+  /* ---------- sidebar ---------- */
+  .sidebar {
+    width:236px; flex:0 0 236px; display:flex; flex-direction:column; padding:22px 16px 18px;
+    background:rgba(255,255,255,.04);
+    border-right:1px solid rgba(255,255,255,.10);
+  }
+  .logo { display:flex; align-items:center; gap:10px; padding:0 6px; }
+  .logo .lg { width:36px; height:36px; border-radius:11px; flex:0 0 36px;
+    background:linear-gradient(145deg,#a78bfa,#7c3aed); display:flex; align-items:center; justify-content:center;
+    font-size:18px; font-weight:700; color:#fff; box-shadow:0 6px 14px rgba(124,58,237,.45); }
+  .logo .ln { font-size:16.5px; font-weight:600; color:#f4f2fa; line-height:1.1; }
+  .logo .ln span { display:block; font-size:10.5px; font-weight:500; color:rgba(236,234,242,.5); letter-spacing:.8px; margin-top:2px; }
+  .nav { margin-top:26px; display:flex; flex-direction:column; gap:5px; }
+  .nitem {
+    display:flex; align-items:center; gap:11px; padding:10px 12px; border-radius:12px; width:100%;
+    font:inherit; font-size:14.5px; font-weight:500; color:rgba(236,234,242,.62); text-align:left;
+    background:none; border:1px solid transparent; cursor:pointer; transition:background .15s,color .15s;
+  }
+  .nitem:hover { background:rgba(255,255,255,.07); }
+  .nitem svg { width:18px; height:18px; flex:0 0 18px; }
+  .nitem .bdg { margin-left:auto; font-size:10.5px; font-weight:700; background:#7c3aed; color:#fff; border-radius:999px; padding:1px 7px; }
+  .nitem .bdg.hide { display:none; }
+  .nitem.on { background:rgba(167,139,250,.16); color:#fff; font-weight:600; border-color:rgba(167,139,250,.4);
+    box-shadow:0 8px 18px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.12); }
+  .sidebar .sp { flex:1; }
+  .aicard { border-radius:15px; padding:12px 13px;
+    background:rgba(167,139,250,.12); border:1px solid rgba(167,139,250,.35); }
+  .aicard .at { font-size:12.5px; font-weight:600; color:#e9e4ff; display:flex; align-items:center; gap:7px; }
+  .aicard .at i { width:7px; height:7px; border-radius:50%; background:#a78bfa; display:block; animation:pulse 2.2s infinite; }
+  .aicard.off .at i { background:rgba(236,234,242,.35); animation:none; }
+  .aicard .am { font-size:11.5px; color:rgba(236,234,242,.6); line-height:1.4; margin-top:4px; }
+  .aicard .at .switch { margin-left:auto; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.45} }
+  .userchip { display:flex; align-items:center; gap:10px; margin-top:14px; padding:0 4px; }
+  .userchip .un { font-size:13px; font-weight:600; color:#f4f2fa; line-height:1.2; }
+  .userchip .un span { display:block; font-size:11px; color:rgba(236,234,242,.45); font-weight:400; }
+  .av { border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:600; color:#fff; flex:0 0 auto; }
+
+  /* ---------- main column ---------- */
+  .main { flex:1; min-width:0; display:flex; flex-direction:column; }
+  .topbar { flex:0 0 auto; display:flex; align-items:center; gap:12px; padding:14px 22px;
+    border-bottom:1px solid rgba(255,255,255,.10); position:relative; }
+  .burger { display:none; width:38px; height:38px; border-radius:11px; border:1px solid rgba(255,255,255,.2);
+    background:rgba(255,255,255,.06); color:#f4f2fa; cursor:pointer; align-items:center; justify-content:center; flex:0 0 auto; }
+  .burger svg { width:19px; height:19px; }
+  .search { flex:1; min-width:0; max-width:380px; height:38px; border-radius:999px;
+    background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.14);
+    display:flex; align-items:center; gap:8px; padding:0 14px; }
+  .search svg { width:15px; height:15px; color:rgba(236,234,242,.5); flex:0 0 auto; }
+  .search input { flex:1; min-width:0; border:none; outline:none; background:none; font:inherit; font-size:13.5px; color:#f4f2fa; }
+  .search input::placeholder { color:rgba(236,234,242,.45); }
+  .btn { font:inherit; cursor:pointer; border-radius:999px; white-space:nowrap; }
+  .btn.ghost { font-size:13px; font-weight:500; color:rgba(236,234,242,.8);
+    border:1px solid rgba(255,255,255,.2); padding:9px 15px; background:rgba(255,255,255,.05); }
+  .btn.ghost:hover { background:rgba(255,255,255,.12); }
+  .btn.primary { font-size:13px; font-weight:600; color:#fff; border:none; padding:10px 17px;
+    background:linear-gradient(150deg,#a78bfa,#7c3aed); box-shadow:0 8px 18px rgba(124,58,237,.4); }
+  .btn.primary:hover { filter:brightness(1.08); }
+
+  /* activity dropdown */
+  .actpanel { position:absolute; top:calc(100% + 8px); right:22px; width:340px; max-width:calc(100vw - 44px); z-index:40;
+    background:rgba(34,31,46,.97); border:1px solid rgba(255,255,255,.16); border-radius:18px;
+    box-shadow:0 24px 50px rgba(0,0,0,.5); padding:14px 16px; display:none; }
+  .actpanel.open { display:block; }
+  .actpanel h4 { font-size:13px; font-weight:700; color:#f4f2fa; margin-bottom:8px; }
+  .actpanel .ai { display:flex; gap:9px; padding:7px 0; border-top:1px solid rgba(255,255,255,.09); font-size:12.5px; color:rgba(236,234,242,.75); }
+  .actpanel .ai b { color:#f4f2fa; font-weight:600; }
+  .actpanel .ai .when { margin-left:auto; font-size:11px; color:rgba(236,234,242,.45); flex:0 0 auto; }
+
+  /* ---------- pages ---------- */
+  .pages { flex:1; overflow-y:auto; padding:22px 24px 30px; }
+  .page { display:none; flex-direction:column; gap:16px; max-width:1180px; margin:0 auto; width:100%; }
+  .page.on { display:flex; }
+  .gcard { background:rgba(255,255,255,.055); border:1px solid rgba(255,255,255,.1); border-radius:22px;
+    box-shadow:0 10px 24px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.09); }
+  .phead { display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+  .phead .pt { font-size:26px; font-weight:600; color:#f4f2fa; letter-spacing:.2px; }
+  .phead .ps { font-size:13px; color:rgba(236,234,242,.5); display:flex; align-items:center; gap:6px; }
+  .phead .ps .livedot { width:7px; height:7px; border-radius:50%; background:#a78bfa; display:inline-block; animation:pulse 2.2s infinite; }
+  .phead .ps b { color:#c4b5fd; font-weight:600; }
+
+  /* greeting */
+  .greet .gt { font-size:29px; font-weight:600; color:#f4f2fa; letter-spacing:.2px; line-height:1.12; }
+  .greet .gt span { color:#c4b5fd; }
+  .greet .gs { font-size:13px; color:rgba(236,234,242,.5); margin-top:5px; display:flex; align-items:center; gap:6px; }
+  .greet .gs .livedot { width:7px; height:7px; border-radius:50%; background:#a78bfa; display:inline-block; animation:pulse 2.2s infinite; }
+  .greet .gs b { color:#c4b5fd; font-weight:600; }
+
+  /* overview top grid */
+  .tgrid { display:flex; gap:16px; align-items:stretch; }
+  .pipecard { width:292px; flex:0 0 292px; padding:16px 18px 13px; display:flex; flex-direction:column; overflow:hidden; }
+  .pipecard .plab { font-size:13.5px; color:rgba(236,234,242,.55); font-weight:500; display:flex; align-items:center; justify-content:space-between; }
+  .pipecard .plab .live2 { font-size:11px; color:#c4b5fd; font-weight:700; letter-spacing:.6px; display:flex; align-items:center; gap:5px; }
+  .pipecard .plab .live2 i { width:7px; height:7px; border-radius:50%; background:#a78bfa; display:block; animation:pulse 2.2s infinite; }
+  .pipecard .pval { font-size:34px; font-weight:600; letter-spacing:.2px; margin-top:4px; color:#f7f5fc; line-height:1.1; }
+  .pipecard .pdelta { font-size:12.5px; color:#c4b5fd; font-weight:500; margin-top:2px; }
+  .pipecard .pdelta span { color:rgba(236,234,242,.45); font-weight:400; }
+  .pctrls { display:flex; gap:7px; margin-top:11px; flex-wrap:wrap; }
+  .pbtn { font:inherit; font-size:12px; font-weight:600; padding:6px 11px; border-radius:999px; background:#f4f2fa; color:#1c1a26; white-space:nowrap; border:none; cursor:pointer; }
+  .pchip { font:inherit; font-size:12px; font-weight:500; padding:6px 10px; border-radius:999px; background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.14); color:rgba(236,234,242,.75); white-space:nowrap; cursor:pointer; }
+  .pchip.on { background:rgba(167,139,250,.2); border-color:rgba(167,139,250,.5); color:#e9e4ff; }
+  .psub { margin-top:auto; border-top:1px solid rgba(255,255,255,.09); padding-top:8px; }
+  .psub .pslab { font-size:10px; letter-spacing:1.4px; font-weight:600; color:rgba(236,234,242,.4); margin-bottom:5px; }
+  .psub .pm { display:flex; align-items:center; font-size:12.5px; color:rgba(236,234,242,.6); line-height:1.55; }
+  .psub .pm i { width:7px; height:7px; border-radius:50%; margin-right:8px; display:block; flex:0 0 7px; }
+  .psub .pm b { margin-left:auto; font-weight:600; color:#f4f2fa; font-size:12.5px; }
+  .statgrid { flex:1; display:grid; grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr; gap:16px; min-width:0; }
+  .stat2 { padding:13px 15px 11px; display:flex; flex-direction:column; overflow:hidden; position:relative; }
+  .stat2 .lab { font-size:12.5px; color:rgba(236,234,242,.55); font-weight:500; white-space:nowrap; padding-right:26px; }
+  .stat2 .ichip { position:absolute; top:10px; right:10px; width:22px; height:22px; border-radius:50%;
+    border:1px solid rgba(255,255,255,.14); background:rgba(255,255,255,.06);
+    display:flex; align-items:center; justify-content:center; color:rgba(236,234,242,.6); }
+  .stat2 .ichip svg { width:12px; height:12px; }
+  .stat2 .val { font-size:27px; font-weight:600; margin-top:2px; color:#f7f5fc; line-height:1.15; }
+  .stat2 .foot { margin-top:auto; }
+  .stat2 .dpill { font-size:11px; font-weight:600; padding:3px 8px; border-radius:999px; background:rgba(167,139,250,.15); color:#c4b5fd; display:inline-block; white-space:nowrap; }
+  .stat2 .dpill span { color:rgba(236,234,242,.45); font-weight:400; }
+  .stat2.acc { background:linear-gradient(150deg,#a78bfa,#7c3aed); border-color:rgba(255,255,255,.25); box-shadow:0 12px 26px rgba(124,58,237,.4), inset 0 1px 0 rgba(255,255,255,.3); }
+  .stat2.acc .lab { color:rgba(255,255,255,.85); }
+  .stat2.acc .val { color:#fff; }
+  .stat2.acc .ichip { background:rgba(255,255,255,.22); border-color:rgba(255,255,255,.3); color:#fff; }
+  .stat2.acc .dpill { background:rgba(255,255,255,.22); color:#f5f3ff; }
+  .stat2.acc .dpill span { color:rgba(255,255,255,.7); }
+
+  /* chart card */
+  .chartcard { width:284px; flex:0 0 284px; padding:15px 17px 12px; display:flex; flex-direction:column; overflow:hidden; }
+  .chartcard .chead { display:flex; align-items:center; justify-content:space-between; }
+  .chartcard .ct { font-size:14px; font-weight:600; color:#f4f2fa; }
+  .legend { display:flex; gap:10px; font-size:11px; color:rgba(236,234,242,.55); font-weight:500; }
+  .legend i { width:7px; height:7px; border-radius:50%; display:inline-block; margin-right:4px; }
+  .bars { flex:1; display:flex; align-items:flex-end; gap:7px; margin-top:10px; border-bottom:1px solid rgba(255,255,255,.12); min-height:0; }
+  .bwrap { flex:1; height:100%; display:flex; align-items:flex-end; }
+  .bstack { width:100%; display:flex; flex-direction:column; transform-origin:bottom; transition:height .3s; }
+  .bseg.web { background:linear-gradient(180deg,#c4b5fd,#8b5cf6); border-radius:4px 4px 0 0; }
+  .bseg.ref { background:linear-gradient(180deg,#5c5c68,#3a3a44); }
+  .xlab { display:flex; gap:7px; margin-top:6px; }
+  .xlab span { flex:1; text-align:center; font-size:11px; color:rgba(236,234,242,.4); }
+
+  /* bottom grid — left stack + wide table */
+  .bgrid { display:flex; gap:16px; align-items:stretch; }
+  .lstack { width:292px; flex:0 0 292px; display:flex; flex-direction:column; gap:16px; min-height:0; }
+  .slimcard { flex:1; padding:12px 14px; display:flex; align-items:center; gap:11px; overflow:hidden; }
+  .slimcard .sic { width:30px; height:30px; flex:0 0 30px; border-radius:10px; background:rgba(167,139,250,.15); color:#c4b5fd; display:flex; align-items:center; justify-content:center; }
+  .slimcard .sic svg { width:16px; height:16px; }
+  .slimcard .st1 { font-size:12.5px; font-weight:600; color:#f4f2fa; line-height:1.25; }
+  .slimcard .st2 { font-size:11px; color:rgba(236,234,242,.5); line-height:1.3; }
+  /* AI Replies panel */
+  .aicard2 { flex:1; padding:12px 14px; display:flex; flex-direction:column; overflow:hidden; }
+  .aicard2 .st { font-size:13.5px; font-weight:600; color:#f4f2fa; display:flex; align-items:center; justify-content:space-between; }
+  .aicard2 .st .live2 { font-size:10px; color:#c4b5fd; font-weight:700; letter-spacing:1px; display:flex; align-items:center; gap:5px; }
+  .aicard2 .st .live2 i { width:6px; height:6px; border-radius:50%; background:#a78bfa; display:block; animation:pulse 2.2s infinite; }
+  .airow { margin-top:8px; }
+  .airow .ail1 { display:flex; align-items:baseline; justify-content:space-between; gap:8px; }
+  .airow .ain { font-size:12px; font-weight:600; color:#f4f2fa; }
+  .airow .ait2 { font-size:10px; font-weight:700; color:#c4b5fd; letter-spacing:.4px; white-space:nowrap; }
+  .airow .aim { font-size:11.5px; color:rgba(236,234,242,.62); line-height:1.35; }
+  .airow .aim span { color:rgba(236,234,242,.38); font-weight:400; white-space:nowrap; }
+  .aitype { margin-top:auto; display:flex; align-items:center; gap:7px; font-size:11px; color:rgba(236,234,242,.5); font-style:italic; padding-top:8px; }
+  .tdots { display:flex; gap:3px; }
+  .tdot { width:5px; height:5px; border-radius:50%; background:#a78bfa; display:block; animation:pulse 1.4s infinite; }
+
+  /* wide table */
+  .tablecard { flex:1; padding:12px 16px 6px; display:flex; flex-direction:column; min-width:0; overflow:hidden; }
+  .tablecard .thead { display:flex; align-items:center; justify-content:space-between; margin-bottom:2px; gap:10px; flex-wrap:wrap; }
+  .tablecard .thead .tt { font-size:14.5px; font-weight:600; color:#f4f2fa; }
+  .tabs { display:flex; gap:8px; margin-top:10px; flex-wrap:wrap; }
+  .tab2 { font:inherit; font-size:12px; font-weight:500; color:rgba(236,234,242,.6); background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.14); padding:6px 14px; border-radius:999px; cursor:pointer; }
+  .tab2.on { background:#f4f2fa; color:#1c1a26; border-color:#f4f2fa; font-weight:600; }
+  .tscroll { overflow-x:auto; margin-top:6px; }
+  table { width:100%; border-collapse:collapse; font-size:13.5px; min-width:560px; }
+  th { text-align:left; font-size:11px; font-weight:700; letter-spacing:.6px; color:rgba(236,234,242,.42);
+    padding:10px 10px 8px; border-bottom:1px solid rgba(255,255,255,.12); white-space:nowrap; }
+  td { padding:11px 10px; border-bottom:1px solid rgba(255,255,255,.07); color:rgba(236,234,242,.8); vertical-align:middle; }
+  td b { color:#f4f2fa; font-weight:600; }
+  tr:last-child td { border-bottom:none; }
+  .pill { font-size:11px; font-weight:600; padding:3px 9px; border-radius:999px; display:inline-block; white-space:nowrap; }
+  .pill.new { background:rgba(167,139,250,.15); color:#c4b5fd; border:1px solid rgba(167,139,250,.45); }
+  .pill.rep { background:rgba(255,255,255,.07); color:rgba(236,234,242,.7); border:1px solid rgba(255,255,255,.16); }
+  .pill.bok { background:#f4f2fa; color:#1c1a26; border:1px solid #f4f2fa; }
+  .pill.pen { background:rgba(245,158,11,.14); color:#fbbf24; border:1px solid rgba(245,158,11,.4); }
+  .noresults { display:none; padding:16px 10px; font-size:13px; color:rgba(236,234,242,.5); }
+
+  /* enquiries — list + conversation */
+  .crow { display:flex; gap:16px; flex:1; min-height:0; }
+  .listcard { width:296px; flex:0 0 296px; padding:12px 10px; display:flex; flex-direction:column; overflow:hidden; }
+  .lhead { display:flex; align-items:center; justify-content:space-between; padding:0 6px 9px; }
+  .lhead .lt2 { font-size:15px; font-weight:600; color:#f4f2fa; }
+  .lchip { font-size:11px; font-weight:600; padding:3px 9px; border-radius:999px; background:rgba(167,139,250,.14); color:#c4b5fd; white-space:nowrap; }
+  .llist { display:flex; flex-direction:column; gap:5px; flex:1; min-height:0; overflow-y:auto; }
+  .litem { display:flex; align-items:center; gap:10px; padding:8px; border-radius:14px; border:1px solid transparent; cursor:pointer; }
+  .litem:hover { background:rgba(255,255,255,.05); }
+  .litem.on { background:rgba(167,139,250,.1); border-color:rgba(167,139,250,.4); }
+  .lmid { flex:1; min-width:0; }
+  .lnm { font-size:13px; font-weight:600; color:#f4f2fa; line-height:1.2; white-space:nowrap; }
+  .lsub { font-size:11px; color:rgba(236,234,242,.5); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:1px; }
+  .lright { text-align:right; display:flex; flex-direction:column; align-items:flex-end; gap:4px; flex:0 0 auto; }
+  .ltime { font-size:10.5px; color:rgba(236,234,242,.42); white-space:nowrap; }
+  .mpill { font-size:9.5px; font-weight:700; letter-spacing:.3px; padding:2px 7px; border-radius:999px; white-space:nowrap; }
+  .mpill.new { background:rgba(167,139,250,.16); color:#c4b5fd; }
+  .mpill.rep { background:rgba(255,255,255,.07); color:rgba(236,234,242,.65); border:1px solid rgba(255,255,255,.15); }
+  .mpill.bok { background:#f4f2fa; color:#1c1a26; }
+  .convcard { flex:1; display:flex; flex-direction:column; overflow:hidden; min-width:0; }
+  .chead2 { display:flex; align-items:center; gap:11px; padding:12px 16px 10px; border-bottom:1px solid rgba(255,255,255,.08); }
+  .cnm { font-size:14.5px; font-weight:600; color:#f4f2fa; line-height:1.2; }
+  .csub { font-size:11.5px; color:rgba(236,234,242,.5); margin-top:1px; }
+  .cbody { flex:1; padding:13px 16px 8px; display:flex; flex-direction:column; gap:8px; min-height:0; overflow-y:auto; }
+  .brow { display:flex; }
+  .brow.cust { justify-content:flex-start; }
+  .brow.ai { justify-content:flex-end; }
+  .bub { max-width:79%; padding:8px 12px 6px; font-size:12.5px; line-height:1.38; }
+  .bub.cust { background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12); border-radius:16px 16px 16px 5px; color:#f0eef6; }
+  .bub.ai { background:linear-gradient(150deg,#a78bfa,#7c3aed); border-radius:16px 16px 5px 16px; color:#f5f3ff; }
+  .btime { display:block; text-align:right; font-size:9.5px; margin-top:3px; opacity:.55; }
+  .creply { display:flex; align-items:center; gap:10px; padding:10px 14px 12px; border-top:1px solid rgba(255,255,255,.08); }
+  .creply input { flex:1; min-width:0; font:inherit; font-size:12.5px; color:#f4f2fa; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); border-radius:999px; padding:9px 15px; outline:none; }
+  .creply input::placeholder { color:rgba(236,234,242,.42); }
+  .creply input:focus { border-color:#a78bfa; }
+  .csend { width:34px; height:34px; flex:0 0 34px; border-radius:50%; background:linear-gradient(150deg,#a78bfa,#7c3aed); color:#fff; display:flex; align-items:center; justify-content:center; box-shadow:0 6px 14px rgba(124,58,237,.4); border:none; cursor:pointer; }
+  .csend svg { width:15px; height:15px; }
+
+  /* bookings — calendar */
+  .calcard { flex:1; padding:14px 17px 13px; display:flex; flex-direction:column; overflow:hidden; min-width:0; }
+  .calhead { display:flex; align-items:center; gap:12px; margin-bottom:9px; flex-wrap:wrap; }
+  .calhead .ct2 { font-size:15.5px; font-weight:600; color:#f4f2fa; white-space:nowrap; }
+  .calhead .calweek { font-size:11.5px; color:rgba(236,234,242,.5); font-weight:500; white-space:nowrap; }
+  .calhead .legend { margin-left:auto; }
+  .calgrid { flex:1; display:flex; min-height:0; border-top:1px solid rgba(255,255,255,.09); }
+  .calcol { flex:1; display:flex; flex-direction:column; border-left:1px solid rgba(255,255,255,.07); min-width:0; cursor:pointer; }
+  .calcol:first-child { border-left:none; }
+  .calcol.today { background:rgba(167,139,250,.07); }
+  .calcol.sel { background:rgba(167,139,250,.12); }
+  .caldh { text-align:center; font-size:9.5px; letter-spacing:1.2px; font-weight:600; color:rgba(236,234,242,.45); padding-top:8px; }
+  .caldn { text-align:center; margin:3px auto 7px; font-size:14.5px; font-weight:600; color:#f4f2fa; width:25px; height:25px; line-height:25px; border-radius:50%; }
+  .caldn.today { background:#7c3aed; color:#fff; }
+  .calbody { position:relative; flex:1; margin:0 3px; min-height:120px; }
+  .blk { position:absolute; left:0; right:0; border-radius:7px; padding:4px 6px; font-size:9.5px; line-height:1.25; color:#fff; overflow:hidden; white-space:nowrap; }
+  .blk b { display:block; font-size:9.5px; font-weight:700; }
+  .blk.teal { background:linear-gradient(150deg,#a78bfa,#7c3aed); }
+  .blk.dark { background:linear-gradient(150deg,#63636e,#43434e); }
+  .blk.amber { background:linear-gradient(150deg,#f59e0b,#d97706); }
+  .calempty { position:absolute; top:40%; left:0; right:0; text-align:center; font-size:10px; color:rgba(236,234,242,.3); }
+  .todaycard { width:284px; flex:0 0 284px; padding:14px 16px 12px; display:flex; flex-direction:column; overflow:hidden; }
+  .todaycard .tt2 { font-size:15px; font-weight:600; color:#f4f2fa; }
+  .todaycard .tsub { font-size:11.5px; color:rgba(236,234,242,.5); margin-top:2px; }
+  .tlist { flex:1; display:flex; flex-direction:column; justify-content:space-evenly; min-height:0; }
+  .trow2 { display:flex; align-items:center; gap:10px; padding:7px 0; border-bottom:1px solid rgba(255,255,255,.06); }
+  .trow2:last-child { border-bottom:none; }
+  .ttime { font-size:13px; font-weight:700; color:#c4b5fd; width:40px; flex:0 0 40px; }
+  .tmid { flex:1; min-width:0; }
+  .tnm { font-size:12.5px; font-weight:600; color:#f4f2fa; line-height:1.2; white-space:nowrap; }
+  .tjob { font-size:11px; color:rgba(236,234,242,.5); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .tfoot { font-size:11px; color:rgba(236,234,242,.5); border-top:1px solid rgba(255,255,255,.08); padding-top:8px; display:flex; align-items:center; gap:6px; }
+  .tfoot i { width:6px; height:6px; border-radius:50%; background:#a78bfa; display:block; flex:0 0 6px; }
+
+  /* reports */
+  .rgrid { display:flex; gap:16px; flex:1; min-height:0; }
+  .linecard { flex:1; padding:15px 19px 11px; display:flex; flex-direction:column; overflow:hidden; min-width:0; }
+  .linecard .chead { display:flex; align-items:flex-start; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+  .linecard .ct { font-size:14px; font-weight:600; color:#f4f2fa; }
+  .linecard .lsub2 { font-size:11.5px; color:rgba(236,234,242,.5); margin-top:1px; }
+  .linecard .lval { font-size:25px; font-weight:600; color:#f7f5fc; }
+  .linesvg { flex:1; width:100%; min-height:0; margin-top:6px; }
+  .xlab2 { display:flex; justify-content:space-between; margin-top:5px; padding:0 2px; }
+  .xlab2 span { font-size:11px; color:rgba(236,234,242,.4); }
+  .rangewrap { display:flex; align-items:center; gap:8px; margin-top:12px; flex-wrap:wrap; }
+  .rpill { font:inherit; font-size:11.5px; font-weight:500; color:rgba(236,234,242,.6); background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.14); padding:6px 13px; border-radius:999px; cursor:pointer; }
+  .rpill.on { background:#f4f2fa; color:#1c1a26; border-color:#f4f2fa; font-weight:600; }
+  .donutwrap { flex:1; display:flex; align-items:center; gap:14px; min-height:0; }
+  .dlegend { display:flex; flex-direction:column; gap:7px; font-size:12px; color:rgba(236,234,242,.65); }
+  .dlegend .dl { display:flex; align-items:center; gap:7px; white-space:nowrap; }
+  .dlegend .dl i { width:8px; height:8px; border-radius:50%; display:block; flex:0 0 8px; }
+  .dlegend .dl b { margin-left:auto; font-weight:600; color:#f4f2fa; padding-left:12px; }
+  .kpirow { display:flex; gap:16px; flex:0 0 auto; }
+  .kpirow .stat2 { flex:1; }
+
+  /* modal + toast */
+  .scrim { position:fixed; inset:0; background:rgba(5,4,10,.55); z-index:55; display:none; }
+  .scrim.open { display:block; }
+  .modal { position:fixed; z-index:60; left:50%; top:50%; transform:translate(-50%,-50%); width:420px; max-width:calc(100vw - 32px);
+    background:rgba(34,31,46,.98); border:1px solid rgba(255,255,255,.16); border-radius:22px; padding:22px 24px;
+    box-shadow:0 30px 70px rgba(0,0,0,.6); display:none; }
+  .modal.open { display:block; }
+  .modal h3 { font-size:18px; font-weight:600; color:#f4f2fa; }
+  .modal .msub { font-size:12.5px; color:rgba(236,234,242,.55); margin-top:3px; }
+  .modal .mrow { display:flex; gap:10px; margin-top:18px; justify-content:flex-end; }
+  .modal select { width:100%; font:inherit; font-size:13.5px; color:#f4f2fa; padding:9px 13px; border-radius:12px;
+    border:1px solid rgba(255,255,255,.2); background:#2a2738; outline:none; }
+  .fld { margin-top:12px; }
+  .fld label { display:block; font-size:11.5px; font-weight:700; letter-spacing:.4px; color:rgba(236,234,242,.5); margin-bottom:5px; }
+  .fld input { width:100%; font:inherit; font-size:13.5px; color:#f4f2fa; padding:9px 13px; border-radius:12px;
+    border:1px solid rgba(255,255,255,.2); background:rgba(255,255,255,.06); outline:none; }
+  .fld input:focus { border-color:#a78bfa; }
+  .toast { position:fixed; z-index:70; left:50%; bottom:26px; transform:translate(-50%,80px); opacity:0;
+    background:#f4f2fa; color:#1c1a26; font-size:13.5px; font-weight:500; padding:12px 20px; border-radius:999px;
+    box-shadow:0 16px 36px rgba(0,0,0,.5); transition:transform .3s,opacity .3s; pointer-events:none; max-width:calc(100vw - 32px); text-align:center; }
+  .toast.show { transform:translate(-50%,0); opacity:1; }
+  .switch { position:relative; width:40px; height:23px; flex:0 0 auto; border:none; cursor:pointer; border-radius:999px;
+    background:rgba(255,255,255,.25); transition:background .18s; padding:0; }
+  .switch::after { content:''; position:absolute; top:3px; left:3px; width:17px; height:17px; border-radius:50%;
+    background:#fff; box-shadow:0 2px 6px rgba(0,0,0,.25); transition:left .18s; }
+  .switch[aria-checked="true"] { background:linear-gradient(120deg,#a78bfa,#7c3aed); }
+  .switch[aria-checked="true"]::after { left:20px; }
+
+  .navscrim { position:fixed; inset:0; background:rgba(5,4,10,.5); z-index:44; display:none; }
+
+  /* ---------- responsive ---------- */
+  @media (max-width:1080px) {
+    .tgrid { flex-wrap:wrap; }
+    .pipecard, .chartcard { flex:1 1 280px; width:auto; }
+    .statgrid { flex:1 1 100%; grid-template-rows:auto auto; }
+    .bgrid { flex-direction:column; }
+    .lstack { width:auto; flex:none; flex-direction:row; }
+    .lstack .aicard2, .lstack .slimcard { flex:1; }
+    .kpirow { flex-wrap:wrap; }
+    .kpirow .stat2 { flex:1 1 200px; }
+    .rgrid { flex-direction:column; }
+    .crow { flex-direction:column; }
+    .listcard { width:auto; flex:none; }
+    .todaycard { width:auto; flex:none; }
+  }
+  @media (max-width:860px) {
+    .app { margin:0; border-radius:0; border:none; }
+    .sidebar { position:fixed; z-index:50; top:0; left:0; bottom:0; width:262px; flex:none;
+      transform:translateX(-105%); transition:transform .28s ease;
+      background:linear-gradient(180deg, rgba(34,31,46,.97), rgba(20,19,28,.96));
+      box-shadow:20px 0 50px rgba(0,0,0,.5); }
+    .sidebar.open { transform:translateX(0); }
+    .navscrim.open { display:block; }
+    .burger { display:flex; }
+    .topbar { padding:12px 14px; }
+    .topbar .btn.ghost { display:none; }
+    .pages { padding:16px 14px 24px; }
+    .lstack { flex-direction:column; }
+  }
+  @media (max-width:560px) {
+    .topbar .av { display:none; }
+    .topbar .btn.primary { padding:9px 12px; font-size:12.5px; }
+    .statgrid { grid-template-columns:1fr; }
+    .greet .gt { font-size:24px; }
+    .phead .pt { font-size:22px; }
+    .bub { max-width:92%; }
+  }
+</style>
+</head>
+<body>
+<div class="backdrop"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div></div>
+
+<div class="app">
+  <!-- ================= SIDEBAR ================= -->
+  <aside class="sidebar" id="sidebar">
+    <div class="logo"><div class="lg">M</div><div class="ln">Merrick<span>HOME BUILDERS</span></div></div>
+    <nav class="nav" id="nav"></nav>
+    <div class="sp"></div>
+    <div class="aicard" id="aicard">
+      <div class="at"><i></i><span>AI receptionist</span><button class="switch" id="tgAI" role="switch" aria-checked="true" aria-label="AI receptionist"></button></div>
+      <div class="am" id="aicard-msg">Live · answered 31 enquiries today</div>
+    </div>
+    <div class="userchip">
+      <div class="av" style="width:34px;height:34px;font-size:12px;background:linear-gradient(145deg,#a78bfa,#7c3aed)">MH</div>
+      <div class="un">Merrick Homes<span>Owner</span></div>
+    </div>
+  </aside>
+  <div class="navscrim" id="navscrim"></div>
+
+  <!-- ================= MAIN ================= -->
+  <div class="main">
+    <div class="topbar">
+      <button class="burger" id="burger" aria-label="Open menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+      <div class="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.8-3.8"/></svg>
+        <input id="search" type="text" placeholder="Search clients, jobs, enquiries…" autocomplete="off">
+      </div>
+      <button class="btn ghost" id="activityBtn">Activity log</button>
+      <button class="btn primary" id="newEnquiryBtn">+ New enquiry</button>
+      <div class="av" style="width:36px;height:36px;font-size:12px;background:linear-gradient(145deg,#a78bfa,#7c3aed)">MH</div>
+      <div class="actpanel" id="actpanel">
+        <h4>Activity log</h4>
+        <div class="ai"><span><b>AI receptionist</b> booked a visit · Charlotte Reid, Wed 10:30</span><span class="when">2 min</span></div>
+        <div class="ai"><span><b>Quote sent</b> · George Miller, £118,400</span><span class="when">1 hr</span></div>
+        <div class="ai"><span><b>New enquiry</b> · Oliver Bennett, extension</span><span class="when">2 hrs</span></div>
+        <div class="ai"><span><b>Visit confirmed</b> · Lily Thompson, loft</span><span class="when">Yesterday</span></div>
+        <div class="ai"><span><b>Review received</b> · 5 stars on Google</span><span class="when">Yesterday</span></div>
+      </div>
+    </div>
+
+    <div class="pages" id="pages">
+
+      <!-- ================= OVERVIEW ================= -->
+      <section class="page" id="page-overview">
+        <div class="greet">
+          <div class="gt">Good morning, <span>Merrick Homes</span></div>
+          <div class="gs">Wednesday · 5 visits today · <span class="livedot"></span><b>AI receptionist live</b></div>
+        </div>
+        <div class="tgrid">
+          <div class="pipecard gcard">
+            <div class="plab">Pipeline value <span class="live2"><i></i>AI RECEPTIONIST LIVE</span></div>
+            <div class="pval">£<span data-count="612480" data-fmt="1">0</span></div>
+            <div class="pdelta">▲ 22% <span>vs last month</span></div>
+            <div class="pctrls">
+              <button class="pbtn" id="pipeRangeBtn">This month ▾</button>
+              <button class="pchip on" data-pipe="quotes">Quotes</button>
+              <button class="pchip on" data-pipe="visits">Visits</button>
+            </div>
+            <div class="psub"><div class="pslab">PIPELINE · 3 STAGES</div>
+              <div class="pm"><i style="background:#a78bfa"></i>Quotes sent<b>£236,900</b></div>
+              <div class="pm"><i style="background:#e7e5ee"></i>Deposits received<b>£88,500</b></div>
+              <div class="pm"><i style="background:#f59e0b"></i>Starts booked in<b>14</b></div>
+            </div>
+          </div>
+          <div class="statgrid">
+            <div class="stat2 gcard acc"><div class="lab">New enquiries</div><div class="ichip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M3.5 20c.6-3.2 2.8-5 5.5-5s4.9 1.8 5.5 5"/><path d="M16 5.2a3.5 3.5 0 0 1 0 5.9M18.5 15.4c1 .8 1.7 2 2 4.6"/></svg></div><div class="val"><span data-count="156">0</span></div><div class="foot"><span class="dpill">▲ 21% <span>this week</span></span></div></div>
+            <div class="stat2 gcard"><div class="lab">Visits booked</div><div class="ichip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2.5"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></div><div class="val"><span data-count="58">0</span></div><div class="foot"><span class="dpill">▲ 15% <span>this week</span></span></div></div>
+            <div class="stat2 gcard"><div class="lab">Quotes sent</div><div class="ichip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 6.5C16.6 5 14.9 4 13 4c-2.8 0-5 2.2-5 5v2H5.5M8 15H5.5M8 11h6.5M8 11v5.5L6.8 20h11"/></svg></div><div class="val"><span data-count="84">0</span></div><div class="foot"><span class="dpill">£237k <span>total value</span></span></div></div>
+            <div class="stat2 gcard"><div class="lab">Reply time</div><div class="ichip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3.5 2"/></svg></div><div class="val"><span data-count="29">0</span>s</div><div class="foot"><span class="dpill">24/7 <span>· instant</span></span></div></div>
+          </div>
+          <div class="chartcard gcard">
+            <div class="chead"><div class="ct">Enquiries</div><div class="legend"><span><i style="background:#a78bfa"></i>Web</span><span><i style="background:#5c5c68"></i>Ref</span></div></div>
+            <div class="bars" id="enqBars"></div>
+            <div class="xlab" id="enqLabels"></div>
+            <div class="rangewrap" style="margin-top:10px">
+              <button class="rpill on" data-enqrange="this">This week</button>
+              <button class="rpill" data-enqrange="last">Last week</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="bgrid">
+          <div class="lstack">
+            <div class="aicard2 gcard">
+              <div class="st">AI Replies <span class="live2"><i></i>LIVE</span></div>
+              <div class="airow"><div class="ail1"><span class="ain">Charlotte Reid</span><span class="ait2">✓ VISIT BOOKED</span></div><div class="aim">“Wednesday 10:30 works, you are booked in.” <span>· 2m ago</span></div></div>
+              <div class="airow"><div class="ail1"><span class="ain">Oliver Bennett</span><span class="ait2">✓ REPLIED IN 24s</span></div><div class="aim">“Thanks! Friday afternoon suits us.” <span>· 8m ago</span></div></div>
+              <div class="aitype"><span class="tdots"><span class="tdot"></span><span class="tdot"></span><span class="tdot"></span></span>AI is replying to a new enquiry…</div>
+            </div>
+            <div class="slimcard gcard"><div class="sic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2.5"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></div><div><div class="st1">Next visit — Reid, kitchen extension</div><div class="st2">Today · 10:30 AM · Twickenham</div></div></div>
+          </div>
+          <div class="tablecard gcard">
+            <div class="thead"><div class="tt">Recent enquiries</div></div>
+            <div class="tabs" id="ovTabs">
+              <button class="tab2 on" data-ovtab="all">All</button>
+              <button class="tab2" data-ovtab="new">New</button>
+              <button class="tab2" data-ovtab="rep">Replied</button>
+              <button class="tab2" data-ovtab="bok">Visit booked</button>
+            </div>
+            <div class="tscroll"><table>
+              <thead><tr><th>Client</th><th>Job</th><th>Status</th><th>Date</th><th>Value</th></tr></thead>
+              <tbody id="overviewTableBody"></tbody>
+            </table></div>
+            <div class="noresults" data-noresults>No enquiries match your search.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= ENQUIRIES ================= -->
+      <section class="page" id="page-enquiries">
+        <div class="phead"><div class="pt">Enquiries</div><div class="ps"><span class="livedot"></span><b>31 new</b> today · AI replies in 24s on average</div></div>
+        <div class="crow">
+          <div class="listcard gcard">
+            <div class="lhead"><span class="lt2">Enquiries</span><span class="lchip">31 new today</span></div>
+            <div class="llist" id="enqList"></div>
+          </div>
+          <div class="convcard gcard">
+            <div class="chead2">
+              <div class="av" id="convAv" style="width:38px;height:38px;font-size:12px;background:linear-gradient(145deg,#6366f1,#4338ca)">CR</div>
+              <div><div class="cnm" id="convName">Charlotte Reid</div><div class="csub" id="convSub">Kitchen extension · Twickenham · via website</div></div>
+              <span class="pill bok" id="convPill" style="margin-left:auto">Visit booked</span>
+            </div>
+            <div class="cbody" id="convBody"></div>
+            <form class="creply" id="replyForm">
+              <input id="replyInput" type="text" placeholder="Write a reply…" autocomplete="off">
+              <button class="csend" type="submit" aria-label="Send reply"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= BOOKINGS ================= -->
+      <section class="page" id="page-bookings">
+        <div class="phead"><div class="pt">Bookings</div><div class="ps">Week 50 · 7–13 December 2026 · <b>13 visits</b> this week</div></div>
+        <div class="crow">
+          <div class="calcard gcard">
+            <div class="calhead"><span class="ct2">December 2026</span><span class="calweek">Mon 7 – Sun 13</span>
+              <div class="legend"><span><i style="background:#a78bfa"></i>Visit</span><span><i style="background:#63636e"></i>Quote</span><span><i style="background:#f59e0b"></i>2nd visit</span></div></div>
+            <div class="calgrid" id="calGrid"></div>
+          </div>
+          <div class="todaycard gcard">
+            <div class="tt2" id="todayTitle">Today — Wednesday</div>
+            <div class="tsub" id="todaySub">5 appointments · booked by AI</div>
+            <div class="tlist" id="todayList"></div>
+            <div class="tfoot"><i></i>Reminders sent automatically</div>
+          </div>
+        </div>
+        <button class="btn primary" id="bookVisitBtn" style="align-self:flex-start">+ Book a visit</button>
+      </section>
+
+      <!-- ================= REPORTS ================= -->
+      <section class="page" id="page-reports">
+        <div class="phead"><div class="pt">Reports</div><div class="ps">Jobs won · updated <b>today</b></div></div>
+        <div class="rgrid">
+          <div class="linecard gcard">
+            <div class="chead"><div><div class="ct">Jobs won</div><div class="lsub2" id="jobsWonSub">Last 6 months · value of work signed</div></div><div class="lval" id="jobsWonVal">£<span data-count="128750" data-fmt="1">0</span></div></div>
+            <div class="rangewrap">
+              <button class="rpill" data-jrange="3">3 months</button>
+              <button class="rpill on" data-jrange="6">6 months</button>
+              <button class="rpill" data-jrange="12">12 months</button>
+            </div>
+            <div id="jobsChart"></div>
+            <div class="xlab2" id="jobsMonths"></div>
+          </div>
+          <div class="chartcard gcard" style="width:300px;flex:0 0 300px"><div class="chead"><div class="ct">Jobs by source</div></div>
+            <div class="donutwrap">
+              <svg width="118" height="118" viewBox="0 0 120 120">
+                <circle cx="60" cy="60" r="46" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="17"/>
+                <circle cx="60" cy="60" r="46" fill="none" stroke="#a78bfa" stroke-width="17" stroke-dasharray="167.6 121.4" transform="rotate(-90 60 60)"/>
+                <circle cx="60" cy="60" r="46" fill="none" stroke="#e7e5ee" stroke-width="17" stroke-dasharray="78.0 211.0" transform="rotate(118.8 60 60)"/>
+                <circle cx="60" cy="60" r="46" fill="none" stroke="rgba(255,255,255,.28)" stroke-width="17" stroke-dasharray="43.3 245.7" transform="rotate(216 60 60)"/>
+              </svg>
+              <div class="dlegend">
+                <div class="dl"><i style="background:#a78bfa"></i>Website<b>58%</b></div>
+                <div class="dl"><i style="background:#e7e5ee"></i>Referrals<b>27%</b></div>
+                <div class="dl"><i style="background:rgba(255,255,255,.28)"></i>Google<b>15%</b></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="kpirow">
+          <div class="stat2 gcard acc"><div class="lab">Win rate</div><div class="ichip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8L3.5 9.7l5.9-.9z"/></svg></div><div class="val"><span data-count="38">0</span>%</div><div class="foot"><span class="dpill">▲ 4 pts <span>this quarter</span></span></div></div>
+          <div class="stat2 gcard"><div class="lab">Quotes sent</div><div class="ichip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 6.5C16.6 5 14.9 4 13 4c-2.8 0-5 2.2-5 5v2H5.5M8 15H5.5M8 11h6.5M8 11v5.5L6.8 20h11"/></svg></div><div class="val"><span data-count="84">0</span></div><div class="foot"><span class="dpill">£237k <span>total value</span></span></div></div>
+          <div class="stat2 gcard"><div class="lab">Avg job value</div><div class="ichip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M3.5 20c.6-3.2 2.8-5 5.5-5s4.9 1.8 5.5 5"/><path d="M16 5.2a3.5 3.5 0 0 1 0 5.9M18.5 15.4c1 .8 1.7 2 2 4.6"/></svg></div><div class="val">£<span data-count="31">0</span>k</div><div class="foot"><span class="dpill">▲ £2.6k <span>this quarter</span></span></div></div>
+          <div class="stat2 gcard"><div class="lab">Reviews</div><div class="ichip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-8.5 8.4c-1.5 0-3-.4-4.2-1.1L3 20l1.3-5.2A8.4 8.4 0 1 1 21 11.5z"/></svg></div><div class="val">4.9</div><div class="foot"><span class="dpill">268 <span>· auto-requested</span></span></div></div>
+        </div>
+      </section>
+
+    </div><!-- /pages -->
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<!-- ================= MODAL + TOAST ================= -->
+<div class="scrim" id="scrim"></div>
+<div class="modal" id="enquiryModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <h3 id="modalTitle">New enquiry</h3>
+  <div class="msub" id="modalSub">It lands in your Enquiries list straight away.</div>
+  <form id="enquiryForm">
+    <div class="fld"><label>CLIENT NAME</label><input id="fName" type="text" required placeholder="e.g. Mrs Hartley"></div>
+    <div class="fld"><label>JOB TYPE</label>
+      <select id="fType">
+        <option>Extension</option><option>Kitchen extension</option><option>Loft conversion</option>
+        <option>Renovation</option><option>Garden room</option><option>Site visit</option><option>Other</option>
+      </select></div>
+    <div class="fld"><label>DETAILS</label><input id="fDetails" type="text" required placeholder="What do they need?"></div>
+    <div class="mrow">
+      <button type="button" class="btn ghost" id="modalCancel">Cancel</button>
+      <button type="submit" class="btn primary">Add enquiry</button>
+    </div>
+  </form>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+/* ================= icons ================= */
+const P = {
+  grid:'<rect x="3" y="3" width="7.5" height="7.5" rx="1.8"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.8"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.8"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.8"/>',
+  chat:'<path d="M21 11.5a8.4 8.4 0 0 1-8.5 8.4c-1.5 0-3-.4-4.2-1.1L3 20l1.3-5.2A8.4 8.4 0 1 1 21 11.5z"/>',
+  cal:'<rect x="3" y="5" width="18" height="16" rx="2.5"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+  chart:'<path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>',
+  check:'<path d="M20 6L9 17l-5-5"/>'
+};
+const svgIcon = p => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+
+/* ================= data (from the V5 source; extensions marked) ================= */
+const NAV = [
+  ['overview','grid','Overview'],['enquiries','chat','Enquiries'],
+  ['bookings','cal','Bookings'],['reports','chart','Reports']
+];
+const AVG = ['linear-gradient(145deg,#8b5cf6,#6d28d9)','linear-gradient(145deg,#6366f1,#4338ca)','linear-gradient(145deg,#71717a,#3f3f46)','linear-gradient(145deg,#c084fc,#9333ea)','linear-gradient(145deg,#a1a1aa,#52525b)'];
+const gbp = n => '£' + n.toLocaleString('en-GB');
+
+/* Recent enquiries — all 5 rows from the source. */
+let ENQ = [
+  { name:'Oliver Bennett', ini:'OB', grad:0, area:'Richmond', job:'Extension', status:'new', label:'New', time:'Today · 09:41', value:57000, via:'via website',
+    thread:[
+      ['cust','Hi, looking to extend the back of our house in Richmond, two storeys if possible. What would something like that cost?','09:41'],
+      ['ai','Hi Oliver, thanks for getting in touch. A two-storey rear extension in Richmond usually starts around £85k, depending on the finish. I can book a free site visit so we can measure up and quote exactly. Would Thursday 10:00 suit you?','AI · replied in 24s'],
+      ['cust','Thursday 10:00 works for us, thank you.','09:47'] ] },
+  { name:'Charlotte Reid', ini:'CR', grad:1, area:'Twickenham', job:'Kitchen ext.', status:'bok', label:'Visit booked', time:'Today · 09:26', value:43750, via:'via website',
+    thread:[
+      ['cust','Hi, we want to extend our kitchen out the back, roughly five metres. Any idea on cost, and how soon you could start?','09:14'],
+      ['ai','Hi Charlotte, thanks for getting in touch. A rear kitchen extension of that size usually comes in between £46k and £58k, depending on the finish. I can book a free site visit so we can measure up and quote exactly. Would Wednesday 10:30 suit you?','AI · replied in 24s'],
+      ['cust','Wednesday 10:30 is perfect, thank you.','09:19'],
+      ['ai','You are booked in for Wednesday 10:30 ✓ Confirmation sent, and a reminder follows the day before.','09:19'] ] },
+  { name:'George Miller', ini:'GM', grad:2, area:'Esher', job:'Renovation', status:'rep', label:'Replied', time:'Today · 08:52', value:118400, via:'via Google',
+    thread:[
+      ['cust','Morning — we are looking at a full renovation of our house in Esher, four bedrooms. Could someone come and look at it this week?','08:52'],
+      ['ai','Morning George, happy to help. A full renovation of that size usually runs £90k to £130k. I can book a visit for Wednesday 13:15 — does that suit you?','AI · replied in 31s'],
+      ['cust','Wednesday 13:15 is fine. I will send over a few photos beforehand.','09:03'] ] },
+  { name:'Lily Thompson', ini:'LT', grad:3, area:'Surbiton', job:'Loft', status:'rep', label:'Replied', time:'Yesterday', value:39600, via:'via website',
+    thread:[
+      ['cust','Hi, we would like a loft conversion with an en-suite if possible. What is the usual cost?','Yesterday'],
+      ['ai','Hi Lily, thanks for asking. A loft conversion with an en-suite in Surbiton usually comes in between £38k and £48k. I can book a second visit to confirm the layout — Thursday 11:00 works if that suits you.','AI · replied in 22s'],
+      ['cust','Thursday 11:00 is perfect, see you then.','Yesterday'] ] },
+  { name:'Harry Wilson', ini:'HW', grad:4, area:'Kingston', job:'Garden room', status:'new', label:'New', time:'Yesterday', value:27800, via:'via referral',
+    thread:[
+      ['cust','Hi — we want a garden room at the bottom of the garden, about 4 by 3 metres, with power and heating. Can you give us a rough price?','Yesterday'],
+      ['ai','Hi Harry, thanks for getting in touch. A garden room that size with power and heating usually comes in around £26k to £32k. I can book a site visit for Tuesday 10:00 to measure up — does that work?','AI · replied in 26s'] ] },
+  { name:'Hannah Reeves', ini:'HR', grad:2, area:'Wimbledon', job:'Renovation', status:'rep', label:'Replied', time:'1h ago', value:64200, via:'via website',
+    thread:[
+      ['cust','Hello, we need a quote for renovating our kitchen and bathroom in Wimbledon. When could someone visit?','1h ago'],
+      ['ai','Hello Hannah, thanks for reaching out. I can book a visit for Monday 9:00 — does that suit you?','AI · replied in 19s'],
+      ['cust','Monday 9:00 is fine, thank you.','1h ago'] ] },
+  { name:'Jack Murphy', ini:'JM', grad:0, area:'Epsom', job:'Extension', status:'new', label:'New', time:'2h ago', value:48900, via:'via Google',
+    thread:[
+      ['cust','Hi, single-storey side extension in Epsom, roughly 3 metres. Ballpark cost?','2h ago'],
+      ['ai','Hi Jack, thanks for asking. A single-storey side extension of that size usually comes in between £42k and £55k. I can book a site visit for Tuesday 15:00 to quote exactly — shall I?','AI · replied in 28s'] ] }
+];
+/* NOTE: Hannah Reeves and Jack Murphy appear in the source's enquiry list only
+   (no conversation shown) — their threads above are extensions in the source's voice. */
+/* Enquiries bar chart — values from the source; last-week split is an extension. */
+const ENQ_BARS = {
+  this: { vals:[.44,.68,.6,.95,.7,.84,.58,1,.74], labs:['M','T','W','T','F','S','S','M','T'] },
+  last: { vals:[.38,.55,.5,.7,.62,.7,.5,.8,.66], labs:['M','T','W','T','F','S','S','M','T'] }
+};
+/* Jobs won — 6-month monthly values (£k) sum to £128,750, matching the source total.
+   3- and 12-month views are extensions on the same trend. */
+const JOBS_WON = {
+  3:  { labels:['Oct','Nov','Dec'], vals:[24,28,30.75], total:82750, sub:'Last 3 months · value of work signed' },
+  6:  { labels:['Jul','Aug','Sep','Oct','Nov','Dec'], vals:[12,18,16,24,28,30.75], total:128750, sub:'Last 6 months · value of work signed' },
+  12: { labels:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'], vals:[8,10,9,14,11,15,12,18,16,24,28,30.75], total:215750, sub:'Last 12 months · value of work signed' }
+};
+/* Bookings week — every block from the source; names/jobs matched to the enquiries above. */
+const WEEK = [
+  { d:'MON', n:7, name:'Monday', events:[
+    { t:'9:00', top:10, kind:'dark', name:'Hannah Reeves', job:'Renovation · Wimbledon', status:'Pending' },
+    { t:'14:30', top:58, kind:'teal', name:'Lily Thompson', job:'Loft · Surbiton', status:'Confirmed' } ] },
+  { d:'TUE', n:8, name:'Tuesday', events:[
+    { t:'10:00', top:16, kind:'teal', name:'Harry Wilson', job:'Garden room · Kingston', status:'Confirmed' },
+    { t:'15:00', top:60, kind:'dark', name:'Jack Murphy', job:'Extension · Epsom', status:'Pending' } ] },
+  { d:'WED', n:9, name:'Wednesday', today:true, events:[
+    { t:'9:00', top:0, kind:'teal', name:'Oliver Bennett', job:'Extension · Richmond', status:'Confirmed' },
+    { t:'10:30', top:20, kind:'dark', name:'Charlotte Reid', job:'Kitchen ext. · Twickenham', status:'Confirmed' },
+    { t:'13:15', top:42, kind:'teal', name:'George Miller', job:'Renovation · Esher', status:'Pending' },
+    { t:'15:45', top:64, kind:'amber', name:'Lily Thompson', job:'Loft · Surbiton', status:'Confirmed' },
+    { t:'17:00', top:84, kind:'teal', name:'Hannah Reeves', job:'Renovation · Wimbledon', status:'Confirmed' } ] },
+  { d:'THU', n:10, name:'Thursday', events:[
+    { t:'11:00', top:30, kind:'amber', name:'Charlotte Reid', job:'Kitchen ext. · Twickenham', status:'Confirmed' } ] },
+  { d:'FRI', n:11, name:'Friday', events:[
+    { t:'9:30', top:12, kind:'dark', name:'Oliver Bennett', job:'Extension · Richmond', status:'Pending' },
+    { t:'14:00', top:56, kind:'teal', name:'Jack Murphy', job:'Extension · Epsom', status:'Confirmed' } ] },
+  { d:'SAT', n:12, name:'Saturday', events:[
+    { t:'10:00', top:8, kind:'teal', name:'Harry Wilson', job:'Garden room · Kingston', status:'Confirmed' } ] },
+  { d:'SUN', n:13, name:'Sunday', events:[] }
+];
+
+/* ================= toast ================= */
+let toastTimer;
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimer); toastTimer = setTimeout(()=>t.classList.remove('show'), 2600);
+}
+
+/* ================= navigation ================= */
+const navEl = document.getElementById('nav');
+navEl.innerHTML = NAV.map(n =>
+  `<button class="nitem" data-page="${n[0]}">${svgIcon(P[n[1]])}${n[2]}${n[0]==='enquiries' ? '<span class="bdg" id="enqBadge">31</span>' : ''}</button>`).join('');
+const countedPages = new Set();
+function goTo(page){
+  document.querySelectorAll('.page').forEach(s => s.classList.toggle('on', s.id === 'page-' + page));
+  document.querySelectorAll('.nitem').forEach(b => b.classList.toggle('on', b.dataset.page === page));
+  document.getElementById('pages').scrollTop = 0;
+  closeSidebar();
+  if (!countedPages.has(page)) { countedPages.add(page); runCountUps(document.getElementById('page-' + page)); }
+}
+navEl.addEventListener('click', e => {
+  const b = e.target.closest('.nitem'); if (b) goTo(b.dataset.page);
+});
+const sidebar = document.getElementById('sidebar'), navscrim = document.getElementById('navscrim');
+function closeSidebar(){ sidebar.classList.remove('open'); navscrim.classList.remove('open'); }
+document.getElementById('burger').addEventListener('click', () => {
+  sidebar.classList.add('open'); navscrim.classList.add('open');
+});
+navscrim.addEventListener('click', closeSidebar);
+
+/* ================= count-up ================= */
+function runCountUps(scope){
+  scope.querySelectorAll('[data-count]').forEach(el => {
+    const target = parseFloat(el.dataset.count), fmt = el.dataset.fmt;
+    const t0 = performance.now(), dur = 650;
+    (function step(now){
+      const p = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - p, 3), v = target * e;
+      el.textContent = fmt ? Math.round(v).toLocaleString('en-GB') : Math.round(v);
+      if (p < 1) requestAnimationFrame(step);
+    })(t0);
+  });
+}
+
+/* ================= overview: enquiries bar chart ================= */
+function renderEnqBars(range){
+  const d = ENQ_BARS[range];
+  document.getElementById('enqBars').innerHTML = d.vals.map(v =>
+    `<div class="bwrap"><div class="bstack" style="height:${(v*100).toFixed(1)}%"><div class="bseg web" style="flex:45"></div><div class="bseg ref" style="flex:55"></div></div></div>`).join('');
+  document.getElementById('enqLabels').innerHTML = d.labs.map(l => `<span>${l}</span>`).join('');
+}
+renderEnqBars('this');
+document.querySelectorAll('[data-enqrange]').forEach(p => p.addEventListener('click', () => {
+  document.querySelectorAll('[data-enqrange]').forEach(x => x.classList.toggle('on', x === p));
+  renderEnqBars(p.dataset.enqrange);
+}));
+document.querySelectorAll('[data-pipe]').forEach(p => p.addEventListener('click', () => {
+  p.classList.toggle('on');
+  toast(p.classList.contains('on') ? p.textContent + ' shown in pipeline' : p.textContent + ' hidden from pipeline');
+}));
+document.getElementById('pipeRangeBtn').addEventListener('click', () => toast('Pipeline shown for this month'));
+
+/* ================= overview table + tabs ================= */
+const pillFor = e => e.status === 'new' ? '<span class="pill new">New</span>'
+  : e.status === 'bok' ? '<span class="pill bok">Visit booked</span>' : '<span class="pill rep">Replied</span>';
+let ovTab = 'all';
+function renderOverviewTable(){
+  const rows = ENQ.filter(e => ovTab === 'all' || e.status === ovTab);
+  document.getElementById('overviewTableBody').innerHTML = rows.map((e, i) =>
+    `<tr data-search-row><td><b>${e.name}</b><br><span style="font-size:11px;color:rgba(236,234,242,.45)">${e.area}</span></td><td>${e.job}</td><td>${pillFor(e)}</td><td>${e.time}</td><td><b>${gbp(e.value)}</b></td></tr>`).join('');
+  applySearch();
+}
+document.querySelectorAll('#ovTabs .tab2').forEach(b => b.addEventListener('click', () => {
+  ovTab = b.dataset.ovtab;
+  document.querySelectorAll('#ovTabs .tab2').forEach(x => x.classList.toggle('on', x === b));
+  renderOverviewTable();
+}));
+renderOverviewTable();
+
+/* ================= enquiries: list + conversation ================= */
+let selEnq = 1; /* Charlotte Reid, as in the source */
+const mpill = e => e.status === 'new' ? '<span class="mpill new">NEW</span>'
+  : e.status === 'bok' ? '<span class="mpill bok">BOOKED</span>' : '<span class="mpill rep">REPLIED</span>';
+function renderEnqList(){
+  document.getElementById('enqList').innerHTML = ENQ.map((e, i) =>
+    `<div class="litem${i === selEnq ? ' on' : ''}" data-enq="${i}" data-search-row>
+      <div class="av" style="width:30px;height:30px;font-size:11px;background:${AVG[e.grad % 5]}">${e.ini}</div>
+      <div class="lmid"><div class="lnm">${e.name}</div><div class="lsub">${e.job} · ${e.area}</div></div>
+      <div class="lright"><div class="ltime">${e.time}</div>${mpill(e)}</div>
+    </div>`).join('');
+  applySearch();
+}
+function renderConv(){
+  const e = ENQ[selEnq];
+  document.getElementById('convAv').textContent = e.ini;
+  document.getElementById('convAv').style.background = AVG[e.grad % 5];
+  document.getElementById('convName').textContent = e.name;
+  document.getElementById('convSub').textContent = `${e.job} · ${e.area} · ${e.via}`;
+  const pill = document.getElementById('convPill');
+  pill.className = 'pill ' + (e.status === 'new' ? 'new' : e.status === 'bok' ? 'bok' : 'rep');
+  pill.style.marginLeft = 'auto';
+  pill.textContent = e.label;
+  document.getElementById('convBody').innerHTML = e.thread.map(m =>
+    `<div class="brow ${m[0]}"><div class="bub ${m[0]}">${m[1]}<span class="btime">${m[2]}</span></div></div>`).join('');
+  document.getElementById('convBody').scrollTop = document.getElementById('convBody').scrollHeight;
+}
+document.getElementById('enqList').addEventListener('click', e => {
+  const item = e.target.closest('[data-enq]'); if (!item) return;
+  selEnq = parseInt(item.dataset.enq, 10);
+  renderEnqList(); renderConv();
+});
+renderEnqList(); renderConv();
+document.getElementById('replyForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const inp = document.getElementById('replyInput');
+  const txt = inp.value.trim(); if (!txt) return;
+  const enq = ENQ[selEnq];
+  enq.thread.push(['ai', txt, 'Just now']);
+  if (enq.status === 'new') { enq.status = 'rep'; enq.label = 'Replied'; renderOverviewTable(); }
+  renderEnqList(); renderConv();
+  inp.value = '';
+  toast(`Reply sent to ${enq.name}`);
+});
+
+/* ================= bookings: week calendar ================= */
+let selDay = 2; /* Wednesday, as in the source */
+function renderCal(){
+  document.getElementById('calGrid').innerHTML = WEEK.map((d, i) =>
+    `<div class="calcol${d.today ? ' today' : ''}${i === selDay ? ' sel' : ''}" data-day="${i}">
+      <div class="caldh">${d.d}</div><div class="caldn${d.today ? ' today' : ''}">${d.n}</div>
+      <div class="calbody">${d.events.length ? d.events.map(ev =>
+        `<div class="blk ${ev.kind}" style="top:${ev.top}%"><b>${ev.t}</b>${ev.name.split(' ')[0]} · ${ev.job.split(' · ')[0]}</div>`).join('')
+        : '<div class="calempty">No visits</div>'}</div>
+    </div>`).join('');
+  renderToday();
+}
+function renderToday(){
+  const d = WEEK[selDay];
+  document.getElementById('todayTitle').textContent = (d.today ? 'Today — ' : '') + d.name;
+  document.getElementById('todaySub').textContent = d.events.length
+    ? `${d.events.length} appointment${d.events.length === 1 ? '' : 's'} · booked by AI` : 'No appointments · booked by AI';
+  document.getElementById('todayList').innerHTML = d.events.length ? d.events.map(ev =>
+    `<div class="trow2"><div class="ttime">${ev.t}</div><div class="tmid"><div class="tnm">${ev.name}</div><div class="tjob">${ev.job}</div></div>
+    <span class="pill ${ev.status === 'Confirmed' ? 'bok' : 'pen'}">${ev.status}</span></div>`).join('')
+    : '<div class="trow2"><div class="tmid"><div class="tnm">Nothing booked</div><div class="tjob">No visits or site work this day.</div></div></div>';
+}
+document.getElementById('calGrid').addEventListener('click', e => {
+  const col = e.target.closest('[data-day]'); if (!col) return;
+  selDay = parseInt(col.dataset.day, 10);
+  document.querySelectorAll('.calcol').forEach(c => c.classList.toggle('sel', parseInt(c.dataset.day, 10) === selDay));
+  renderToday();
+});
+renderCal();
+
+/* ================= reports: jobs-won line chart ================= */
+function lineChart(el, labels, vals){
+  const W = 700, H = 240, padL = 6, padR = 6, padT = 14, padB = 10;
+  const max = Math.ceil(Math.max(...vals) * 1.15 / 10) * 10;
+  const x = i => padL + (W - padL - padR) * (labels.length === 1 ? 0.5 : i / (labels.length - 1));
+  const y = v => padT + (H - padT - padB) * (1 - v / max);
+  const pts = vals.map((v,i) => `${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(' ');
+  const area = `M${x(0)},${y(vals[0])} ` + vals.map((v,i)=>`L${x(i)},${y(v)}`).join(' ') + ` L${x(vals.length-1)},${H} L${x(0)},${H} Z`;
+  let grid = '';
+  for (let g = 1; g <= 3; g++) { const gy = padT + (H - padT - padB) * g / 4;
+    grid += `<line x1="0" y1="${gy}" x2="${W}" y2="${gy}" stroke="rgba(255,255,255,.08)"/>`; }
+  el.innerHTML = `
+  <svg class="linesvg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Jobs won chart">
+    <defs><linearGradient id="jwfill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#a78bfa" stop-opacity=".35"/><stop offset="1" stop-color="#a78bfa" stop-opacity="0"/>
+    </linearGradient></defs>
+    ${grid}
+    <path d="${area}" fill="url(#jwfill)"/>
+    <polyline points="${pts}" fill="none" stroke="#a78bfa" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="${x(vals.length-1)}" cy="${y(vals[vals.length-1])}" r="5.5" fill="#a78bfa" stroke="#17141f" stroke-width="2"/>
+  </svg>`;
+}
+function renderJobsWon(range){
+  const d = JOBS_WON[range];
+  lineChart(document.getElementById('jobsChart'), d.labels, d.vals);
+  document.getElementById('jobsMonths').innerHTML = d.labels.map(l => `<span>${l}</span>`).join('');
+  document.getElementById('jobsWonSub').textContent = d.sub;
+  const valEl = document.getElementById('jobsWonVal');
+  valEl.innerHTML = '£<span data-count="' + d.total + '" data-fmt="1">' + d.total.toLocaleString('en-GB') + '</span>';
+  runCountUps(document.getElementById('page-reports'));
+}
+document.querySelectorAll('[data-jrange]').forEach(p => p.addEventListener('click', () => {
+  document.querySelectorAll('[data-jrange]').forEach(x => x.classList.toggle('on', x === p));
+  renderJobsWon(parseInt(p.dataset.jrange, 10));
+}));
+renderJobsWon(6);
+
+/* ================= search (filters rows on the page you are on) ================= */
+function applySearch(){
+  const q = document.getElementById('search').value.trim().toLowerCase();
+  document.querySelectorAll('.page.on [data-search-row]').forEach(row => {
+    row.style.display = (!q || row.textContent.toLowerCase().includes(q)) ? '' : 'none';
+  });
+  document.querySelectorAll('.page.on [data-noresults]').forEach(nr => {
+    const rows = [...nr.closest('.page').querySelectorAll('[data-search-row]')];
+    nr.style.display = (q && rows.length && rows.every(r => r.style.display === 'none')) ? 'block' : 'none';
+  });
+}
+document.getElementById('search').addEventListener('input', applySearch);
+
+/* ================= activity panel ================= */
+const actpanel = document.getElementById('actpanel');
+document.getElementById('activityBtn').addEventListener('click', e => { e.stopPropagation(); actpanel.classList.toggle('open'); });
+document.addEventListener('click', e => { if (!actpanel.contains(e.target)) actpanel.classList.remove('open'); });
+
+/* ================= enquiry modal ================= */
+const modal = document.getElementById('enquiryModal'), scrim = document.getElementById('scrim');
+function openModal(type, title){
+  if (type) document.getElementById('fType').value = type;
+  document.getElementById('modalTitle').textContent = title || 'New enquiry';
+  modal.classList.add('open'); scrim.classList.add('open');
+  setTimeout(() => document.getElementById('fName').focus(), 30);
+}
+function closeModal(){ modal.classList.remove('open'); scrim.classList.remove('open'); }
+document.getElementById('newEnquiryBtn').addEventListener('click', () => openModal());
+document.getElementById('bookVisitBtn').addEventListener('click', () => openModal('Site visit', 'Book a visit'));
+document.getElementById('modalCancel').addEventListener('click', closeModal);
+scrim.addEventListener('click', closeModal);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal(); closeSidebar(); } });
+document.getElementById('enquiryForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const name = document.getElementById('fName').value.trim();
+  const type = document.getElementById('fType').value;
+  const details = document.getElementById('fDetails').value.trim();
+  if (!name || !details) return;
+  const ini = name.replace(/^(Mrs|Mr|Ms|Dr)\s+/i, '').split(/\s+/).map(w => w[0]).join('').slice(0, 2).toUpperCase() || 'EN';
+  ENQ.unshift({ name, ini, grad: ENQ.length % 5, area:'—', job:type, status:'new', label:'New', time:'Just now', value:0, via:'via website',
+    thread:[['cust', details, 'Just now']] });
+  selEnq = 0;
+  renderEnqList(); renderConv(); renderOverviewTable();
+  closeModal(); e.target.reset();
+  toast(`Enquiry from ${name} added to your Enquiries`);
+  goTo('enquiries');
+});
+
+/* ================= AI toggle ================= */
+document.getElementById('tgAI').addEventListener('click', function(){
+  const on = this.getAttribute('aria-checked') !== 'true';
+  this.setAttribute('aria-checked', on);
+  const card = document.getElementById('aicard');
+  card.classList.toggle('off', !on);
+  document.getElementById('aicard-msg').textContent = on ? 'Live · answered 31 enquiries today' : 'Off · enquiries go to the list unanswered';
+  toast(on ? 'AI receptionist is live' : 'AI receptionist switched off');
+});
+
+/* ================= start ================= */
+goTo('overview');
+</script>
+</body>
+</html>

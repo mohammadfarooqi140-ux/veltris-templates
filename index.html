@@ -106,6 +106,41 @@
   .btn-dl{background:transparent;color:var(--gold)}
   .btn-dl:hover{background:var(--panel-2)}
 
+  /* Custom build */
+  .custom{
+    border:1px solid var(--line);
+    background:var(--panel);
+    border-radius:14px;
+    padding:28px;
+    margin:6px 0 64px;
+  }
+  .custom .kicker{
+    color:var(--gold);font-size:12.5px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;
+  }
+  .custom h2{font-size:clamp(24px,3.6vw,32px);font-weight:800;margin:10px 0 10px;line-height:1.15}
+  .custom p.lead{color:var(--muted);font-size:16px;max-width:640px}
+  .menu{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 4px}
+  .menu span{
+    border:1px solid var(--gold);color:var(--gold);
+    font-size:13.5px;font-weight:700;padding:7px 13px;border-radius:999px;
+  }
+  .cform{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:22px}
+  .cform .full{grid-column:1 / -1}
+  .cform label{display:block;font-size:13px;font-weight:700;color:var(--muted);margin-bottom:6px;letter-spacing:.04em}
+  .cform input,.cform select,.cform textarea{
+    width:100%;background:var(--panel-2);border:1px solid var(--line);border-radius:9px;
+    color:var(--text);font-size:15px;padding:11px 12px;font-family:inherit;
+  }
+  .cform textarea{min-height:96px;resize:vertical}
+  .cform .send{
+    background:var(--gold);color:var(--gold-dark);border:1px solid var(--gold);
+    font-size:15px;font-weight:800;padding:12px 18px;border-radius:9px;cursor:pointer;width:100%;
+  }
+  .cform .send:hover{background:#e5c65a}
+  .custom .alt{margin-top:16px;font-size:14.5px;color:var(--muted)}
+  .custom .alt a{color:var(--gold);font-weight:700}
+  @media (max-width:560px){ .cform{grid-template-columns:1fr} .custom{padding:22px} }
+
   /* Footer */
   footer{
     border-top:1px solid var(--line);
@@ -348,6 +383,46 @@
     </article>
 
   </section>
+
+  <section class="custom" id="custom">
+    <div class="kicker">Custom builds</div>
+    <h2>Need one of these built for your business?</h2>
+    <p class="lead">These templates are the starting point. We build the real thing for businesses, set up around how your team actually works.</p>
+    <div class="menu">
+      <span>CRM</span>
+      <span>Client portal</span>
+      <span>Website</span>
+      <span>AI automations</span>
+    </div>
+    <form class="cform" id="customForm">
+      <div>
+        <label for="cf-name">Your name</label>
+        <input id="cf-name" name="name" type="text" required autocomplete="name">
+      </div>
+      <div>
+        <label for="cf-email">Your email</label>
+        <input id="cf-email" name="email" type="email" required autocomplete="email">
+      </div>
+      <div class="full">
+        <label for="cf-need">What do you need?</label>
+        <select id="cf-need" name="need">
+          <option>CRM</option>
+          <option>Client portal</option>
+          <option>Website</option>
+          <option>AI automations</option>
+          <option>Something else</option>
+        </select>
+      </div>
+      <div class="full">
+        <label for="cf-msg">Tell us a little about it</label>
+        <textarea id="cf-msg" name="message" placeholder="Your business, and what you want the system to do"></textarea>
+      </div>
+      <div class="full">
+        <button class="send" type="submit">Send enquiry</button>
+      </div>
+    </form>
+    <p class="alt">Prefer to talk it through first? <a href="https://calendar.app.google/opAcE1TeBet57Tx17">Book a free audit call</a> and we will map it out with you.</p>
+  </section>
 </main>
 
 <footer>
@@ -358,6 +433,23 @@
 </footer>
 
 
+<script>
+(function(){
+  var form = document.getElementById('customForm');
+  if(form){
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      var name = document.getElementById('cf-name').value.trim();
+      var email = document.getElementById('cf-email').value.trim();
+      var need = document.getElementById('cf-need').value;
+      var msg = document.getElementById('cf-msg').value.trim();
+      var subject = 'Custom build enquiry: ' + need;
+      var body = 'Name: ' + name + '\nEmail: ' + email + '\nWhat I need: ' + need + '\n\n' + msg;
+      window.location.href = 'mailto:muhammad@veltris.uk?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+    });
+  }
+})();
+</script>
 <script>
 (function(){
   var frames = Array.prototype.slice.call(document.querySelectorAll('iframe.pv-frame'));

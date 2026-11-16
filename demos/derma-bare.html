@@ -3,113 +3,196 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Derma Bare | Nurse Prescriber Aesthetics, Newport</title>
-<meta name="description" content="Derma Bare, Newport, South Wales. Independent Nurse Prescriber Danielle Batty RMN, 15 years of clinical experience. Refined, natural results.">
+<title>Derma Bare | Refined, Natural Aesthetics in Newport</title>
+<meta name="description" content="Derma Bare, Newport, South Wales. Danielle Batty RMN — Independent Nurse Prescriber with 15 years' clinical experience. Refined, natural results: microneedling, skin boosters, filler and Noon Aesthetics skincare. Book online.">
 <style>
-:root{--accent:#9a7b5f;--accent-dark:#6f5944;--ink:#2b2b28;--muted:#6f6f68;--bg:#faf8f5;--card:#ffffff;--line:#e9e3da}
+:root{
+  --ink:#17151a; --ink-soft:#5d565e;
+  --peach:#d2a98e; --peach-deep:#b0825e; --blush:#f4d9c6;
+  --paper:#fdfaf7; --card:#ffffff; --line:#eee0d2;
+  --grad:linear-gradient(160deg,#fffdfa 0%,#f9e3cf 55%,#e2b48f 100%);
+  --grad-dark:linear-gradient(150deg,#0f0e13 0%,#2c2126 60%,#54382e 100%);
+}
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{font-family:'Avenir Next','Segoe UI',Helvetica,Arial,sans-serif;color:var(--ink);background:var(--bg);line-height:1.6}
+body{font-family:'Avenir Next','Segoe UI',Helvetica,Arial,sans-serif;color:var(--ink);background:var(--paper);line-height:1.6;padding-bottom:74px}
 h1,h2,h3,.serif{font-family:Georgia,'Times New Roman',serif;font-weight:500}
 a{text-decoration:none;color:inherit}
-.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
-header{position:sticky;top:0;background:rgba(250,248,245,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);z-index:10}
-.nav{display:flex;align-items:center;justify-content:space-between;padding:16px 0}
-.logo{font-family:Georgia,serif;font-size:21px;letter-spacing:.02em}
-.logo span{color:var(--accent-dark)}
-.nav .links{display:flex;gap:28px;font-size:14px;color:var(--muted)}
+.wrap{max-width:1060px;margin:0 auto;padding:0 20px}
+.btn{display:inline-flex;align-items:center;justify-content:center;background:var(--ink);color:#fff;padding:14px 28px;border-radius:999px;font-size:15.5px;font-weight:600;transition:transform .15s,background .2s}
+.btn:hover{background:#2c2126;transform:translateY(-1px)}
+.btn.peach{background:var(--peach);color:#2a1c11}
+.btn.peach:hover{background:var(--peach-deep);color:#fff}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid rgba(23,21,26,.4)}
+.btn.ghost:hover{background:rgba(23,21,26,.06)}
+header{position:sticky;top:0;z-index:20;background:rgba(253,250,247,.94);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:13px 0}
+.logo{font-family:Georgia,serif;font-size:20px;letter-spacing:.1em;text-transform:uppercase}
+.logo span{color:var(--peach-deep)}
+.nav .links{display:flex;gap:26px;font-size:14px;color:var(--ink-soft)}
 .nav .links a:hover{color:var(--ink)}
-.btn{display:inline-block;background:var(--accent);color:#fff;padding:12px 26px;border-radius:999px;font-size:15px;letter-spacing:.01em;transition:background .2s}
-.btn:hover{background:var(--accent-dark)}
-.btn.small{padding:9px 20px;font-size:14px}
-.btn.ghost{background:transparent;color:var(--accent-dark);border:1px solid var(--accent)}
-.btn.ghost:hover{background:var(--accent);color:#fff}
-.hero{padding:84px 0 64px;text-align:center;background:linear-gradient(180deg,#e9e3de 0%,var(--bg) 100%)}
-.eyebrow{text-transform:uppercase;letter-spacing:.22em;font-size:12px;color:var(--accent-dark);margin-bottom:18px}
-.hero h1{font-size:46px;line-height:1.15;max-width:720px;margin:0 auto 18px}
-.hero p{font-size:18px;color:var(--muted);max-width:560px;margin:0 auto 32px}
-.hero .cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
-.trust{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;padding:26px 0 6px}
-.chip{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:7px 16px;font-size:13.5px;color:var(--muted)}
-.chip b{color:var(--accent-dark);font-weight:600}
-section{padding:64px 0}
-.sec-head{text-align:center;max-width:620px;margin:0 auto 40px}
-.sec-head h2{font-size:32px;margin-bottom:10px}
-.sec-head p{color:var(--muted)}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
-.tcard{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:28px}
-.tcard h3{font-size:19px;margin-bottom:8px}
-.tcard p{color:var(--muted);font-size:15px}
-.tcard .tag{display:inline-block;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent-dark);margin-bottom:10px}
-.about{background:#e9e3de;border-radius:24px;padding:48px;display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}
-.about h2{font-size:30px;margin-bottom:14px}
-.about p{color:#55534c;margin-bottom:12px}
-.about .sig{font-family:Georgia,serif;font-size:19px;color:var(--accent-dark)}
-.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}
-.step{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:28px}
-.step .num{width:38px;height:38px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-family:Georgia,serif;margin-bottom:14px}
-.step h3{font-size:18px;margin-bottom:6px}
-.step p{color:var(--muted);font-size:15px}
+.nav .book{background:var(--ink);color:#fff;padding:9px 18px;border-radius:999px;font-size:13.5px;font-weight:600}
+.hero{background:var(--grad);position:relative;overflow:hidden;border-bottom:1px solid var(--line)}
+.hero::after{content:"";position:absolute;inset:0;background:radial-gradient(500px 260px at 92% -30px,rgba(255,255,255,.85),transparent 60%),radial-gradient(360px 220px at -40px 108%,rgba(210,169,142,.4),transparent 60%);pointer-events:none}
+.hero .wrap{position:relative;z-index:1;padding:56px 20px 52px;text-align:center}
+.eyebrow{text-transform:uppercase;letter-spacing:.26em;font-size:11.5px;color:var(--peach-deep);margin-bottom:16px}
+.hero h1{font-size:41px;line-height:1.13;max-width:580px;margin:0 auto 16px}
+.hero h1 em{font-style:italic;color:var(--peach-deep)}
+.hero p{font-size:16.5px;color:var(--ink-soft);max-width:490px;margin:0 auto 26px}
+.hero .cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.trust{display:flex;gap:9px;justify-content:center;flex-wrap:wrap;margin-top:30px}
+.chip{background:rgba(255,255,255,.8);border:1px solid var(--line);border-radius:999px;padding:7px 15px;font-size:13px;color:var(--ink-soft)}
+.chip b{color:var(--ink);font-weight:700}
+section{padding:54px 0}
+.sec-head{max-width:600px;margin:0 auto 32px;text-align:center}
+.sec-head h2{font-size:30px;line-height:1.2;margin-bottom:10px}
+.sec-head p{color:var(--ink-soft);font-size:16px}
+.grid{display:grid;gap:14px}
+.tcard{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:26px;position:relative}
+.tcard::before{content:"";position:absolute;top:0;left:26px;right:26px;height:3px;border-radius:0 0 4px 4px;background:linear-gradient(90deg,var(--blush),var(--peach))}
+.tcard .k{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--peach-deep);margin-bottom:9px}
+.tcard h3{font-size:20px;margin-bottom:6px}
+.tcard p{color:var(--ink-soft);font-size:15px}
+.quote{background:var(--grad-dark);color:#fff;border-radius:24px;padding:40px 30px;text-align:center;position:relative;overflow:hidden}
+.quote::after{content:"";position:absolute;inset:0;background:radial-gradient(420px 220px at 50% -60px,rgba(210,169,142,.35),transparent 65%);pointer-events:none}
+.quote blockquote{position:relative;z-index:1;font-family:Georgia,serif;font-size:26px;line-height:1.4;max-width:620px;margin:0 auto 14px}
+.quote blockquote em{color:var(--peach);font-style:italic}
+.quote p{position:relative;z-index:1;color:#cfc2b8;font-size:15px;max-width:520px;margin:0 auto}
+.skincare{display:grid;gap:14px;align-items:stretch}
+.skin-card{background:linear-gradient(150deg,#fdf3e7,#f6ddc4);border:1px solid var(--line);border-radius:20px;padding:30px 26px}
+.skin-card h3{font-size:23px;margin-bottom:9px}
+.skin-card p{color:#5d4a38;font-size:15.5px;margin-bottom:10px}
+.skin-card ul{list-style:none;display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
+.skin-card ul li{background:rgba(255,255,255,.7);border:1px solid var(--line);border-radius:999px;padding:5px 13px;font-size:13px;color:#6b543e}
+.steps{display:grid;gap:14px}
+.step{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px;display:flex;gap:16px}
+.step .num{width:40px;height:40px;flex:none;border-radius:50%;background:var(--grad);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:Georgia,serif;color:var(--peach-deep);font-size:16px}
+.step h3{font-size:17.5px;margin-bottom:4px}
+.step p{color:var(--ink-soft);font-size:15px}
+.step a{color:var(--peach-deep);font-weight:600}
+.about{text-align:center;max-width:640px;margin:0 auto}
+.about h2{font-size:29px;margin-bottom:12px}
+.about p{color:var(--ink-soft);font-size:16px;margin-bottom:11px}
+.about .sig{font-family:Georgia,serif;font-style:italic;font-size:18px;color:var(--peach-deep)}
 .contact{text-align:center}
-.contact h2{font-size:32px;margin-bottom:12px}
-.contact p{color:var(--muted);max-width:520px;margin:0 auto 28px}
-.contact .cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
-.contact .detail{margin-top:18px;font-size:15px;color:var(--muted)}
-.contact .detail a{color:var(--accent-dark)}
-footer{border-top:1px solid var(--line);padding:28px 0;margin-top:20px}
-.foot{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-size:13.5px;color:var(--muted)}
-.credit{color:#a09a8e}
-@media(max-width:720px){.hero h1{font-size:34px}.about{grid-template-columns:1fr;padding:32px}.nav .links{display:none}}
+.contact h2{font-size:29px;margin-bottom:10px}
+.contact p{color:var(--ink-soft);max-width:480px;margin:0 auto 24px}
+.contact .cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+footer{border-top:1px solid var(--line);padding:26px 0 6px;margin-top:6px}
+.foot{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:13px;color:#a08b74}
+.credit{color:#c2ab90}
+.bookbar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(23,21,26,.97);padding:10px 14px calc(10px + env(safe-area-inset-bottom));display:flex;gap:10px}
+.bookbar a{flex:1;text-align:center;padding:13px 10px;border-radius:999px;font-weight:600;font-size:15px;background:var(--peach);color:#2a1c11}
+.bookbar a.alt{background:rgba(255,255,255,.13);color:#fff;border:1px solid rgba(255,255,255,.32)}
+@media(min-width:760px){
+  .hero .wrap{padding:82px 20px 72px}
+  .hero h1{font-size:55px}
+  .grid{grid-template-columns:1fr 1fr}
+  .quote blockquote{font-size:31px}
+  .steps{grid-template-columns:repeat(3,1fr)}
+  .step{flex-direction:column}
+  .bookbar{display:none}
+  body{padding-bottom:0}
+}
+@media(max-width:759px){.nav .links{display:none}}
 </style>
 </head>
 <body>
 <header>
   <div class="wrap nav">
-    <div class="logo">Derma <span>Bare</span></div>
+    <div class="logo">Derma<span>Bare</span></div>
     <nav class="links">
       <a href="#treatments">Treatments</a>
-      <a href="#about">About</a>
+      <a href="#philosophy">Philosophy</a>
+      <a href="#skincare">Skincare</a>
       <a href="#booking">Booking</a>
-      <a href="#contact">Contact</a>
     </nav>
-    <a class="btn small" href="https://portal.aestheticnursesoftware.com/book-online/3550" target="_blank" rel="noopener">Book now</a>
+    <a class="book" href="https://portal.aestheticnursesoftware.com/book-online/3550" target="_blank" rel="noopener">Book online</a>
   </div>
 </header>
 
 <div class="hero">
   <div class="wrap">
-    <div class="eyebrow">Newport, South Wales · Nurse Prescriber</div>
-    <h1>Refined, natural results</h1>
-    <p>Aesthetics from an Independent Nurse Prescriber with 15 years of clinical experience — subtle, refined results in Newport, South Wales.</p>
+    <div class="eyebrow">Newport, South Wales · Nurse Prescriber Clinic</div>
+    <h1>You, but <em>better</em> — never someone else</h1>
+    <p>Refined, natural results from an Independent Nurse Prescriber with 15 years of clinical experience. Skin health first, injectables with a light hand.</p>
     <div class="cta">
-      <a class="btn" href="https://portal.aestheticnursesoftware.com/book-online/3550" target="_blank" rel="noopener">Book a consultation</a>
-      <a class="btn ghost" href="#treatments">View treatments</a>
+      <a class="btn" href="https://portal.aestheticnursesoftware.com/book-online/3550" target="_blank" rel="noopener">Book your appointment</a>
+      <a class="btn ghost" href="#treatments">Explore treatments</a>
     </div>
-    <div class="trust"><div class="chip">Independent Nurse Prescriber</div><div class="chip"><b>15 years</b> clinical experience</div><div class="chip">RMN</div><div class="chip">Newport, South Wales</div></div>
+    <div class="trust">
+      <div class="chip"><b>Danielle Batty</b> RMN</div>
+      <div class="chip">Independent Nurse Prescriber</div>
+      <div class="chip"><b>15 years</b> clinical experience</div>
+      <div class="chip">Official <b>Noon Aesthetics</b> stockist</div>
+    </div>
   </div>
 </div>
 
 <section id="treatments">
   <div class="wrap">
     <div class="sec-head">
-      <h2>Treatments</h2>
-      <p>Popular treatments at Derma Bare. Your plan is always confirmed at consultation.</p>
+      <div class="eyebrow">Treatments</div>
+      <h2>Start with the skin, the rest follows</h2>
+      <p>Clinic dates fill quickly — especially in the run-up to Christmas — so booking ahead is always wise.</p>
     </div>
-    <div class="grid"><div class="tcard"><div class="tag">Signature</div><h3>Skin Boosters</h3><p>Deep skin hydration from within — the answer when moisturiser alone is not cutting it, especially through the winter months.</p></div><div class="tcard"><h3>Anti-Wrinkle Treatments</h3><p>Soften lines and prevent new ones forming, for a fresher, rested look.</p></div><div class="tcard"><h3>Dermal Fillers</h3><p>Restore volume and definition to lips, cheeks and contours, always in balance with your features.</p></div><div class="tcard"><h3>Microneedling</h3><p>Stimulate collagen production to improve texture, scarring and fine lines.</p></div><div class="tcard"><h3>Medical Facials</h3><p>Clinical-grade facials tailored to your skin on the day, for clarity and radiance.</p></div><div class="tcard"><h3>Skin Rejuvenation</h3><p>Target dullness, pigmentation and uneven tone for healthier, more even skin.</p></div></div>
+    <div class="grid">
+      <div class="tcard">
+        <div class="k">Danielle's favourite</div>
+        <h3>Microneedling</h3>
+        <p>The one treatment Danielle will always preach for skin health. It works with your skin's natural repair process, stimulating collagen and elastin to improve texture and smoothness and soften the appearance of fine lines.</p>
+      </div>
+      <div class="tcard">
+        <div class="k">Seasonal skin</div>
+        <h3>Skin Boosters &amp; Winter Skin</h3>
+        <p>Colder months leave skin dry, flaky and dull — a sign it needs more than another drugstore product. Injectable skin boosters give your skin exactly what it needs from within, restoring hydration and glow.</p>
+      </div>
+      <div class="tcard">
+        <div class="k">Injectables</div>
+        <h3>Anti-Wrinkle Treatments</h3>
+        <p>Smoother, more youthful, refined — targeted injectables that reduce the signs of ageing and open up the eye area, without freezing the face you know.</p>
+      </div>
+      <div class="tcard">
+        <div class="k">Injectables</div>
+        <h3>Dermal Filler, Done Differently</h3>
+        <p>No overfilling, ever. Filler placed with restraint and an honest eye, so you leave clinic still feeling like you — just better. Results that reverse the signs of ageing while keeping your face unmistakably yours.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="philosophy" style="padding-top:0">
+  <div class="wrap">
+    <div class="quote">
+      <blockquote>“Derma Bare was built on wanting to help people feel their best — <em>without making them look like a whole different person.</em>”</blockquote>
+      <p>That approach runs through everything here: honest assessment, treatments chosen for your skin, and results people notice for the right reasons.</p>
+    </div>
+  </div>
+</section>
+
+<section id="skincare" style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow">At home</div>
+      <h2>Pharmaceutical-grade skincare</h2>
+    </div>
+    <div class="skin-card">
+      <h3>Official stockists of Noon Aesthetics</h3>
+      <p>Treatments work harder when your home routine does too. Derma Bare is an official stockist of Noon Aesthetics — pharmaceutical-grade skincare with ingredients you simply won't find in drugstore products.</p>
+      <p>The 3–4 week starter kit is the best place to begin, targeting the four concerns Danielle hears most: hydration, pigmentation, texture and ageing. Stop playing the guessing game with your skin — and save money doing it.</p>
+      <ul><li>Hydration</li><li>Pigmentation</li><li>Texture</li><li>Ageing</li></ul>
+    </div>
   </div>
 </section>
 
 <section style="padding-top:0">
   <div class="wrap">
-    <div class="about" id="about">
-      <div>
-        <h2>Meet Danielle Batty</h2>
-        <p>Derma Bare is led by Danielle Batty, a Registered Mental Health Nurse (RMN) and Independent Nurse Prescriber with 15 years of clinical experience.</p><p>Her speciality is refined, natural results — the kind that leave you looking well, not worked on.</p>
-      </div>
-      <div>
-        <p>Every treatment starts with a consultation and an honest conversation about what will suit your skin.</p><p>Online booking is available through the clinic's booking portal.</p>
-        <p class="sig">Danielle Batty, RMN — Derma Bare</p>
-      </div>
+    <div class="about">
+      <div class="eyebrow">Your practitioner</div>
+      <h2>Meet Danielle Batty</h2>
+      <p>Danielle Batty RMN is an Independent Nurse Prescriber with 15 years of clinical experience, and the founder of Derma Bare in Newport, South Wales.</p>
+      <p>Her reputation is built on restraint: refined, natural results, honest advice about what your skin actually needs, and never selling you a treatment that isn't right for you.</p>
+      <p class="sig">— Danielle Batty RMN, Derma Bare</p>
     </div>
   </div>
 </section>
@@ -117,30 +200,38 @@ footer{border-top:1px solid var(--line);padding:28px 0;margin-top:20px}
 <section id="booking" style="padding-top:0">
   <div class="wrap">
     <div class="sec-head">
+      <div class="eyebrow">Booking</div>
       <h2>How booking works</h2>
-      <p>Simple, unhurried, and centred on what is right for your skin.</p>
     </div>
-    <div class="steps"><div class="step"><div class="num">1</div><h3>Book your consultation</h3><p>Choose a time that suits you. Your consultation is a conversation first — your skin, your concerns, and what you would like to achieve.</p></div><div class="step"><div class="num">2</div><h3>Your personalised plan</h3><p>You will receive honest advice and a treatment plan tailored to you, including what to expect and full aftercare guidance.</p></div><div class="step"><div class="num">3</div><h3>Treatment & aftercare</h3><p>Your treatment is carried out with medical-grade products and techniques, with follow-up support as your results develop.</p></div></div>
+    <div class="steps">
+      <div class="step"><div class="num">1</div><div><h3>Book online</h3><p>Choose your appointment through the <a href="https://portal.aestheticnursesoftware.com/book-online/3550" target="_blank" rel="noopener">online booking portal</a> — clinic dates go fast, so book in advance where you can.</p></div></div>
+      <div class="step"><div class="num">2</div><div><h3>Consultation</h3><p>Your skin is assessed properly first — its history, its changes, and what it genuinely needs.</p></div></div>
+      <div class="step"><div class="num">3</div><div><h3>Treatment &amp; plan</h3><p>Treatment with Danielle, plus a home skincare plan to protect and extend your result.</p></div></div>
+    </div>
   </div>
 </section>
 
-<section class="contact" id="contact" style="padding-top:0">
+<section class="contact" style="padding-top:0">
   <div class="wrap">
-    <h2>Ready when you are</h2>
-    <p>Derma Bare is based in Newport, South Wales. Book your consultation online, or follow on Instagram for skin advice and availability.</p>
+    <h2>Your skin, but better</h2>
+    <p>Book online in a couple of minutes, or follow Derma Bare on Instagram for skin advice, results and clinic dates.</p>
     <div class="cta">
-      <a class="btn" href="https://portal.aestheticnursesoftware.com/book-online/3550" target="_blank" rel="noopener">Book a consultation</a>
-      <a class="btn ghost" href="https://www.instagram.com/derma.bare" target="_blank" rel="noopener">Follow on Instagram</a>
+      <a class="btn peach" href="https://portal.aestheticnursesoftware.com/book-online/3550" target="_blank" rel="noopener">Book online</a>
+      <a class="btn ghost" href="https://www.instagram.com/derma.bare" target="_blank" rel="noopener">@derma.bare</a>
     </div>
-    
   </div>
 </section>
 
 <footer>
   <div class="wrap foot">
-    <div>© Derma Bare. All rights reserved.</div>
+    <div>© Derma Bare, Newport. All rights reserved.</div>
     <div class="credit">Demo website made by Veltris — veltris.uk</div>
   </div>
 </footer>
+
+<div class="bookbar">
+  <a href="https://portal.aestheticnursesoftware.com/book-online/3550" target="_blank" rel="noopener">Book online</a>
+  <a class="alt" href="https://www.instagram.com/derma.bare" target="_blank" rel="noopener">Instagram</a>
+</div>
 </body>
 </html>

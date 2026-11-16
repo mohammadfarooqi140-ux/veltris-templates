@@ -4,62 +4,92 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SSW Aesthetics | Nurse-Led Aesthetics in Telford</title>
-<meta name="description" content="SSW Aesthetics, Telford. Advanced Nurse Practitioner & Prescriber with 23+ years of clinical nursing. Natural, nurse-led aesthetic treatments.">
+<meta name="description" content="SSW Aesthetics, Telford. Sister Stacey Withers — Advanced Nurse Practitioner & Prescriber, BAMAN member, 23+ years of clinical nursing. Natural, safe, results-driven aesthetic treatments.">
 <style>
-:root{--accent:#7d8b74;--accent-dark:#5a6454;--ink:#2b2b28;--muted:#6f6f68;--bg:#faf8f5;--card:#ffffff;--line:#e9e3da}
+:root{
+  --ink:#41382d; --ink-soft:#6f6151;
+  --bronze:#8c6d3f; --bronze-deep:#6e552f;
+  --cream:#fbf7ef; --card:#ffffff; --line:#e9dcc4;
+  --grad:linear-gradient(165deg,#fdfaf3 0%,#f3e5cb 52%,#dfc294 100%);
+  --grad-deep:linear-gradient(150deg,#57462c 0%,#8c6d3f 60%,#b08d54 100%);
+}
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{font-family:'Avenir Next','Segoe UI',Helvetica,Arial,sans-serif;color:var(--ink);background:var(--bg);line-height:1.6}
+body{font-family:'Avenir Next','Segoe UI',Helvetica,Arial,sans-serif;color:var(--ink);background:var(--cream);line-height:1.6;padding-bottom:74px}
 h1,h2,h3,.serif{font-family:Georgia,'Times New Roman',serif;font-weight:500}
 a{text-decoration:none;color:inherit}
-.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
-header{position:sticky;top:0;background:rgba(250,248,245,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);z-index:10}
-.nav{display:flex;align-items:center;justify-content:space-between;padding:16px 0}
-.logo{font-family:Georgia,serif;font-size:21px;letter-spacing:.02em}
-.logo span{color:var(--accent-dark)}
-.nav .links{display:flex;gap:28px;font-size:14px;color:var(--muted)}
+.wrap{max-width:1060px;margin:0 auto;padding:0 20px}
+.btn{display:inline-flex;align-items:center;justify-content:center;background:var(--grad-deep);color:#fff;padding:14px 28px;border-radius:999px;font-size:15.5px;font-weight:600;transition:transform .15s,filter .2s;box-shadow:0 8px 20px rgba(140,109,63,.28)}
+.btn:hover{transform:translateY(-1px);filter:brightness(1.06)}
+.btn.ghost{background:transparent;color:var(--bronze-deep);border:1px solid var(--bronze);box-shadow:none}
+.btn.ghost:hover{background:rgba(140,109,63,.08)}
+header{position:sticky;top:0;z-index:20;background:rgba(251,247,239,.94);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:13px 0}
+.logo{font-family:Georgia,serif;font-size:20px;letter-spacing:.04em}
+.logo span{color:var(--bronze)}
+.nav .links{display:flex;gap:26px;font-size:14px;color:var(--ink-soft)}
 .nav .links a:hover{color:var(--ink)}
-.btn{display:inline-block;background:var(--accent);color:#fff;padding:12px 26px;border-radius:999px;font-size:15px;letter-spacing:.01em;transition:background .2s}
-.btn:hover{background:var(--accent-dark)}
-.btn.small{padding:9px 20px;font-size:14px}
-.btn.ghost{background:transparent;color:var(--accent-dark);border:1px solid var(--accent)}
-.btn.ghost:hover{background:var(--accent);color:#fff}
-.hero{padding:84px 0 64px;text-align:center;background:linear-gradient(180deg,#e4e6e2 0%,var(--bg) 100%)}
-.eyebrow{text-transform:uppercase;letter-spacing:.22em;font-size:12px;color:var(--accent-dark);margin-bottom:18px}
-.hero h1{font-size:46px;line-height:1.15;max-width:720px;margin:0 auto 18px}
-.hero p{font-size:18px;color:var(--muted);max-width:560px;margin:0 auto 32px}
-.hero .cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
-.trust{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;padding:26px 0 6px}
-.chip{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:7px 16px;font-size:13.5px;color:var(--muted)}
-.chip b{color:var(--accent-dark);font-weight:600}
-section{padding:64px 0}
-.sec-head{text-align:center;max-width:620px;margin:0 auto 40px}
-.sec-head h2{font-size:32px;margin-bottom:10px}
-.sec-head p{color:var(--muted)}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
-.tcard{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:28px}
-.tcard h3{font-size:19px;margin-bottom:8px}
-.tcard p{color:var(--muted);font-size:15px}
-.tcard .tag{display:inline-block;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent-dark);margin-bottom:10px}
-.about{background:#e4e6e2;border-radius:24px;padding:48px;display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}
-.about h2{font-size:30px;margin-bottom:14px}
-.about p{color:#55534c;margin-bottom:12px}
-.about .sig{font-family:Georgia,serif;font-size:19px;color:var(--accent-dark)}
-.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}
-.step{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:28px}
-.step .num{width:38px;height:38px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-family:Georgia,serif;margin-bottom:14px}
-.step h3{font-size:18px;margin-bottom:6px}
-.step p{color:var(--muted);font-size:15px}
-.contact{text-align:center}
-.contact h2{font-size:32px;margin-bottom:12px}
-.contact p{color:var(--muted);max-width:520px;margin:0 auto 28px}
-.contact .cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
-.contact .detail{margin-top:18px;font-size:15px;color:var(--muted)}
-.contact .detail a{color:var(--accent-dark)}
-footer{border-top:1px solid var(--line);padding:28px 0;margin-top:20px}
-.foot{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-size:13.5px;color:var(--muted)}
-.credit{color:#a09a8e}
-@media(max-width:720px){.hero h1{font-size:34px}.about{grid-template-columns:1fr;padding:32px}.nav .links{display:none}}
+.nav .book{background:var(--grad-deep);color:#fff;padding:9px 18px;border-radius:999px;font-size:13.5px;font-weight:600}
+.hero{background:var(--grad);position:relative;overflow:hidden;border-bottom:1px solid var(--line)}
+.hero::after{content:"";position:absolute;inset:0;background:radial-gradient(480px 260px at 90% -30px,rgba(255,255,255,.75),transparent 60%),radial-gradient(380px 240px at -40px 105%,rgba(176,141,84,.35),transparent 60%);pointer-events:none}
+.hero .wrap{position:relative;z-index:1;padding:54px 20px 50px;text-align:center}
+.ribbon{display:inline-block;background:var(--ink);color:#f3e5cb;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;border-radius:999px;padding:6px 16px;margin-bottom:20px}
+.mono{width:74px;height:74px;margin:0 auto 18px;border-radius:50%;background:var(--grad-deep);color:#fdf6e7;display:flex;align-items:center;justify-content:center;font-family:Georgia,serif;font-size:26px;letter-spacing:.06em;box-shadow:0 10px 24px rgba(140,109,63,.35);border:2px solid rgba(255,255,255,.65)}
+.hero h1{font-size:40px;line-height:1.14;max-width:600px;margin:0 auto 14px}
+.hero h1 em{font-style:italic;color:var(--bronze-deep)}
+.hero p{font-size:16.5px;color:var(--ink-soft);max-width:500px;margin:0 auto 26px}
+.hero .cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.trust{display:flex;gap:9px;justify-content:center;flex-wrap:wrap;margin-top:30px}
+.chip{background:rgba(255,255,255,.75);border:1px solid var(--line);border-radius:999px;padding:7px 15px;font-size:13px;color:var(--ink-soft)}
+.chip b{color:var(--bronze-deep);font-weight:700}
+section{padding:54px 0}
+.sec-head{max-width:600px;margin:0 auto 32px;text-align:center}
+.eyebrow{text-transform:uppercase;letter-spacing:.24em;font-size:11.5px;color:var(--bronze);margin-bottom:10px}
+.sec-head h2{font-size:30px;line-height:1.2;margin-bottom:10px}
+.sec-head p{color:var(--ink-soft);font-size:16px}
+.tlist{display:grid;gap:14px}
+.trow{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px;box-shadow:0 4px 14px rgba(140,109,63,.06)}
+.trow .topline{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+.trow h3{font-size:20px}
+.trow .ml{font-family:Georgia,serif;font-style:italic;color:var(--bronze);font-size:15px;white-space:nowrap}
+.trow p{color:var(--ink-soft);font-size:15px;margin-top:6px}
+.trow ul{list-style:none;margin-top:10px;display:flex;flex-wrap:wrap;gap:7px}
+.trow ul li{font-size:12.5px;background:var(--cream);border:1px solid var(--line);border-radius:999px;padding:4px 12px;color:var(--ink-soft)}
+.about{display:grid;gap:14px}
+.about-card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:30px 26px}
+.about-card h2{font-size:28px;margin-bottom:12px}
+.about-card p{color:var(--ink-soft);font-size:16px;margin-bottom:11px}
+.about-card .sig{font-family:Georgia,serif;font-style:italic;font-size:18px;color:var(--bronze-deep)}
+.loc{background:var(--grad-deep);color:#fdf6e7;border-radius:20px;padding:30px 26px}
+.loc h3{font-size:21px;margin-bottom:8px}
+.loc p{color:#efe0c2;font-size:15px}
+.loc .pin{font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:#e8cf9e;margin-bottom:10px}
+.steps{display:grid;gap:14px}
+.step{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px;text-align:left;display:flex;gap:16px}
+.step .num{width:40px;height:40px;flex:none;border-radius:50%;background:var(--grad);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:Georgia,serif;color:var(--bronze-deep);font-size:16px}
+.step h3{font-size:17.5px;margin-bottom:4px}
+.step p{color:var(--ink-soft);font-size:15px}
+.contact{text-align:center;background:var(--card);border:1px solid var(--line);border-radius:24px;padding:38px 26px}
+.contact h2{font-size:29px;margin-bottom:10px}
+.contact p{color:var(--ink-soft);max-width:480px;margin:0 auto 24px}
+.contact .cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+footer{padding:26px 0 6px}
+.foot{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:13px;color:#9a8a6d}
+.credit{color:#bfae8e}
+.bookbar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(65,56,45,.97);padding:10px 14px calc(10px + env(safe-area-inset-bottom));display:flex;gap:10px}
+.bookbar a{flex:1;text-align:center;padding:13px 10px;border-radius:999px;font-weight:600;font-size:15px;background:var(--grad-deep);color:#fff}
+.bookbar a.alt{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.35)}
+@media(min-width:760px){
+  .hero .wrap{padding:80px 20px 70px}
+  .hero h1{font-size:54px}
+  .tlist{grid-template-columns:1fr 1fr}
+  .about{grid-template-columns:1.5fr 1fr}
+  .steps{grid-template-columns:repeat(3,1fr)}
+  .step{flex-direction:column}
+  .bookbar{display:none}
+  body{padding-bottom:0}
+}
+@media(max-width:759px){.nav .links{display:none}}
 </style>
 </head>
 <body>
@@ -68,48 +98,78 @@ footer{border-top:1px solid var(--line);padding:28px 0;margin-top:20px}
     <div class="logo">SSW <span>Aesthetics</span></div>
     <nav class="links">
       <a href="#treatments">Treatments</a>
-      <a href="#about">About</a>
+      <a href="#about">About Stacey</a>
       <a href="#booking">Booking</a>
-      <a href="#contact">Contact</a>
     </nav>
-    <a class="btn small" href="https://www.instagram.com/ssw.aesthetics.uk" target="_blank" rel="noopener">Book now</a>
+    <a class="book" href="https://www.instagram.com/ssw.aesthetics.uk" target="_blank" rel="noopener">Book now</a>
   </div>
 </header>
 
 <div class="hero">
   <div class="wrap">
-    <div class="eyebrow">Telford, Shropshire · Nurse-Led Clinic</div>
-    <h1>Natural results, backed by 23 years of nursing</h1>
-    <p>Advanced aesthetic treatments led by an Advanced Nurse Practitioner & Prescriber — subtle, balanced results that still look like you.</p>
+    <div class="ribbon">Now open · Telford, Shropshire</div>
+    <div class="mono">SW</div>
+    <h1>The best version of you, <em>still you</em></h1>
+    <p>Natural, safe and results-driven aesthetic treatments, led by an Advanced Nurse Practitioner with over 23 years of clinical nursing behind her.</p>
     <div class="cta">
-      <a class="btn" href="https://www.instagram.com/ssw.aesthetics.uk" target="_blank" rel="noopener">Book a consultation</a>
-      <a class="btn ghost" href="#treatments">View treatments</a>
+      <a class="btn" href="https://www.instagram.com/ssw.aesthetics.uk" target="_blank" rel="noopener">DM to book your consultation</a>
+      <a class="btn ghost" href="#treatments">See treatments</a>
     </div>
-    <div class="trust"><div class="chip"><b>BAMAN</b> Member</div><div class="chip">Advanced Nurse Practitioner</div><div class="chip">Independent Prescriber</div><div class="chip"><b>23+ years</b> clinical nursing</div></div>
+    <div class="trust">
+      <div class="chip"><b>BAMAN</b> Member</div>
+      <div class="chip">Advanced Nurse Practitioner</div>
+      <div class="chip">Independent Prescriber</div>
+      <div class="chip"><b>23+ years</b> clinical nursing</div>
+    </div>
   </div>
 </div>
 
 <section id="treatments">
   <div class="wrap">
     <div class="sec-head">
-      <h2>Treatments</h2>
-      <p>Popular treatments at SSW Aesthetics. Your exact plan is always agreed at consultation, once your skin and goals have been properly assessed.</p>
+      <div class="eyebrow">Treatments</div>
+      <h2>Your favourites, at SSW</h2>
+      <p>Every treatment at SSW Aesthetics is Advanced Nurse Practitioner led, with a full medical consultation and aftercare included.</p>
     </div>
-    <div class="grid"><div class="tcard"><div class="tag">Signature</div><h3>Lip Enhancement</h3><p>Soft, natural lip filler — including subtle 0.5ml results that hydrate and define without ever looking overdone.</p></div><div class="tcard"><h3>Anti-Wrinkle Treatments</h3><p>Soften lines and prevent new ones forming, for a fresher, rested look.</p></div><div class="tcard"><h3>Dermal Fillers</h3><p>Restore volume and definition to lips, cheeks and contours, always in balance with your features.</p></div><div class="tcard"><h3>Skin Boosters</h3><p>Deep hydration from within, improving skin quality, elasticity and glow.</p></div><div class="tcard"><h3>Microneedling</h3><p>Stimulate collagen production to improve texture, scarring and fine lines.</p></div><div class="tcard"><h3>Medical Facials</h3><p>Clinical-grade facials tailored to your skin on the day, for clarity and radiance.</p></div><div class="tcard"><h3>Skin Rejuvenation</h3><p>Target dullness, pigmentation and uneven tone for healthier, more even skin.</p></div></div>
+    <div class="tlist">
+      <div class="trow">
+        <div class="topline"><h3>Lip Filler</h3><span class="ml">0.5ml · 1ml</span></div>
+        <p>Hydrated, balanced lips with natural volume. A subtle 0.5ml can be perfect — defining the lip border and balancing top to bottom, never overdone. Swelling settles within a few days to reveal the softer result.</p>
+        <ul><li>Natural border definition</li><li>Hydration &amp; soft volume</li><li>Balanced proportions</li></ul>
+      </div>
+      <div class="trow">
+        <div class="topline"><h3>Anti-Wrinkle Treatments</h3><span class="ml">Azzalure</span></div>
+        <p>Soften lines and refresh your expression while keeping everything natural. Prescribed and administered by Stacey herself, following your consultation.</p>
+        <ul><li>1, 2 or 3 areas</li><li>Prescriber led</li><li>Review included</li></ul>
+      </div>
+      <div class="trow">
+        <div class="topline"><h3>Dermal Filler — Folds &amp; Lines</h3><span class="ml">Lower face</span></div>
+        <p>Gentle restoration for nasolabial folds and marionette lines — softening the shadows that make the face look tired, while keeping your expressions entirely your own.</p>
+        <ul><li>Nasolabial folds</li><li>Marionette lines</li><li>Natural finish</li></ul>
+      </div>
+      <div class="trow">
+        <div class="topline"><h3>Consultation First, Always</h3><span class="ml">1 hour</span></div>
+        <p>Not sure what you need? Start with a proper conversation. Stacey will assess, advise honestly — including when treatment isn't right for you — and build a plan around your face.</p>
+        <ul><li>Full medical consultation</li><li>Honest advice</li><li>Personal plan</li></ul>
+      </div>
+    </div>
   </div>
 </section>
 
 <section style="padding-top:0">
-  <div class="wrap">
-    <div class="about" id="about">
-      <div>
-        <h2>Meet Sister Stacey Withers</h2>
-        <p>SSW Aesthetics is led by Sister Stacey Withers, an Advanced Nurse Practitioner and Prescriber with more than 23 years of clinical nursing experience, and a member of BAMAN (the British Association of Medical Aesthetic Nurses).</p><p>That medical background shapes everything: careful assessment, honest advice, and treatments chosen because they are right for you — not because they are fashionable.</p>
-      </div>
-      <div>
-        <p>SSW Aesthetics is a new clinic, currently welcoming clients at KTKOSMETICS Clinic in Telford.</p><p>Consultations are secured with a £30 deposit, which comes off the cost of your treatment.</p>
-        <p class="sig">Sister Stacey Withers, ANP</p>
-      </div>
+  <div class="wrap about" id="about">
+    <div class="about-card">
+      <div class="eyebrow">Meet Sister Stacey</div>
+      <h2>23 years of nursing, a brand new clinic</h2>
+      <p>After over 23 years of nursing experience, Sister Stacey Withers has launched SSW Aesthetics — bringing the standards of clinical nursing to aesthetic treatments in Telford.</p>
+      <p>Her approach is simple: natural-looking results, real attention to detail, and making every client feel comfortable and confident. Professional care and honest advice, from your first message to your aftercare.</p>
+      <p class="sig">— Sister Stacey Withers, Advanced Nurse Practitioner &amp; Prescriber</p>
+    </div>
+    <div class="loc">
+      <div class="pin">Find the clinic</div>
+      <h3>KTKOSMETICS Clinic &amp; Beauty Academy</h3>
+      <p>Unit 4, Hortonwood 33<br>Telford TF1 7EX<br>Next to Auto Craft</p>
+      <p style="margin-top:12px">Evening and weekend appointments are also available — just message to ask about availability.</p>
     </div>
   </div>
 </section>
@@ -117,30 +177,40 @@ footer{border-top:1px solid var(--line);padding:28px 0;margin-top:20px}
 <section id="booking" style="padding-top:0">
   <div class="wrap">
     <div class="sec-head">
+      <div class="eyebrow">Booking</div>
       <h2>How booking works</h2>
-      <p>Simple, unhurried, and centred on what is right for your skin.</p>
     </div>
-    <div class="steps"><div class="step"><div class="num">1</div><h3>Message to book</h3><p>Send a message on Instagram to arrange your consultation. A £30 deposit secures your appointment and is deducted from your treatment.</p></div><div class="step"><div class="num">2</div><h3>Your consultation</h3><p>A full assessment with Stacey — your medical history, your concerns, and a plan built around natural, balanced results.</p></div><div class="step"><div class="num">3</div><h3>Treatment & aftercare</h3><p>Your treatment is carried out by an experienced nurse prescriber, with clear aftercare and follow-up support.</p></div></div>
+    <div class="steps">
+      <div class="step"><div class="num">1</div><div><h3>Message to book</h3><p>Send a DM on Instagram to arrange your appointment. A £30 deposit secures your booking.</p></div></div>
+      <div class="step"><div class="num">2</div><div><h3>Your consultation</h3><p>A full medical consultation with Stacey — your history, your goals, and a treatment plan tailored to you.</p></div></div>
+      <div class="step"><div class="num">3</div><div><h3>Treatment &amp; aftercare</h3><p>Treatment by an experienced nurse prescriber, with clear aftercare and Stacey on hand while you settle.</p></div></div>
+    </div>
   </div>
 </section>
 
-<section class="contact" id="contact" style="padding-top:0">
+<section style="padding-top:0">
   <div class="wrap">
-    <h2>Ready when you are</h2>
-    <p>SSW Aesthetics is currently based at KTKOSMETICS Clinic in Telford, with bookings taken by message. Send a message to arrange your consultation.</p>
-    <div class="cta">
-      <a class="btn" href="https://www.instagram.com/ssw.aesthetics.uk" target="_blank" rel="noopener">Book a consultation</a>
-      <a class="btn ghost" href="https://www.instagram.com/ssw.aesthetics.uk" target="_blank" rel="noopener">Follow on Instagram</a>
+    <div class="contact">
+      <h2>Ready when you are</h2>
+      <p>Spaces are limited each week, and appointments are booked by message. Say hello on Instagram to start your consultation.</p>
+      <div class="cta">
+        <a class="btn" href="https://www.instagram.com/ssw.aesthetics.uk" target="_blank" rel="noopener">DM to book</a>
+        <a class="btn ghost" href="https://www.instagram.com/ssw.aesthetics.uk" target="_blank" rel="noopener">Follow @ssw.aesthetics.uk</a>
+      </div>
     </div>
-    
   </div>
 </section>
 
 <footer>
   <div class="wrap foot">
-    <div>© SSW Aesthetics. All rights reserved.</div>
+    <div>© SSW Aesthetics, Telford. All rights reserved.</div>
     <div class="credit">Demo website made by Veltris — veltris.uk</div>
   </div>
 </footer>
+
+<div class="bookbar">
+  <a href="https://www.instagram.com/ssw.aesthetics.uk" target="_blank" rel="noopener">DM to book</a>
+  <a class="alt" href="#treatments">Treatments</a>
+</div>
 </body>
 </html>

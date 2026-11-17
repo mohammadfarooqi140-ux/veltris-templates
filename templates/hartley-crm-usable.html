@@ -9,20 +9,20 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
-    --ink:#2e2a23;
-    --ink-soft:#5c5546;
-    --muted:#9a8f78;
-    --teal:#0e9594;
-    --teal-dark:#0b7a76;
-    --teal-deep:#0a6e6a;
-    --card:#fffdf7;
-    --line:rgba(90,74,40,.09);
-    --shadow:0 14px 34px rgba(122,94,32,.10), 0 2px 6px rgba(122,94,32,.06);
-    --amber-bg:#fdf0d3; --amber-tx:#96660d;
-    --orange-bg:#fde7d3; --orange-tx:#a35a12;
-    --green-bg:#e0f1e2; --green-tx:#2e7d32;
-    --teal-bg:#dcf2f0; --teal-tx:#0b7a76;
-    --red-bg:#fbe3dd; --red-tx:#b23c22;
+    --ink:#F5F2EA;
+    --ink-soft:#C6C3CD;
+    --muted:#9A97A3;
+    --teal:#FF6A1A;
+    --teal-dark:#FF8A3D;
+    --teal-deep:#E64A1F;
+    --card:#17171C;
+    --line:rgba(255,255,255,.07);
+    --shadow:0 14px 34px rgba(0,0,0,.45), 0 2px 6px rgba(0,0,0,.35);
+    --amber-bg:rgba(240,190,85,.14); --amber-tx:#F0BE55;
+    --orange-bg:rgba(255,61,46,.13); --orange-tx:#FF7A66;
+    --green-bg:rgba(64,190,110,.14); --green-tx:#5CC97E;
+    --teal-bg:rgba(255,122,24,.15); --teal-tx:#FF8A3D;
+    --red-bg:rgba(255,90,70,.14); --red-tx:#FF7A68;
   }
   *{margin:0;padding:0;box-sizing:border-box}
   html,body{height:100%}
@@ -30,9 +30,9 @@
     font-family:"Poppins",-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     color:var(--ink);
     background:
-      radial-gradient(1100px 600px at 12% -10%, #faf0da 0%, rgba(250,240,218,0) 60%),
-      radial-gradient(900px 700px at 105% 110%, #e8d5ae 0%, rgba(232,213,174,0) 55%),
-      linear-gradient(140deg,#f6eedb 0%,#f2e6cc 52%,#ecdcae 100%);
+      radial-gradient(1100px 600px at 12% -10%, rgba(255,110,40,.08) 0%, rgba(255,110,40,0) 60%),
+      radial-gradient(900px 700px at 105% 110%, rgba(255,61,46,.06) 0%, rgba(255,61,46,0) 55%),
+      linear-gradient(140deg,#101014 0%,#0B0B0D 55%,#0B0B0D 100%);
     overflow:hidden;
   }
   .app{position:relative;height:100vh;padding:26px 34px 104px;display:flex;flex-direction:column;max-width:1560px;margin:0 auto}
@@ -42,16 +42,16 @@
   .topbar h1{font-size:31px;font-weight:700;letter-spacing:-.01em;line-height:1.15}
   .topbar .sub{font-size:13.5px;color:var(--ink-soft);font-weight:500;margin-top:3px}
   .top-actions{display:flex;align-items:center;gap:12px;padding-top:4px}
-  .search{display:flex;align-items:center;gap:8px;background:rgba(255,253,247,.85);border:1px solid var(--line);
-    border-radius:999px;padding:9px 16px;box-shadow:0 4px 14px rgba(122,94,32,.06)}
+  .search{display:flex;align-items:center;gap:8px;background:#17171C;border:1px solid var(--line);
+    border-radius:999px;padding:9px 16px;box-shadow:0 4px 14px rgba(0,0,0,.35)}
   .search svg{flex:0 0 auto}
   .search input{border:none;outline:none;background:transparent;font-family:inherit;font-size:13px;width:170px;color:var(--ink)}
   .search input::placeholder{color:var(--muted)}
-  .iconbtn{position:relative;width:42px;height:42px;border-radius:50%;background:rgba(255,253,247,.9);
-    border:1px solid var(--line);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(122,94,32,.06);cursor:pointer}
-  .iconbtn .dot{position:absolute;top:9px;right:10px;width:8px;height:8px;border-radius:50%;background:#e2574c;border:2px solid #fffdf7}
-  .avatar-lg{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#f2b879,#e08a4c);
-    color:#fff;font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(122,94,32,.18)}
+  .iconbtn{position:relative;width:42px;height:42px;border-radius:50%;background:#17171C;
+    border:1px solid var(--line);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(0,0,0,.35);cursor:pointer}
+  .iconbtn .dot{position:absolute;top:9px;right:10px;width:8px;height:8px;border-radius:50%;background:#FF3D2E;border:2px solid #17171C}
+  .avatar-lg{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#FF7A18,#FF3D2E);
+    color:#fff;font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(255,61,46,.30)}
 
   /* ---------- pages ---------- */
   .page{display:none;flex:1;min-height:0}
@@ -74,16 +74,16 @@
   .tile .t-label{font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;opacity:.75}
   .tile .t-value{font-size:40px;font-weight:800;line-height:1.1;letter-spacing:-.02em}
   .tile .t-sub{font-size:12px;font-weight:500;opacity:.8}
-  .tile.teal{background:linear-gradient(150deg,#13a89f 0%,#0b7f7a 100%);color:#fff;border:none;box-shadow:0 16px 34px rgba(11,127,122,.30)}
+  .tile.teal{background:linear-gradient(150deg,#FF7A18 0%,#FF3D2E 100%);color:#fff;border:none;box-shadow:0 16px 34px rgba(255,61,46,.32)}
   .tile.white{background:var(--card)}
   .chart-card{grid-column:span 3;grid-row:span 2;padding:20px 22px;display:flex;flex-direction:column}
   .chart-head{display:flex;justify-content:space-between;align-items:baseline}
   .chart-title{font-size:14.5px;font-weight:600}
   .bars{flex:1;display:flex;align-items:flex-end;gap:10px;padding-top:10px;min-height:94px}
   .bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:7px;height:100%;justify-content:flex-end}
-  .bar{width:100%;max-width:34px;border-radius:7px 7px 3px 3px;background:linear-gradient(180deg,#1db3ab,#0d8a86);
+  .bar{width:100%;max-width:34px;border-radius:7px 7px 3px 3px;background:linear-gradient(180deg,#FF8A2A,#FF3D2E);
     transform-origin:bottom;animation:grow .9s cubic-bezier(.22,.8,.3,1) both}
-  .bar.dim{background:linear-gradient(180deg,#a8dcd6,#7cc4bd)}
+  .bar.dim{background:linear-gradient(180deg,#6E4634,#46302A)}
   @keyframes grow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
   .bar-lab{font-size:10.5px;color:var(--muted);font-weight:600}
   .bar-val{font-size:11px;font-weight:700;color:var(--teal-dark)}
@@ -108,7 +108,7 @@
   .pill.won{background:var(--green-bg);color:var(--green-tx)}
   .pill.due{background:var(--amber-bg);color:var(--amber-tx)}
   .pill.over{background:var(--red-bg);color:var(--red-tx)}
-  .pill.stage{background:#f1e8d2;color:#7a6420}
+  .pill.stage{background:#232329;color:#B9B6C0}
 
   /* ---------- inner pages ---------- */
   .stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:16px}
@@ -117,11 +117,11 @@
   .stat-card .s-sub{font-size:12px;color:var(--muted);font-weight:500}
   .panel{padding:20px 22px}
   .chips{display:flex;gap:9px;flex-wrap:wrap}
-  .chip{font-size:12.5px;font-weight:600;padding:8px 15px;border-radius:999px;background:rgba(255,253,247,.8);
+  .chip{font-size:12.5px;font-weight:600;padding:8px 15px;border-radius:999px;background:#1B1B21;
     border:1px solid var(--line);color:var(--ink-soft);cursor:pointer;font-family:inherit}
-  .chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .chip.on{background:linear-gradient(135deg,#FF7A18,#FF3D2E);color:#fff;border-color:transparent}
   .chip b{color:var(--teal-dark)}
-  .chip.on b{color:#7fe3da}
+  .chip.on b{color:#FFE3D1}
   table{width:100%;border-collapse:collapse}
   th{font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:600;text-align:left;padding:8px 8px 10px;border-bottom:1px solid var(--line)}
   td{font-size:13.5px;font-weight:500;padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
@@ -134,31 +134,31 @@
   .proj-name{font-size:15.5px;font-weight:700;line-height:1.25}
   .proj-loc{font-size:12px;color:var(--muted);font-weight:500;margin-top:2px}
   .proj-val{font-size:14px;font-weight:700;color:var(--teal-dark)}
-  .prog{height:9px;border-radius:99px;background:#f0e7d0;margin:14px 0 8px;overflow:hidden}
-  .prog-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,#1db3ab,#0b7f7a);width:0;transition:width 1s cubic-bezier(.22,.8,.3,1)}
+  .prog{height:9px;border-radius:99px;background:#26262E;margin:14px 0 8px;overflow:hidden}
+  .prog-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,#FF7A18,#FF3D2E);width:0;transition:width 1s cubic-bezier(.22,.8,.3,1)}
   .page.on .prog-fill{width:var(--w)}
   .proj-meta{display:flex;justify-content:space-between;font-size:12px;color:var(--ink-soft);font-weight:500}
   .ana-grid{display:grid;grid-template-columns:1.15fr 1fr;gap:16px;margin-bottom:16px}
   .hbars{display:flex;flex-direction:column;gap:9px;margin-top:10px}
   .hbar-row{display:grid;grid-template-columns:92px 1fr 34px;align-items:center;gap:12px;font-size:12.5px;font-weight:600}
-  .hbar{height:12px;background:#f0e7d0;border-radius:99px;overflow:hidden}
-  .hbar-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,#1db3ab,#0b7f7a);width:0;transition:width 1s cubic-bezier(.22,.8,.3,1)}
+  .hbar{height:12px;background:#26262E;border-radius:99px;overflow:hidden}
+  .hbar-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,#FF7A18,#FF3D2E);width:0;transition:width 1s cubic-bezier(.22,.8,.3,1)}
   .page.on .hbar-fill{width:var(--w)}
   .funnel{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:12px;align-items:stretch;margin-top:9px}
-  .fstep{border-radius:16px;padding:11px 18px;background:#faf3e1;border:1px solid var(--line)}
-  .fstep.teal{background:linear-gradient(150deg,#13a89f,#0b7f7a);color:#fff;border:none}
+  .fstep{border-radius:16px;padding:11px 18px;background:#1C1C22;border:1px solid var(--line)}
+  .fstep.teal{background:linear-gradient(150deg,#FF7A18,#FF3D2E);color:#fff;border:none}
   .fstep .f-value{font-size:25px;font-weight:800;line-height:1.05}
   .fstep .f-label{font-size:12px;font-weight:600;opacity:.85}
   .farrow{display:flex;align-items:center;font-size:19px;color:var(--muted);font-weight:700}
 
   /* ---------- bottom nav ---------- */
   #nav{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);display:flex;gap:4px;
-    background:#262019;border-radius:999px;padding:6px;box-shadow:0 18px 40px rgba(38,32,25,.35);z-index:20}
-  #nav .nav-item{border:none;background:transparent;color:#cfc6b2;font-family:inherit;font-size:13.5px;font-weight:600;
+    background:#141419;border:1px solid #26262E;border-radius:999px;padding:6px;box-shadow:0 18px 40px rgba(0,0,0,.55);z-index:20}
+  #nav .nav-item{border:none;background:transparent;color:#9A97A3;font-family:inherit;font-size:13.5px;font-weight:600;
     padding:10px 20px;border-radius:999px;cursor:pointer;display:flex;align-items:center;gap:8px;transition:all .25s}
   #nav .nav-item .ndot{width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.45}
-  #nav .nav-item.on{background:#fffdf7;color:var(--ink)}
-  #nav .nav-item.on .ndot{background:var(--teal);opacity:1}
+  #nav .nav-item.on{background:linear-gradient(135deg,#FF7A18,#FF3D2E);color:#fff}
+  #nav .nav-item.on .ndot{background:#fff;opacity:1}
   ::-webkit-scrollbar{width:0;height:0}
 </style>
 </head>
@@ -173,11 +173,11 @@
     </div>
     <div class="top-actions">
       <label class="search">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9a8f78" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.8-3.8"/></svg>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9A97A3" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.8-3.8"/></svg>
         <input id="searchInput" type="text" placeholder="Search enquiries, jobs…">
       </label>
       <div class="iconbtn" title="Notifications">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#5c5546" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#C6C3CD" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
         <span class="dot"></span>
       </div>
       <div class="avatar-lg" title="James Hartley">JH</div>
@@ -194,8 +194,8 @@
         </div>
         <div class="rev-value">£<span data-count="486250">0</span></div>
         <svg class="spark" width="100%" height="44" viewBox="0 0 460 44" preserveAspectRatio="none">
-          <path d="M0,36 L76,31 L153,33 L230,24 L306,20 L383,12 L460,5 L460,44 L0,44 Z" fill="rgba(14,149,148,.13)"/>
-          <path d="M0,36 L76,31 L153,33 L230,24 L306,20 L383,12 L460,5" fill="none" stroke="#0e9594" stroke-width="2.6" stroke-linecap="round"/>
+          <path d="M0,36 L76,31 L153,33 L230,24 L306,20 L383,12 L460,5 L460,44 L0,44 Z" fill="rgba(255,110,30,.14)"/>
+          <path d="M0,36 L76,31 L153,33 L230,24 L306,20 L383,12 L460,5" fill="none" stroke="#FF6A1A" stroke-width="2.6" stroke-linecap="round"/>
         </svg>
         <div class="rev-foot"><span>Last month <b>£448,700</b></span><span>Best month this year</span></div>
       </div>
@@ -238,19 +238,19 @@
     <div class="ov-bottom">
       <div class="card list-card">
         <div class="list-head"><span class="list-title">Recent enquiries</span><span class="view-all" data-goto="enquiries">View all 128 →</span></div>
-        <div class="row"><div class="av" style="background:#fde7d3;color:#a35a12">ST</div>
+        <div class="row"><div class="av" style="background:rgba(255,122,24,.15);color:#FF8A3D">ST</div>
           <div class="row-main"><div class="row-name">Sarah Thompson</div><div class="row-sub">Kitchen extension · Bath</div></div>
           <span class="pill new">New</span><div class="row-time">12 min ago</div></div>
-        <div class="row"><div class="av" style="background:#dcf2f0;color:#0b7a76">JW</div>
+        <div class="row"><div class="av" style="background:rgba(64,190,110,.14);color:#5CC97E">JW</div>
           <div class="row-main"><div class="row-name">James Whitfield</div><div class="row-sub">Loft conversion · Bristol</div></div>
           <span class="pill visit">Site visit booked</span><div class="row-time">38 min ago</div></div>
-        <div class="row"><div class="av" style="background:#fdf0d3;color:#96660d">PK</div>
+        <div class="row"><div class="av" style="background:rgba(240,190,85,.14);color:#F0BE55">PK</div>
           <div class="row-main"><div class="row-name">Priya Kaur</div><div class="row-sub">Annexe build · Frome</div></div>
           <span class="pill quote">Quote sent</span><div class="row-time">1 hr ago</div></div>
-        <div class="row"><div class="av" style="background:#e0f1e2;color:#2e7d32">TE</div>
+        <div class="row"><div class="av" style="background:rgba(64,190,110,.14);color:#5CC97E">TE</div>
           <div class="row-main"><div class="row-name">Tom Ellery</div><div class="row-sub">Garage conversion · Wells</div></div>
           <span class="pill new">New</span><div class="row-time">2 hrs ago</div></div>
-        <div class="row"><div class="av" style="background:#fbe3dd;color:#b23c22">GA</div>
+        <div class="row"><div class="av" style="background:rgba(255,90,70,.14);color:#FF7A68">GA</div>
           <div class="row-main"><div class="row-name">Grace Adeyemi</div><div class="row-sub">Full renovation · Bath</div></div>
           <span class="pill won">Won</span><div class="row-time">3 hrs ago</div></div>
       </div>
@@ -264,7 +264,7 @@
         <div class="row"><div class="row-main"><div class="row-name">Priya Kaur</div><div class="row-sub">Annexe build · due 28 Nov</div></div>
           <div><div class="row-amt">£14,250</div><div class="row-time">Due</div></div></div>
         <div class="row"><div class="row-main"><div class="row-name">Hannah Cole</div><div class="row-sub">Garden room · 6 days overdue</div></div>
-          <div><div class="row-amt" style="color:#b23c22">£8,250</div><div class="row-time" style="color:#b23c22">Overdue</div></div></div>
+          <div><div class="row-amt" style="color:#FF6B57">£8,250</div><div class="row-time" style="color:#FF6B57">Overdue</div></div></div>
         <div class="rev-foot" style="margin-top:6px"><span>Total outstanding</span><b>£96,400</b></div>
       </div>
     </div>
@@ -292,14 +292,14 @@
       <table>
         <thead><tr><th style="width:30%">Client</th><th style="width:24%">Project</th><th>Source</th><th>Est. value</th><th>Status</th><th style="text-align:right">Received</th></tr></thead>
         <tbody id="enqBody">
-          <tr data-status="new"><td><div style="display:flex;align-items:center;gap:11px"><div class="av" style="background:#fde7d3;color:#a35a12;width:36px;height:36px;font-size:12px">ST</div><span class="row-name">Sarah Thompson</span></div></td><td>Kitchen extension · Bath</td><td>Website</td><td><b>£38,000</b></td><td><span class="pill new">New</span></td><td style="text-align:right">12 min ago</td></tr>
-          <tr data-status="visit"><td><div style="display:flex;align-items:center;gap:11px"><div class="av" style="background:#dcf2f0;color:#0b7a76;width:36px;height:36px;font-size:12px">JW</div><span class="row-name">James Whitfield</span></div></td><td>Loft conversion · Bristol</td><td>Google</td><td><b>£45,000</b></td><td><span class="pill visit">Site visit booked</span></td><td style="text-align:right">38 min ago</td></tr>
-          <tr data-status="quote"><td><div style="display:flex;align-items:center;gap:11px"><div class="av" style="background:#fdf0d3;color:#96660d;width:36px;height:36px;font-size:12px">PK</div><span class="row-name">Priya Kaur</span></div></td><td>Annexe build · Frome</td><td>Referral</td><td><b>£72,500</b></td><td><span class="pill quote">Quote sent</span></td><td style="text-align:right">1 hr ago</td></tr>
-          <tr data-status="new"><td><div style="display:flex;align-items:center;gap:11px"><div class="av" style="background:#e0f1e2;color:#2e7d32;width:36px;height:36px;font-size:12px">TE</div><span class="row-name">Tom Ellery</span></div></td><td>Garage conversion · Wells</td><td>Checkatrade</td><td><b>£21,000</b></td><td><span class="pill new">New</span></td><td style="text-align:right">2 hrs ago</td></tr>
-          <tr data-status="won"><td><div style="display:flex;align-items:center;gap:11px"><div class="av" style="background:#fbe3dd;color:#b23c22;width:36px;height:36px;font-size:12px">GA</div><span class="row-name">Grace Adeyemi</span></div></td><td>Full renovation · Bath</td><td>Website</td><td><b>£96,000</b></td><td><span class="pill won">Won</span></td><td style="text-align:right">3 hrs ago</td></tr>
-          <tr data-status="visit"><td><div style="display:flex;align-items:center;gap:11px"><div class="av" style="background:#fde7d3;color:#a35a12;width:36px;height:36px;font-size:12px">LM</div><span class="row-name">Lucy Marsh</span></div></td><td>Barn conversion · Shepton Mallet</td><td>Referral</td><td><b>£120,000</b></td><td><span class="pill visit">Site visit booked</span></td><td style="text-align:right">Yesterday</td></tr>
-          <tr data-status="new"><td><div style="display:flex;align-items:center;gap:11px"><div class="av" style="background:#fdf0d3;color:#96660d;width:36px;height:36px;font-size:12px">BP</div><span class="row-name">Ben Prior</span></div></td><td>Porch + driveway · Bristol</td><td>Website</td><td><b>£12,750</b></td><td><span class="pill new">New</span></td><td style="text-align:right">Yesterday</td></tr>
-          <tr data-status="quote"><td><div style="display:flex;align-items:center;gap:11px"><div class="av" style="background:#e0f1e2;color:#2e7d32;width:36px;height:36px;font-size:12px">HC</div><span class="row-name">Hannah Cole</span></div></td><td>Garden room · Bath</td><td>Instagram</td><td><b>£18,900</b></td><td><span class="pill quote">Quote sent</span></td><td style="text-align:right">Yesterday</td></tr>
+          <tr data-status="new"><td><div style="display:flex;align-items:center;gap:11px"><div class="av" style="background:rgba(255,122,24,.15);color:#FF8A3D;width:36px;height:36px;font-size:12px">ST</div><span class="row-name">Sarah Thompson</span></div></td><td>Kitchen extension · Bath</td><td>Website</td><td><b>£38,000</b></td><td><span class="pill new">New</span></td><td style="text-align:right">12 min ago</td></tr>
+          <tr data-status="visit"><td><div style="display:flex;align-items:center;gap:11px"><div class="av" style="background:rgba(64,190,110,.14);color:#5CC97E;width:36px;height:36px;font-size:12px">JW</div><span class="row-name">James Whitfield</span></div></td><td>Loft conversion · Bristol</td><td>Google</td><td><b>£45,000</b></td><td><span class="pill visit">Site visit booked</span></td><td style="text-align:right">38 min ago</td></tr>
+          <tr data-status="quote"><td><div style="display:flex;align-items:center;gap:11px"><div class="av" style="background:rgba(240,190,85,.14);color:#F0BE55;width:36px;height:36px;font-size:12px">PK</div><span class="row-name">Priya Kaur</span></div></td><td>Annexe build · Frome</td><td>Referral</td><td><b>£72,500</b></td><td><span class="pill quote">Quote sent</span></td><td style="text-align:right">1 hr ago</td></tr>
+          <tr data-status="new"><td><div style="display:flex;align-items:center;gap:11px"><div class="av" style="background:rgba(64,190,110,.14);color:#5CC97E;width:36px;height:36px;font-size:12px">TE</div><span class="row-name">Tom Ellery</span></div></td><td>Garage conversion · Wells</td><td>Checkatrade</td><td><b>£21,000</b></td><td><span class="pill new">New</span></td><td style="text-align:right">2 hrs ago</td></tr>
+          <tr data-status="won"><td><div style="display:flex;align-items:center;gap:11px"><div class="av" style="background:rgba(255,90,70,.14);color:#FF7A68;width:36px;height:36px;font-size:12px">GA</div><span class="row-name">Grace Adeyemi</span></div></td><td>Full renovation · Bath</td><td>Website</td><td><b>£96,000</b></td><td><span class="pill won">Won</span></td><td style="text-align:right">3 hrs ago</td></tr>
+          <tr data-status="visit"><td><div style="display:flex;align-items:center;gap:11px"><div class="av" style="background:rgba(255,122,24,.15);color:#FF8A3D;width:36px;height:36px;font-size:12px">LM</div><span class="row-name">Lucy Marsh</span></div></td><td>Barn conversion · Shepton Mallet</td><td>Referral</td><td><b>£120,000</b></td><td><span class="pill visit">Site visit booked</span></td><td style="text-align:right">Yesterday</td></tr>
+          <tr data-status="new"><td><div style="display:flex;align-items:center;gap:11px"><div class="av" style="background:rgba(240,190,85,.14);color:#F0BE55;width:36px;height:36px;font-size:12px">BP</div><span class="row-name">Ben Prior</span></div></td><td>Porch + driveway · Bristol</td><td>Website</td><td><b>£12,750</b></td><td><span class="pill new">New</span></td><td style="text-align:right">Yesterday</td></tr>
+          <tr data-status="quote"><td><div style="display:flex;align-items:center;gap:11px"><div class="av" style="background:rgba(64,190,110,.14);color:#5CC97E;width:36px;height:36px;font-size:12px">HC</div><span class="row-name">Hannah Cole</span></div></td><td>Garden room · Bath</td><td>Instagram</td><td><b>£18,900</b></td><td><span class="pill quote">Quote sent</span></td><td style="text-align:right">Yesterday</td></tr>
         </tbody>
       </table>
     </div>
@@ -367,7 +367,7 @@
     <div class="stat-row" style="grid-template-columns:repeat(3,1fr)">
       <div class="card stat-card"><span class="card-label">Collected · November</span><div class="s-value">£<span data-count="486250">0</span></div><div class="s-sub">▲ 8.4% vs last month</div></div>
       <div class="card stat-card"><span class="card-label">Outstanding</span><div class="s-value">£<span data-count="96400">0</span></div><div class="s-sub">8 invoices open</div></div>
-      <div class="card stat-card"><span class="card-label">Overdue</span><div class="s-value" style="color:#b23c22">£<span data-count="18750">0</span></div><div class="s-sub">3 invoices · reminders sent automatically</div></div>
+      <div class="card stat-card"><span class="card-label">Overdue</span><div class="s-value" style="color:#FF6B57">£<span data-count="18750">0</span></div><div class="s-sub">3 invoices · reminders sent automatically</div></div>
     </div>
     <div style="display:grid;grid-template-columns:7fr 5fr;gap:16px">
       <div class="card panel">
@@ -388,13 +388,13 @@
       </div>
       <div class="card list-card">
         <div class="list-head"><span class="list-title">Received this month</span></div>
-        <div class="row"><div class="av" style="background:#e0f1e2;color:#2e7d32">✓</div>
+        <div class="row"><div class="av" style="background:rgba(64,190,110,.14);color:#5CC97E">✓</div>
           <div class="row-main"><div class="row-name">Ruth Okafor</div><div class="row-sub">Stage payment · 15 Nov</div></div><div class="row-amt">£41,200</div></div>
-        <div class="row"><div class="av" style="background:#e0f1e2;color:#2e7d32">✓</div>
+        <div class="row"><div class="av" style="background:rgba(64,190,110,.14);color:#5CC97E">✓</div>
           <div class="row-main"><div class="row-name">Sarah Thompson</div><div class="row-sub">Deposit · 12 Nov</div></div><div class="row-amt">£32,000</div></div>
-        <div class="row"><div class="av" style="background:#e0f1e2;color:#2e7d32">✓</div>
+        <div class="row"><div class="av" style="background:rgba(64,190,110,.14);color:#5CC97E">✓</div>
           <div class="row-main"><div class="row-name">Mark Delaney</div><div class="row-sub">Stage payment · 14 Nov</div></div><div class="row-amt">£28,400</div></div>
-        <div class="row"><div class="av" style="background:#e0f1e2;color:#2e7d32">✓</div>
+        <div class="row"><div class="av" style="background:rgba(64,190,110,.14);color:#5CC97E">✓</div>
           <div class="row-main"><div class="row-name">Lucy Marsh</div><div class="row-sub">Deposit · 11 Nov</div></div><div class="row-amt">£15,800</div></div>
         <div class="rev-foot" style="margin-top:8px"><span>Total collected</span><b>£486,250</b></div>
       </div>

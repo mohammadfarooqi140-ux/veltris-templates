@@ -373,33 +373,36 @@
     <div class="repmid">
       <div class="chartcard card" style="flex:1.2;">
         <div class="ct">Patient Biomarker Response Curve (24 Weeks) <span class="cup">+32% T-Cell Index</span></div>
-        <svg viewBox="0 0 420 130" style="width:100%; height:110px; margin-top:4px;">
+        <svg viewBox="0 0 420 270" style="width:100%; height:270px; margin-top:6px;">
           <defs>
             <linearGradient id="r4repgrad" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stop-color="#A855F7" stop-opacity="0.45"/>
               <stop offset="100%" stop-color="#A855F7" stop-opacity="0.0"/>
             </linearGradient>
           </defs>
-          <path d="M0,110 L0,90 L70,84 L140,78 L210,48 L280,44 L350,22 L420,12 L420,120 L0,120 Z" fill="url(#r4repgrad)"/>
-          <path class="aline" data-len="480" d="M0,90 L70,84 L140,78 L210,48 L280,44 L350,22 L420,12" fill="none" stroke="#A855F7" stroke-width="3" stroke-linecap="round" stroke-dasharray="480" stroke-dashoffset="480"/>
-          <circle cx="350" cy="22" r="5" fill="#C084FC" stroke="#200a38" stroke-width="2"/>
+          <path d="M0,260 L0,195 L70,180 L140,168 L210,102 L280,94 L350,46 L420,26 L420,260 L0,260 Z" fill="url(#r4repgrad)"/>
+          <path class="aline" data-len="480" d="M0,195 L70,180 L140,168 L210,102 L280,94 L350,46 L420,26" fill="none" stroke="#A855F7" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="480" stroke-dashoffset="480"/>
+          <circle cx="350" cy="46" r="5" fill="#C084FC" stroke="#200a38" stroke-width="2"/>
         </svg>
-        <div class="xlabels"><span>WK 1 BASE</span><span>WK 8 DOSE</span><span>WK 16 EXPANSION</span><span>WK 24 PRIMARY</span></div>
+        <div class="xlabels" style="padding-top:4px;"><span>WK 1 BASE</span><span>WK 8 DOSE</span><span>WK 16 EXPANSION</span><span>WK 24 PRIMARY</span></div>
       </div>
       <div class="donutcard card">
         <div class="ct">Cohort Phase Mix</div>
-        <div class="donutrow">
-          <svg width="86" height="86" viewBox="0 0 86 86">
-            <circle cx="43" cy="43" r="34" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="12"/>
-            <circle class="aline" data-len="214" cx="43" cy="43" r="34" fill="none" stroke="#A855F7" stroke-width="12" stroke-dasharray="103 214" stroke-linecap="round" transform="rotate(-90 43 43)"/>
-            <circle class="aline" data-len="214" cx="43" cy="43" r="34" fill="none" stroke="#C084FC" stroke-width="12" stroke-dasharray="64 214" stroke-dashoffset="-105" stroke-linecap="round" transform="rotate(-90 43 43)"/>
-            <circle class="aline" data-len="214" cx="43" cy="43" r="34" fill="none" stroke="#E879F9" stroke-width="12" stroke-dasharray="47 214" stroke-dashoffset="-171" stroke-linecap="round" transform="rotate(-90 43 43)"/>
-            <text x="43" y="47" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">48%</text>
+        <div class="donutrow" style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:20px; padding:10px 0;">
+          <svg width="160" height="160" viewBox="0 0 180 180">
+            <circle cx="90" cy="90" r="68" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="18"/>
+            <!-- 48% Phase II Efficacy = 160px arc with clear 18px round cap gaps -->
+            <circle cx="90" cy="90" r="68" fill="none" stroke="#A855F7" stroke-width="18" stroke-dasharray="160 428" stroke-linecap="round" transform="rotate(-80 90 90)"/>
+            <!-- 30% Phase III Center = 96px arc -->
+            <circle cx="90" cy="90" r="68" fill="none" stroke="#C084FC" stroke-width="18" stroke-dasharray="96 428" stroke-linecap="round" transform="rotate(88 90 90)"/>
+            <!-- 22% Phase I Safety = 68px arc -->
+            <circle cx="90" cy="90" r="68" fill="none" stroke="#E879F9" stroke-width="18" stroke-dasharray="68 428" stroke-linecap="round" transform="rotate(198 90 90)"/>
+            <text x="90" y="98" text-anchor="middle" fill="#fff" font-size="24" font-weight="700">48%</text>
           </svg>
-          <div class="dleg">
-            <div class="dlrow"><i style="background:#A855F7"></i>Phase II Efficacy <b>48%</b></div>
-            <div class="dlrow"><i style="background:#C084FC"></i>Phase III Center <b>30%</b></div>
-            <div class="dlrow"><i style="background:#E879F9"></i>Phase I Safety <b>22%</b></div>
+          <div class="dleg" style="width:100%; display:flex; flex-direction:column; gap:10px; padding:0 10px;">
+            <div class="dlrow" style="font-size:12px;"><i style="background:#A855F7; width:10px; height:10px;"></i>Phase II Efficacy <b>48%</b></div>
+            <div class="dlrow" style="font-size:12px;"><i style="background:#C084FC; width:10px; height:10px;"></i>Phase III Center <b>30%</b></div>
+            <div class="dlrow" style="font-size:12px;"><i style="background:#E879F9; width:10px; height:10px;"></i>Phase I Safety <b>22%</b></div>
           </div>
         </div>
       </div>
@@ -451,26 +454,26 @@
     </div>
     <div class="chartcard card">
       <div class="ct">Weekly Genomic Sample Processing Volume (Samples / Wk) <span class="cup">99.8% Sequencer Efficiency</span></div>
-      <div style="flex:1; display:flex; align-items:flex-end; gap:20px; padding:10px 10px 0; min-height:0;">
-        <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:5px; height:100%; justify-content:flex-end;">
-          <span style="font-size:11px;font-weight:700;color:#fff;">620</span>
-          <div data-bary="true" style="width:100%; max-width:44px; height:85px; border-radius:6px 6px 2px 2px; background:linear-gradient(180deg,#A855F7,#7C3AED); transform-origin:bottom;"></div>
-          <span style="font-size:10px;color:rgba(255,255,255,0.5);font-weight:600;">CAMBRIDGE</span>
+      <div style="flex:1; display:flex; align-items:flex-end; gap:24px; padding:10px 24px 8px; min-height:0;">
+        <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:6px; height:100%; justify-content:flex-end;">
+          <span style="font-size:13px;font-weight:700;color:#fff;">620</span>
+          <div data-bary="true" style="width:100%; max-width:54px; height:195px; border-radius:8px 8px 3px 3px; background:linear-gradient(180deg,#A855F7,#7C3AED); transform-origin:bottom;"></div>
+          <span style="font-size:11px;color:rgba(255,255,255,0.6);font-weight:600;">CAMBRIDGE</span>
         </div>
-        <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:5px; height:100%; justify-content:flex-end;">
-          <span style="font-size:11px;font-weight:700;color:#fff;">480</span>
-          <div data-bary="true" style="width:100%; max-width:44px; height:66px; border-radius:6px 6px 2px 2px; background:linear-gradient(180deg,#9333EA,#6B21A8); transform-origin:bottom;"></div>
-          <span style="font-size:10px;color:rgba(255,255,255,0.5);font-weight:600;">OXFORD</span>
+        <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:6px; height:100%; justify-content:flex-end;">
+          <span style="font-size:13px;font-weight:700;color:#fff;">480</span>
+          <div data-bary="true" style="width:100%; max-width:54px; height:151px; border-radius:8px 8px 3px 3px; background:linear-gradient(180deg,#9333EA,#6B21A8); transform-origin:bottom;"></div>
+          <span style="font-size:11px;color:rgba(255,255,255,0.6);font-weight:600;">OXFORD</span>
         </div>
-        <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:5px; height:100%; justify-content:flex-end;">
-          <span style="font-size:11px;font-weight:700;color:#fff;">410</span>
-          <div data-bary="true" style="width:100%; max-width:44px; height:54px; border-radius:6px 6px 2px 2px; background:linear-gradient(180deg,#C084FC,#9333EA); transform-origin:bottom;"></div>
-          <span style="font-size:10px;color:rgba(255,255,255,0.5);font-weight:600;">UCL HOSP</span>
+        <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:6px; height:100%; justify-content:flex-end;">
+          <span style="font-size:13px;font-weight:700;color:#fff;">410</span>
+          <div data-bary="true" style="width:100%; max-width:54px; height:129px; border-radius:8px 8px 3px 3px; background:linear-gradient(180deg,#C084FC,#9333EA); transform-origin:bottom;"></div>
+          <span style="font-size:11px;color:rgba(255,255,255,0.6);font-weight:600;">UCL HOSP</span>
         </div>
-        <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:5px; height:100%; justify-content:flex-end;">
-          <span style="font-size:11px;font-weight:700;color:#fff;">330</span>
-          <div data-bary="true" style="width:100%; max-width:44px; height:42px; border-radius:6px 6px 2px 2px; background:linear-gradient(180deg,#E879F9,#A855F7); transform-origin:bottom;"></div>
-          <span style="font-size:10px;color:rgba(255,255,255,0.5);font-weight:600;">CHRISTIE</span>
+        <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:6px; height:100%; justify-content:flex-end;">
+          <span style="font-size:13px;font-weight:700;color:#fff;">330</span>
+          <div data-bary="true" style="width:100%; max-width:54px; height:104px; border-radius:8px 8px 3px 3px; background:linear-gradient(180deg,#E879F9,#A855F7); transform-origin:bottom;"></div>
+          <span style="font-size:11px;color:rgba(255,255,255,0.6);font-weight:600;">CHRISTIE</span>
         </div>
       </div>
     </div>

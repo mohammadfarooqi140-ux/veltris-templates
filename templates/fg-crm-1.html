@@ -323,6 +323,14 @@
         
         <div class="views" id="views">
           
+  <style>
+    .codewin pre {
+      font-size: 19px;
+      line-height: 1.6;
+      padding: 22px 30px;
+    }
+  </style>
+
   <!-- VIEW 0: OVERVIEW -->
   <div class="view" id="v0">
     <div class="vhead">
@@ -365,19 +373,19 @@
     </div>
     <div class="chartcard card">
       <div class="ct">Commercial EPC Revenue Trajectory (12 Mo) <span class="cup">&pound;1.84M Total</span></div>
-      <svg viewBox="0 0 710 130" style="width:100%; height:110px; margin-top:4px;">
+      <svg viewBox="0 0 710 200" style="width:100%; height:200px; margin-top:6px;">
         <defs>
           <linearGradient id="r1grad" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stop-color="#10B981" stop-opacity="0.45"/>
             <stop offset="100%" stop-color="#10B981" stop-opacity="0.0"/>
           </linearGradient>
         </defs>
-        <path d="M0,110 L0,85 L118,78 L236,82 L354,55 L472,60 L590,32 L708,18 L708,125 L0,125 Z" fill="url(#r1grad)"/>
-        <path class="aline" data-len="780" d="M0,85 L118,78 L236,82 L354,55 L472,60 L590,32 L708,18" fill="none" stroke="#10B981" stroke-width="3" stroke-linecap="round" stroke-dasharray="780" stroke-dashoffset="780"/>
-        <circle cx="590" cy="32" r="5" fill="#6EE7B7" stroke="#062b1e" stroke-width="2"/>
-        <circle cx="708" cy="18" r="5" fill="#34D399" stroke="#062b1e" stroke-width="2"/>
+        <path d="M0,195 L0,145 L118,135 L236,140 L354,92 L472,100 L590,48 L708,22 L708,195 L0,195 Z" fill="url(#r1grad)"/>
+        <path class="aline" data-len="780" d="M0,145 L118,135 L236,140 L354,92 L472,100 L590,48 L708,22" fill="none" stroke="#10B981" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="780" stroke-dashoffset="780"/>
+        <circle cx="590" cy="48" r="5" fill="#6EE7B7" stroke="#062b1e" stroke-width="2"/>
+        <circle cx="708" cy="22" r="5" fill="#34D399" stroke="#062b1e" stroke-width="2"/>
       </svg>
-      <div class="xlabels"><span>Q1 COMM</span><span>Q2 SURVEY</span><span>Q3 PEAK PROPOSALS</span><span>Q4 CLOSING</span></div>
+      <div class="xlabels" style="padding-top:4px;"><span>Q1 COMM</span><span>Q2 SURVEY</span><span>Q3 PEAK PROPOSALS</span><span>Q4 CLOSING</span></div>
     </div>
     <div class="infostrip">
       <i></i><b>AI Copilot:</b> 4 DNO grid connection permits approved across Scottish Power territory &middot; 14 days ahead of Q3 plan
@@ -453,33 +461,36 @@
     <div class="repmid">
       <div class="chartcard card" style="flex:1.2;">
         <div class="ct">Commercial Revenue by Sector <span class="cup">&pound;1.84M Total</span></div>
-        <svg viewBox="0 0 420 130" style="width:100%; height:110px; margin-top:4px;">
+        <svg viewBox="0 0 420 270" style="width:100%; height:270px; margin-top:6px;">
           <defs>
             <linearGradient id="r1repgrad" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stop-color="#14B8A6" stop-opacity="0.45"/>
               <stop offset="100%" stop-color="#14B8A6" stop-opacity="0.0"/>
             </linearGradient>
           </defs>
-          <path d="M0,110 L0,90 L70,82 L140,75 L210,50 L280,55 L350,30 L420,15 L420,120 L0,120 Z" fill="url(#r1repgrad)"/>
-          <path class="aline" data-len="480" d="M0,90 L70,82 L140,75 L210,50 L280,55 L350,30 L420,15" fill="none" stroke="#14B8A6" stroke-width="3" stroke-linecap="round" stroke-dasharray="480" stroke-dashoffset="480"/>
-          <circle cx="350" cy="30" r="5" fill="#6EE7B7" stroke="#062b1e" stroke-width="2"/>
+          <path d="M0,260 L0,195 L70,175 L140,160 L210,105 L280,115 L350,60 L420,28 L420,260 L0,260 Z" fill="url(#r1repgrad)"/>
+          <path class="aline" data-len="480" d="M0,195 L70,175 L140,160 L210,105 L280,115 L350,60 L420,28" fill="none" stroke="#14B8A6" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="480" stroke-dashoffset="480"/>
+          <circle cx="350" cy="60" r="5" fill="#6EE7B7" stroke="#062b1e" stroke-width="2"/>
         </svg>
-        <div class="xlabels"><span>JAN-MAR</span><span>APR-JUN</span><span>JUL-SEP</span><span>OCT-DEC</span></div>
+        <div class="xlabels" style="padding-top:4px;"><span>JAN-MAR</span><span>APR-JUN</span><span>JUL-SEP</span><span>OCT-DEC</span></div>
       </div>
       <div class="donutcard card">
         <div class="ct">EPC Mix Breakdown</div>
-        <div class="donutrow">
-          <svg width="86" height="86" viewBox="0 0 86 86">
-            <circle cx="43" cy="43" r="34" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="12"/>
-            <circle class="aline" data-len="214" cx="43" cy="43" r="34" fill="none" stroke="#10B981" stroke-width="12" stroke-dasharray="124 214" stroke-linecap="round" transform="rotate(-90 43 43)"/>
-            <circle class="aline" data-len="214" cx="43" cy="43" r="34" fill="none" stroke="#14B8A6" stroke-width="12" stroke-dasharray="55 214" stroke-dashoffset="-126" stroke-linecap="round" transform="rotate(-90 43 43)"/>
-            <circle class="aline" data-len="214" cx="43" cy="43" r="34" fill="none" stroke="#6EE7B7" stroke-width="12" stroke-dasharray="35 214" stroke-dashoffset="-183" stroke-linecap="round" transform="rotate(-90 43 43)"/>
-            <text x="43" y="47" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">58%</text>
+        <div class="donutrow" style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:20px; padding:10px 0;">
+          <svg width="160" height="160" viewBox="0 0 180 180">
+            <circle cx="90" cy="90" r="68" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="18"/>
+            <!-- 58% Commercial EPC = 196px arc with clear 18px round cap gaps -->
+            <circle cx="90" cy="90" r="68" fill="none" stroke="#10B981" stroke-width="18" stroke-dasharray="196 428" stroke-linecap="round" transform="rotate(-80 90 90)"/>
+            <!-- 26% Storage Systems = 84px arc -->
+            <circle cx="90" cy="90" r="68" fill="none" stroke="#14B8A6" stroke-width="18" stroke-dasharray="84 428" stroke-linecap="round" transform="rotate(118 90 90)"/>
+            <!-- 16% O&M Contracts = 46px arc -->
+            <circle cx="90" cy="90" r="68" fill="none" stroke="#6EE7B7" stroke-width="18" stroke-dasharray="46 428" stroke-linecap="round" transform="rotate(218 90 90)"/>
+            <text x="90" y="98" text-anchor="middle" fill="#fff" font-size="24" font-weight="700">58%</text>
           </svg>
-          <div class="dleg">
-            <div class="dlrow"><i style="background:#10B981"></i>Commercial EPC <b>58%</b></div>
-            <div class="dlrow"><i style="background:#14B8A6"></i>Storage Systems <b>26%</b></div>
-            <div class="dlrow"><i style="background:#6EE7B7"></i>O&amp;M Contracts <b>16%</b></div>
+          <div class="dleg" style="width:100%; display:flex; flex-direction:column; gap:10px; padding:0 10px;">
+            <div class="dlrow" style="font-size:12px;"><i style="background:#10B981; width:10px; height:10px;"></i>Commercial EPC <b>58%</b></div>
+            <div class="dlrow" style="font-size:12px;"><i style="background:#14B8A6; width:10px; height:10px;"></i>Storage Systems <b>26%</b></div>
+            <div class="dlrow" style="font-size:12px;"><i style="background:#6EE7B7; width:10px; height:10px;"></i>O&amp;M Contracts <b>16%</b></div>
           </div>
         </div>
       </div>
@@ -550,7 +561,9 @@
 
 <span class="k">export const</span> <span class="f">CaledonSolarDashboard</span> = () =&gt; {
   <span class="k">const</span> [view, setView] = <span class="f">useState</span>(<span class="s">'overview'</span>);
-  <span class="k">const</span> [stats, setStats] = <span class="f">useState</span>({ bids: 42, pipeline: 1.84, winRate: 68.4 });
+  <span class="k">const</span> [stats, setStats] = <span class="f">useState</span>({
+    bids: 42, pipeline: 1.84, winRate: 68.4
+  });
 
   <span class="k">return</span> (
     &lt;<span class="t">main</span> <span class="p">className</span>=<span class="s">"glassy-dashboard emerald-stage"</span>&gt;

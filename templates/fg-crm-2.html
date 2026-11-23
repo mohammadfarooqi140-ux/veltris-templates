@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Apex Aviation CRM — AI·Ops V2</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html,body { width:1080px; height:1920px; overflow:hidden; background:#000; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    color: #ffffff;
+    -webkit-font-smoothing: antialiased;
+  }
+  
+  /* TITLE ZONE (Top) */
+  .title-zone { padding-top: 104px; text-align: center; }
+  .title-zone .name { font-size: 88px; font-weight: 600; letter-spacing: 0.5px; color: #ffffff; line-height: 1.05; }
+  .title-zone .ver  { font-size: 88px; font-weight: 700; color: #2563EB; line-height: 1.1; }
+
+  /* MIDDLE ZONE */
+  .stage {
+    position: relative; margin-top: 54px; height: 694px; width: 1080px;
+    background: radial-gradient(1200px 720px at 50% 38%, #081a36, #020712 78%);
+    overflow: hidden;
+  }
+  .blob { position: absolute; border-radius: 50%; filter: blur(70px); }
+  .blob.b1 { width: 580px; height: 580px; background: #2563EB; left: -120px; top: -170px; opacity: .65; }
+  .blob.b2 { width: 580px; height: 580px; background: #1D4ED8; right: -150px; top: 20px; opacity: .60; }
+  .blob.b3 { width: 480px; height: 480px; background: #06B6D4; left: 300px; bottom: -240px; opacity: .55; }
+  .blob.b4 { width: 380px; height: 380px; background: #38BDF8; right: 120px; bottom: -180px; opacity: .45; }
+
+  /* DASHBOARD WINDOW (Frosted translucent glass) */
+  .dash {
+    position: absolute; left: 63px; top: 54px; width: 954px; height: 586px;
+    border-radius: 34px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    box-shadow: 0 40px 90px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+    backdrop-filter: blur(24px) saturate(160%);
+    -webkit-backdrop-filter: blur(24px) saturate(160%);
+    overflow: hidden;
+    display: flex;
+  }
+
+  /* SIDEBAR */
+  .side {
+    width: 176px; flex: 0 0 176px; height: 100%;
+    background: rgba(255, 255, 255, 0.04);
+    border-right: 1px solid rgba(255, 255, 255, 0.12);
+    display: flex; flex-direction: column; padding: 20px 14px 16px;
+  }
+  .logo { display: flex; align-items: center; gap: 9px; padding: 0 6px; }
+  .logo .lg {
+    width: 30px; height: 30px; border-radius: 9px; flex: 0 0 30px;
+    background: linear-gradient(145deg, #2563EB, #06B6D4);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700; color: #fff;
+    box-shadow: 0 6px 14px rgba(37, 99, 235, 0.45);
+  }
+  .logo .ln { font-size: 14px; font-weight: 600; color: #fff; line-height: 1.1; }
+  .logo .ln span { display: block; font-size: 9.5px; font-weight: 500; color: rgba(255, 255, 255, 0.5); letter-spacing: .6px; }
+  
+  .nav { margin-top: 24px; display: flex; flex-direction: column; gap: 5px; }
+  .nitem {
+    display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 11px;
+    font-size: 13.5px; font-weight: 500; color: rgba(255, 255, 255, 0.62);
+    border: 1px solid transparent; cursor: pointer; transition: all .15s;
+  }
+  .nitem svg { width: 16px; height: 16px; flex: 0 0 16px; }
+  .nitem .bdg { margin-left: auto; font-size: 9.5px; font-weight: 700; background: #2563EB; color: #fff; border-radius: 999px; padding: 1px 6px; }
+  .nitem.on {
+    background: linear-gradient(120deg, rgba(255, 255, 255, 0.20), rgba(255, 255, 255, 0.07));
+    border-color: rgba(255, 255, 255, 0.32); color: #fff;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22);
+  }
+  .side .sp { flex: 1; }
+  .syscard {
+    border-radius: 14px; padding: 10px 11px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+  }
+  .syscard .at { font-size: 11px; font-weight: 600; color: #fff; display: flex; align-items: center; gap: 6px; }
+  .syscard .at i { width: 6px; height: 6px; border-radius: 50%; background: #2563EB; display: block; box-shadow: 0 0 8px #2563EB; }
+  .syscard .am { font-size: 10px; color: rgba(255, 255, 255, 0.6); line-height: 1.35; margin-top: 3px; }
+  .userchip { display: flex; align-items: center; gap: 9px; margin-top: 12px; padding: 0 4px; }
+  .userchip .av { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, #2563EB, #06B6D4); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #fff; flex: 0 0 28px; }
+  .userchip .un { font-size: 11.5px; font-weight: 600; color: #fff; line-height: 1.15; }
+  .userchip .un span { display: block; font-size: 9.5px; color: rgba(255, 255, 255, 0.45); font-weight: 400; }
+
+  /* MAIN */
+  .main2 { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+  .topbar {
+    flex: 0 0 54px; display: flex; align-items: center; gap: 14px; padding: 0 22px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.11);
+  }
+  .search {
+    flex: 1; max-width: 360px; height: 32px; border-radius: 999px;
+    background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.14);
+    display: flex; align-items: center; gap: 8px; padding: 0 14px;
+    font-size: 12px; color: rgba(255, 255, 255, 0.45);
+  }
+  .search svg { width: 14px; height: 14px; }
+  .topbar .tbtn {
+    margin-left: auto; font-size: 12px; font-weight: 600; color: #fff;
+    background: linear-gradient(120deg, #2563EB, #06B6D4); border-radius: 999px; padding: 7px 15px;
+    box-shadow: 0 8px 18px rgba(37, 99, 235, 0.45); white-space: nowrap; cursor: pointer;
+  }
+  .topbar .tav {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: linear-gradient(135deg, #2563EB, #06B6D4);
+    display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700;
+  }
+
+  /* VIEWS */
+  .views { position: relative; flex: 1; min-height: 0; }
+  .view { position: absolute; inset: 0; padding: 16px 20px 14px; display: flex; flex-direction: column; gap: 12px; opacity: 0; }
+  .vhead { display: flex; align-items: baseline; justify-content: space-between; flex: 0 0 auto; }
+  .vhead .vt { font-size: 22px; font-weight: 600; color: #fff; letter-spacing: .2px; }
+  .vhead .vt span { color: #2563EB; }
+  .vhead .vs { font-size: 11.5px; color: rgba(255, 255, 255, 0.5); display: flex; align-items: center; gap: 6px; }
+  .vhead .vs .livedot { width: 7px; height: 7px; border-radius: 50%; background: #2563EB; display: inline-block; box-shadow: 0 0 6px #2563EB; }
+  .vhead .vs b { color: #60A5FA; font-weight: 600; }
+
+  /* CARDS */
+  .card {
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 18px;
+    box-shadow: 0 12px 26px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  }
+  
+  /* STAT ROW */
+  .statrow { display: flex; gap: 11px; flex: 0 0 72px; }
+  .astat { flex: 1; padding: 10px 13px 8px; display: flex; flex-direction: column; overflow: hidden; }
+  .astat .lab { font-size: 11px; color: rgba(255, 255, 255, 0.55); font-weight: 500; display: flex; align-items: center; justify-content: space-between; }
+  .astat .tr { font-size: 9.5px; font-weight: 700; color: #2563EB; background: #2563EB22; border: 1px solid #2563EB44; padding: 1px 6px; border-radius: 999px; }
+  .astat .valrow { display: flex; align-items: baseline; justify-content: space-between; margin-top: 2px; }
+  .astat .val { font-size: 21px; font-weight: 600; color: #fff; line-height: 1.1; }
+
+  /* CHART CARD */
+  .chartcard { flex: 1; padding: 12px 16px 8px; display: flex; flex-direction: column; overflow: hidden; min-height: 0; }
+  .chartcard .ct { font-size: 13.5px; font-weight: 600; color: #fff; display: flex; align-items: center; justify-content: space-between; }
+  .chartcard .ct .cup { font-size: 10.5px; font-weight: 700; color: #60A5FA; background: #2563EB22; border: 1px solid #2563EB44; padding: 2px 8px; border-radius: 999px; }
+  .xlabels { display: flex; justify-content: space-between; font-size: 10px; color: rgba(255, 255, 255, 0.42); font-weight: 500; padding: 2px 2px 4px; }
+
+  /* INFO STRIP */
+  .infostrip {
+    flex: 0 0 auto; display: flex; align-items: center; gap: 12px; padding: 9px 14px;
+    border-radius: 12px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.12);
+    font-size: 11px; color: rgba(255, 255, 255, 0.75); overflow: hidden; white-space: nowrap;
+  }
+  .infostrip i { width: 6px; height: 6px; border-radius: 50%; background: #2563EB; display: block; flex: 0 0 6px; box-shadow: 0 0 6px #2563EB; }
+  .infostrip b { color: #fff; font-weight: 600; }
+  .infostrip span.tag { margin-left: auto; font-size: 9.5px; font-weight: 700; color: #60A5FA; background: #2563EB22; border: 1px solid #2563EB44; padding: 1px 7px; border-radius: 999px; }
+
+  /* GRID 2x2 */
+  .grid2x2 { flex: 1; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 11px; min-height: 0; }
+  .dealcard { padding: 12px 14px; display: flex; flex-direction: column; justify-content: space-between; }
+  .dealcard .dh { display: flex; justify-content: space-between; align-items: flex-start; }
+  .dealcard .dtitle { font-size: 13.5px; font-weight: 600; color: #fff; line-height: 1.2; }
+  .dealcard .dsub { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 2px; }
+  .dealcard .damt { font-size: 17px; font-weight: 700; color: #fff; }
+  .dealcard .dfoot { display: flex; align-items: center; justify-content: space-between; margin-top: 6px; }
+  .pill { font-size: 9.5px; font-weight: 700; padding: 2px 8px; border-radius: 999px; }
+  .pill.primary { background: #2563EB22; color: #60A5FA; border: 1px solid #2563EB44; }
+  .pill.muted { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.7); border: 1px solid rgba(255,255,255,0.15); }
+  .pill.green { background: #10b98122; color: #34d399; border: 1px solid #10b98144; }
+
+  /* REPORTS (CHART + DONUT/GAUGE PAIR) */
+  .repmid { flex: 1; display: flex; gap: 12px; min-height: 0; }
+  .donutcard { width: 330px; flex: 0 0 330px; padding: 12px 15px; display: flex; flex-direction: column; justify-content: space-between; }
+  .donutcard .ct { font-size: 13.5px; font-weight: 600; color: #fff; margin-bottom: 4px; }
+  .donutrow { flex: 1; display: flex; align-items: center; gap: 14px; min-height: 0; }
+  .dleg { flex: 1; display: flex; flex-direction: column; gap: 7px; }
+  .dleg .dlrow { display: flex; align-items: center; gap: 7px; font-size: 11px; color: rgba(255, 255, 255, 0.7); font-weight: 500; }
+  .dleg .dlrow i { width: 9px; height: 9px; border-radius: 3px; display: block; flex: 0 0 9px; }
+  .dleg .dlrow b { margin-left: auto; color: #fff; font-weight: 600; }
+
+  /* MESSAGES / CHAT THREAD */
+  .chatmid { flex: 1; display: flex; gap: 12px; min-height: 0; }
+  .chatlist { width: 200px; flex: 0 0 200px; padding: 10px; display: flex; flex-direction: column; gap: 6px; }
+  .citem { padding: 8px 10px; border-radius: 12px; display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.04); border: 1px solid transparent; cursor: pointer; }
+  .citem.active { background: rgba(255,255,255,0.10); border-color: rgba(255,255,255,0.22); }
+  .citem .cav { width: 28px; height: 28px; border-radius: 50%; background: #2563EB44; color: #60A5FA; font-weight: 700; font-size: 11px; display: flex; align-items: center; justify-content: center; }
+  .citem .cinfo { flex: 1; min-width: 0; }
+  .citem .cn { font-size: 12px; font-weight: 600; color: #fff; line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .citem .cs { font-size: 10px; color: rgba(255,255,255,0.5); }
+  .chatbox { flex: 1; padding: 12px 14px; display: flex; flex-direction: column; justify-content: space-between; }
+  .cbubbles { flex: 1; display: flex; flex-direction: column; gap: 10px; min-height: 0; }
+  .bubble { max-width: 82%; padding: 8px 12px; border-radius: 14px; font-size: 11.5px; line-height: 1.4; }
+  .bubble.in { align-self: flex-start; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); color: rgba(255,255,255,0.9); }
+  .bubble.ai { align-self: flex-start; background: #2563EB18; border: 1px solid #2563EB44; color: #60A5FA; }
+  .bubble.out { align-self: flex-end; background: linear-gradient(135deg, #2563EB, #06B6D4); color: #fff; }
+  .chatinfo { width: 170px; flex: 0 0 170px; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+  .chatinfo .ititle { font-size: 12px; font-weight: 700; color: #fff; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px; }
+  .chatinfo .irow { font-size: 10.5px; color: rgba(255,255,255,0.6); display: flex; flex-direction: column; gap: 2px; }
+  .chatinfo .irow b { color: #fff; font-size: 12px; }
+
+  /* FINANCE TABLE */
+  .tblcard { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-height: 0; padding: 6px 0; }
+  .trow { display: grid; align-items: center; padding: 8px 16px; border-bottom: 1px solid rgba(255,255,255,0.07); font-size: 11.5px; }
+  .trow:last-child { border-bottom: none; }
+  .trow.head { font-size: 9.5px; font-weight: 700; letter-spacing: 1px; color: rgba(255,255,255,0.4); text-transform: uppercase; }
+  .fcols { grid-template-columns: 1fr 1.8fr 1fr 1fr; }
+
+  /* TASKS FEED */
+  .taskfeed { flex: 1; display: flex; flex-direction: column; gap: 9px; min-height: 0; }
+  .taskrow { padding: 10px 14px; display: flex; align-items: center; gap: 12px; }
+  .taskrow .tmid { flex: 1; min-width: 0; }
+  .taskrow .ttitle { font-size: 12.5px; font-weight: 600; color: #fff; }
+  .taskrow .tsub { font-size: 10px; color: rgba(255,255,255,0.5); margin-top: 2px; }
+  .taskrow .tbar { height: 6px; border-radius: 999px; background: rgba(255,255,255,0.1); overflow: hidden; margin-top: 5px; }
+  .taskrow .tfill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, #2563EB, #06B6D4); transform-origin: left; }
+
+  /* ANNOUNCEMENTS FEED */
+  .annfeed { flex: 1; display: flex; flex-direction: column; gap: 10px; min-height: 0; }
+  .anncard { padding: 11px 15px; display: flex; flex-direction: column; gap: 6px; }
+  .anncard .annhead { display: flex; align-items: center; justify-content: space-between; }
+  .anncard .anntitle { font-size: 13px; font-weight: 600; color: #fff; }
+  .anncard .annsub { font-size: 11px; color: rgba(255,255,255,0.65); line-height: 1.35; }
+
+  /* SETTINGS GRID */
+  .setgrid { flex: 1; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr 1fr; gap: 10px; min-height: 0; }
+  .setcard { padding: 11px 14px; display: flex; flex-direction: column; justify-content: space-between; }
+  .setcard .stitle { font-size: 12.5px; font-weight: 600; color: #fff; }
+  .setcard .ssub { font-size: 10px; color: rgba(255,255,255,0.5); margin-top: 2px; }
+
+  /* CODE ZONE */
+  .codewin {
+    margin: 56px 48px 0; height: 596px; border-radius: 24px; overflow: hidden;
+    background: #0b0e15; border: 1px solid rgba(255, 255, 255, 0.11);
+    box-shadow: 0 34px 80px rgba(0, 0, 0, 0.6);
+  }
+  .codebar {
+    height: 60px; background: #11141d; display: flex; align-items: center; gap: 9px;
+    padding: 0 22px; border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+  .cdot { width: 14px; height: 14px; border-radius: 50%; }
+  .tab {
+    margin-left: 20px; background: #0b0e15; border: 1px solid rgba(255, 255, 255, 0.08); border-bottom: none;
+    padding: 8px 18px; border-radius: 10px 10px 0 0; font-family: 'Liberation Mono', Consolas, monospace;
+    font-size: 16px; color: #d7deeb; align-self: flex-end; height: 42px; display: flex; align-items: center;
+  }
+  .tab i { color: #2563EB; font-style: normal; }
+  pre {
+    padding: 28px 34px; font-family: 'Liberation Mono', Consolas, monospace;
+    font-size: 22px; line-height: 1.8; color: #a9b7d0; white-space: pre;
+  }
+  .k { color: #2563EB; } .s { color: #9ece6a; } .t { color: #60A5FA; }
+  .f { color: #82aaff; } .p { color: #89ddff; } .n { color: #f78c6c; } .cm { color: #565f89; }
+</style>
+</head>
+<body>
+
+  <!-- TITLE ZONE -->
+  <div class="title-zone">
+    <div class="name">Apex Aviation CRM</div>
+    <div class="ver">AI·Ops V2</div>
+  </div>
+
+  <!-- MIDDLE ZONE -->
+  <div class="stage">
+    <div class="blob b1"></div>
+    <div class="blob b2"></div>
+    <div class="blob b3"></div>
+    <div class="blob b4"></div>
+    
+    <div class="dash">
+      <!-- SIDEBAR -->
+      <div class="side">
+        <div class="logo">
+          <div class="lg">AA</div>
+          <div class="ln">Apex Aviation<span>MRO &amp; LOGISTICS</span></div>
+        </div>
+        <div class="nav" id="nav">
+          
+            <div class="nitem on" data-ic="0" onclick="switchView(0)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+              <span>Overview</span>
+              <span class="bdg">Live</span>
+            </div>
+          
+            <div class="nitem " data-ic="1" onclick="switchView(1)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 6v12"/></svg>
+              <span>Finance</span>
+              <span class="bdg">£384k</span>
+            </div>
+          
+            <div class="nitem " data-ic="2" onclick="switchView(2)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+              <span>Tasks</span>
+              <span class="bdg">28</span>
+            </div>
+          
+            <div class="nitem " data-ic="3" onclick="switchView(3)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+              <span>Reports</span>
+              
+            </div>
+          
+        </div>
+        <div class="sp"></div>
+        <div class="syscard">
+          <div class="at"><i></i>AI Engine Live</div>
+          <div class="am">Veltris Neural Bridge active · 99.98% latency</div>
+        </div>
+        <div class="userchip">
+          <div class="av">MV</div>
+          <div class="un">Marcus Vance<span>Head of MRO</span></div>
+        </div>
+      </div>
+
+      <!-- MAIN -->
+      <div class="main2">
+        <div class="topbar">
+          <div class="search">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.8-3.8"/></svg>
+            Search parts, serials, flight couriers…
+          </div>
+          <span class="tbtn">+ Dispatch Part</span>
+          <div class="tav">MV</div>
+        </div>
+        
+        <div class="views" id="views">
+          
+  <!-- VIEW 0: OVERVIEW -->
+  <div class="view" id="v0">
+    <div class="vhead">
+      <div class="vt">Flight Operations <span>Overview</span></div>
+      <div class="vs"><i class="livedot"></i>EASA Part-145 Hubs &middot; <b>All Live</b></div>
+    </div>
+    <div class="statrow">
+      <div class="astat card">
+        <div class="lab">Mo. Revenue <span class="tr">+21.4%</span></div>
+        <div class="valrow"><div class="val">&pound;<span data-count="384.5" data-dec="true">0.0</span>k</div>
+    <svg width="64" height="24" viewBox="0 0 64 24" style="overflow:visible;">
+      <path d="M 0.0,21.0 12.8,15.8 25.6,13.2 38.4,8.9 51.2,5.8 64.0,3.0" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+      </div>
+      <div class="astat card">
+        <div class="lab">Dispatched <span class="tr">+168</span></div>
+        <div class="valrow"><div class="val" data-count="1420" data-fmt="true">0</div>
+    <svg width="64" height="24" viewBox="0 0 64 24" style="overflow:visible;">
+      <path d="M 0.0,21.0 12.8,16.5 25.6,13.1 38.4,9.2 51.2,5.8 64.0,3.0" fill="none" stroke="#60A5FA" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+      </div>
+      <div class="astat card">
+        <div class="lab">AOG Alerts <span class="tr">100% OK</span></div>
+        <div class="valrow"><div class="val" data-count="0">0</div>
+    <svg width="64" height="24" viewBox="0 0 64 24" style="overflow:visible;">
+      <path d="M 0.0,3.0 12.8,12.0 25.6,16.5 38.4,16.5 51.2,21.0 64.0,21.0" fill="none" stroke="#06B6D4" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+      </div>
+      <div class="astat card">
+        <div class="lab">Dispatch Rate <span class="tr">+0.8%</span></div>
+        <div class="valrow"><div class="val"><span data-count="99.4" data-dec="true">0.0</span>%</div>
+    <svg width="64" height="24" viewBox="0 0 64 24" style="overflow:visible;">
+      <path d="M 0.0,21.0 12.8,16.8 25.6,11.3 38.4,8.5 51.2,5.8 64.0,3.0" fill="none" stroke="#38BDF8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+      </div>
+    </div>
+    <div class="chartcard card">
+      <div class="ct">Spares Dispatch Volume by Airport Hub (Units / Wk) <span class="cup">1,420 Dispatched</span></div>
+      <div style="flex:1; display:flex; align-items:flex-end; gap:20px; padding:10px 10px 0; min-height:0;">
+        <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:5px; height:100%; justify-content:flex-end;">
+          <span style="font-size:11px;font-weight:700;color:#fff;">542</span>
+          <div data-bary="true" style="width:100%; max-width:44px; height:85px; border-radius:6px 6px 2px 2px; background:linear-gradient(180deg,#2563EB,#1D4ED8); transform-origin:bottom;"></div>
+          <span style="font-size:10px;color:rgba(255,255,255,0.5);font-weight:600;">LHR</span>
+        </div>
+        <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:5px; height:100%; justify-content:flex-end;">
+          <span style="font-size:11px;font-weight:700;color:#fff;">386</span>
+          <div data-bary="true" style="width:100%; max-width:44px; height:62px; border-radius:6px 6px 2px 2px; background:linear-gradient(180deg,#06B6D4,#0284C7); transform-origin:bottom;"></div>
+          <span style="font-size:10px;color:rgba(255,255,255,0.5);font-weight:600;">BHX</span>
+        </div>
+        <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:5px; height:100%; justify-content:flex-end;">
+          <span style="font-size:11px;font-weight:700;color:#fff;">298</span>
+          <div data-bary="true" style="width:100%; max-width:44px; height:48px; border-radius:6px 6px 2px 2px; background:linear-gradient(180deg,#3B82F6,#1E40AF); transform-origin:bottom;"></div>
+          <span style="font-size:10px;color:rgba(255,255,255,0.5);font-weight:600;">FILTON</span>
+        </div>
+        <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:5px; height:100%; justify-content:flex-end;">
+          <span style="font-size:11px;font-weight:700;color:#fff;">194</span>
+          <div data-bary="true" style="width:100%; max-width:44px; height:32px; border-radius:6px 6px 2px 2px; background:linear-gradient(180deg,#60A5FA,#2563EB); transform-origin:bottom;"></div>
+          <span style="font-size:10px;color:rgba(255,255,255,0.5);font-weight:600;">EMA</span>
+        </div>
+      </div>
+    </div>
+    <div class="infostrip">
+      <i></i><b>System Telemetry:</b> All 4 Regional Spares Hubs Live &middot; Dedicated couriers tracked via EASA Part-145 telemetry
+      <span class="tag">0 AOG DELAYS</span>
+    </div>
+  </div>
+
+  <!-- VIEW 1: FINANCE -->
+  <div class="view" id="v1">
+    <div class="vhead">
+      <div class="vt">MRO Billing &amp; <span>Finance</span></div>
+      <div class="vs"><i class="livedot"></i>Invoiced MoTD &middot; <b>&pound;384,500</b></div>
+    </div>
+    <div class="statrow">
+      <div class="astat card"><div class="lab">Total Invoiced</div><div class="val">&pound;384.5k</div></div>
+      <div class="astat card"><div class="lab">Collected</div><div class="val" style="color:#60A5FA">&pound;322.4k</div></div>
+      <div class="astat card"><div class="lab">Pending (3d)</div><div class="val">&pound;62.1k</div></div>
+      <div class="astat card"><div class="lab">Escrow Reserve</div><div class="val">&pound;48.2k</div></div>
+    </div>
+    <div class="tblcard card">
+      <div class="trow head fcols">
+        <div>Invoice #</div><div>Airline / Client</div><div>Amount</div><div style="text-align:right">Status</div>
+      </div>
+      <div class="trow fcols">
+        <div style="font-weight:700;color:#fff;">INV-8841</div>
+        <div>British Airways Eng &middot; <span style="color:rgba(255,255,255,0.5)">CFM56 Blades</span></div>
+        <div style="font-weight:700;color:#fff;">&pound;94,200</div>
+        <div style="text-align:right"><span class="pill green">PAID</span></div>
+      </div>
+      <div class="trow fcols">
+        <div style="font-weight:700;color:#fff;">INV-8842</div>
+        <div>Rolls-Royce MRO &middot; <span style="color:rgba(255,255,255,0.5)">Trent 1000 Actuators</span></div>
+        <div style="font-weight:700;color:#fff;">&pound;126,500</div>
+        <div style="text-align:right"><span class="pill green">PAID</span></div>
+      </div>
+      <div class="trow fcols">
+        <div style="font-weight:700;color:#fff;">INV-8843</div>
+        <div>DHL Cargo EMA &middot; <span style="color:rgba(255,255,255,0.5)">B777 Gear Seals</span></div>
+        <div style="font-weight:700;color:#fff;">&pound;38,400</div>
+        <div style="text-align:right"><span class="pill primary">DUE 2D</span></div>
+      </div>
+      <div class="trow fcols">
+        <div style="font-weight:700;color:#fff;">INV-8844</div>
+        <div>Virgin Atlantic Eng &middot; <span style="color:rgba(255,255,255,0.5)">A350 Sensor Kit</span></div>
+        <div style="font-weight:700;color:#fff;">&pound;23,700</div>
+        <div style="text-align:right"><span class="pill muted">PROCESSING</span></div>
+      </div>
+    </div>
+    <div class="infostrip">
+      <i></i><b>Cashflow Audit:</b> 98.2% on-time corporate payment rate across all British flag carrier contracts
+    </div>
+  </div>
+
+  <!-- VIEW 2: TASKS -->
+  <div class="view" id="v2">
+    <div class="vhead">
+      <div class="vt">Critical Ops &amp; <span>Tasks</span></div>
+      <div class="vs"><i class="livedot"></i>Active Queue &middot; <b>28 Logged</b></div>
+    </div>
+    <div class="taskfeed">
+      <div class="taskrow card">
+        <div class="tmid">
+          <div class="ttitle">AOG Express Courier to Heathrow: CFM56 Turbine Casing</div>
+          <div class="tsub">Courier en route M4 &middot; ETA 24 mins &middot; Tracking ID: #APX-904</div>
+          <div class="tbar"><div class="tfill" data-bar="true" style="width:88%;"></div></div>
+        </div>
+        <span class="pill primary">IN TRANSIT 88%</span>
+      </div>
+      <div class="taskrow card">
+        <div class="tmid">
+          <div class="ttitle">CAA Compliance File Audit: Batch #409 Rotables</div>
+          <div class="tsub">Automated certificate validation &middot; 48 serials verified</div>
+          <div class="tbar"><div class="tfill" data-bar="true" style="width:100%; background:#10B981;"></div></div>
+        </div>
+        <span class="pill green">AI VERIFIED 100%</span>
+      </div>
+      <div class="taskrow card">
+        <div class="tmid">
+          <div class="ttitle">Filton Test Cell Calibration: Hydraulic Servo Valves</div>
+          <div class="tsub">QA signoff required prior to Trent 1000 fitting</div>
+          <div class="tbar"><div class="tfill" data-bar="true" style="width:45%;"></div></div>
+        </div>
+        <span class="pill muted">IN TESTING 45%</span>
+      </div>
+      <div class="taskrow card">
+        <div class="tmid">
+          <div class="ttitle">Shannon Airport Express: APU Fuel Metering Unit</div>
+          <div class="tsub">Irish customs cleared &middot; Final courier handover underway</div>
+          <div class="tbar"><div class="tfill" data-bar="true" style="width:72%;"></div></div>
+        </div>
+        <span class="pill primary">CLEARED 72%</span>
+      </div>
+    </div>
+    <div class="infostrip">
+      <i></i><b>Courier SLA:</b> Average emergency AOG dispatch initiated within 11 minutes of airline ticket logging
+    </div>
+  </div>
+
+  <!-- VIEW 3: REPORTS -->
+  <div class="view" id="v3">
+    <div class="vhead">
+      <div class="vt">Fleet Analytics &amp; <span>Reports</span></div>
+      <div class="vs"><i class="livedot"></i>Yield Intel &middot; <b>34.2% Fleet Margin</b></div>
+    </div>
+    <div class="repmid">
+      <div class="chartcard card" style="flex:1.2;">
+        <div class="ct">MRO Spares Yield Comparison (&pound;k / Qtr) <span class="cup">&pound;384.5k Mo</span></div>
+        <svg viewBox="0 0 420 130" style="width:100%; height:110px; margin-top:4px;">
+          <defs>
+            <linearGradient id="r2repgrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#2563EB" stop-opacity="0.45"/>
+              <stop offset="100%" stop-color="#2563EB" stop-opacity="0.0"/>
+            </linearGradient>
+          </defs>
+          <path d="M0,110 L0,95 L80,80 L160,78 L240,48 L320,52 L420,20 L420,120 L0,120 Z" fill="url(#r2repgrad)"/>
+          <path class="aline" data-len="480" d="M0,95 L80,80 L160,78 L240,48 L320,52 L420,20" fill="none" stroke="#2563EB" stroke-width="3" stroke-linecap="round" stroke-dasharray="480" stroke-dashoffset="480"/>
+          <circle cx="420" cy="20" r="5" fill="#60A5FA" stroke="#081a36" stroke-width="2"/>
+        </svg>
+        <div class="xlabels"><span>Q1 MRO</span><span>Q2 TURBINES</span><span>Q3 ROTABLES</span><span>Q4 AVIONICS</span></div>
+      </div>
+      <div class="donutcard card">
+        <div class="ct">Fleet Performance Gauges</div>
+        <div class="donutrow">
+          <svg width="86" height="86" viewBox="0 0 86 86">
+            <circle cx="43" cy="43" r="34" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="12"/>
+            <circle class="aline" data-len="214" cx="43" cy="43" r="34" fill="none" stroke="#2563EB" stroke-width="12" stroke-dasharray="145 214" stroke-linecap="round" transform="rotate(-90 43 43)"/>
+            <circle class="aline" data-len="214" cx="43" cy="43" r="34" fill="none" stroke="#06B6D4" stroke-width="12" stroke-dasharray="60 214" stroke-dashoffset="-148" stroke-linecap="round" transform="rotate(-90 43 43)"/>
+            <text x="43" y="47" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">98%</text>
+          </svg>
+          <div class="dleg">
+            <div class="dlrow"><i style="background:#2563EB"></i>Spares Avail <b>98.6%</b></div>
+            <div class="dlrow"><i style="background:#06B6D4"></i>Fleet Margin <b>34.2%</b></div>
+            <div class="dlrow"><i style="background:#38BDF8"></i>AOG Res <b>100%</b></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="infostrip">
+      <i></i><b>Executive Summary:</b> High-pressure turbine overhaul components expand gross margins by +28% YoY across Bristol &amp; Midlands hubs
+    </div>
+  </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CODE ZONE -->
+  <div class="codewin">
+    <div class="codebar">
+      <div class="cdot" style="background:#ff5f57"></div>
+      <div class="cdot" style="background:#febc2e"></div>
+      <div class="cdot" style="background:#28c840"></div>
+      <div class="tab" id="codetab">Overview<i>.jsx</i></div>
+    </div>
+    <pre><code><span class="k">import</span> { useState } <span class="k">from</span> <span class="s">'react'</span>;
+<span class="k">import</span> { DispatchHub } <span class="k">from</span> <span class="s">'./DispatchHub'</span>;
+<span class="k">import</span> { CashflowLedger } <span class="k">from</span> <span class="s">'./CashflowLedger'</span>;
+
+<span class="k">export const</span> <span class="f">ApexOperationsConsole</span> = () =&gt; {
+  <span class="k">const</span> [activeHub, setActiveHub] = <span class="f">useState</span>(<span class="s">'LHR'</span>);
+  <span class="k">const</span> dispatchRate = 99.4;
+
+  <span class="k">return</span> (
+    &lt;<span class="t">div</span> <span class="p">className</span>=<span class="s">"apex-console cobalt-theme"</span>&gt;
+      &lt;<span class="t">DispatchHub</span> <span class="p">hub</span>={activeHub} <span class="p">sla</span>={dispatchRate} /&gt;
+      &lt;<span class="t">CashflowLedger</span> <span class="p">currency</span>=<span class="s">"GBP"</span> <span class="p">onTimeRate</span>={0.982} /&gt;
+    &lt;/<span class="t">div</span>&gt;
+  );
+};</code></pre>
+  </div>
+
+<script>
+  const CODE_TABS = ["Overview","Finance","Tasks","Reports"];
+  
+  function switchView(idx) {
+    document.querySelectorAll('.view').forEach((el, i) => {
+      el.style.opacity = (i === idx) ? '1' : '0';
+      el.style.visibility = (i === idx) ? 'visible' : 'hidden';
+      el.style.zIndex = (i === idx) ? '2' : '1';
+    });
+    document.querySelectorAll('.nitem[data-ic]').forEach(el => {
+      el.classList.toggle('on', parseInt(el.dataset.ic) === idx);
+    });
+    const ct = document.getElementById('codetab');
+    if (ct && CODE_TABS[idx]) ct.innerHTML = CODE_TABS[idx] + '<i>.jsx</i>';
+  }
+
+  function renderAt(t) {
+    const DUR = 1.5;
+    const XF = 0.18;
+    const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
+    const easeOut = x => 1 - Math.pow(1 - x, 3);
+    const smooth = x => { x = clamp(x, 0, 1); return x * x * (3 - 2 * x); };
+    
+    const slotF = t / DUR;
+    const slot = Math.min(3, Math.floor(slotF));
+    const lt = t - slot * DUR;
+    const prev = slot > 0 ? slot - 1 : -1;
+
+    document.querySelectorAll('.view').forEach((el, i) => {
+      let op = 0, age = 0;
+      if (i === slot) {
+        op = lt < XF ? smooth(lt / XF) : 1;
+        age = lt;
+      } else if (i === prev) {
+        op = lt < XF ? 1 - smooth(lt / XF) : 0;
+        age = DUR + lt;
+      }
+      
+      el.style.opacity = op.toFixed(3);
+      el.style.zIndex = (i === slot) ? 2 : 1;
+      el.style.visibility = op <= 0 ? 'hidden' : 'visible';
+      if (op <= 0) return;
+
+      // Animate numbers and bars during first 0.5s of age
+      const p = easeOut(clamp(age / 0.5, 0, 1));
+      
+      el.querySelectorAll('[data-count]').forEach(c => {
+        const target = parseFloat(c.dataset.count);
+        const val = target * p;
+        if (c.dataset.dec) {
+          c.textContent = val.toFixed(1);
+        } else if (c.dataset.fmt) {
+          c.textContent = Math.round(val).toLocaleString('en-GB');
+        } else {
+          c.textContent = Math.round(val);
+        }
+      });
+
+      el.querySelectorAll('[data-bar]').forEach((b, idx) => {
+        const bp = easeOut(clamp((age - 0.05 - idx * 0.04) / 0.45, 0, 1));
+        b.style.transform = 'scaleX(' + Math.max(0.01, bp).toFixed(3) + ')';
+      });
+
+      el.querySelectorAll('[data-bary]').forEach((b, idx) => {
+        const bp = easeOut(clamp((age - 0.05 - idx * 0.04) / 0.45, 0, 1));
+        b.style.transform = 'scaleY(' + Math.max(0.01, bp).toFixed(3) + ')';
+      });
+
+      el.querySelectorAll('.aline').forEach(s => {
+        const len = parseFloat(s.dataset.len || 600);
+        const sp = easeOut(clamp((age - 0.06) / 0.44, 0, 1));
+        s.style.strokeDashoffset = (len * (1 - sp)).toFixed(1);
+      });
+    });
+
+    document.querySelectorAll('.nitem[data-ic]').forEach(ic => {
+      ic.classList.toggle('on', parseInt(ic.dataset.ic) === slot);
+    });
+
+    const ct = document.getElementById('codetab');
+    if (ct && CODE_TABS[slot]) ct.innerHTML = CODE_TABS[slot] + '<i>.jsx</i>';
+
+    const pulse = 0.55 + 0.45 * Math.sin(t * 3.0);
+    document.querySelectorAll('.livedot').forEach(d => { d.style.opacity = pulse.toFixed(3); });
+  }
+
+  window.renderAt = renderAt;
+  const initialT = parseFloat(new URLSearchParams(location.search).get('t') || '0');
+  renderAt(initialT);
+</script>
+</body>
+</html>

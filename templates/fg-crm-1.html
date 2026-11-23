@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Caledon Solar CRM — AI·Pipeline V4</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html,body { width:1080px; height:1920px; overflow:hidden; background:#000; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    color: #ffffff;
+    -webkit-font-smoothing: antialiased;
+  }
+  
+  /* TITLE ZONE (Top) */
+  .title-zone { padding-top: 104px; text-align: center; }
+  .title-zone .name { font-size: 88px; font-weight: 600; letter-spacing: 0.5px; color: #ffffff; line-height: 1.05; }
+  .title-zone .ver  { font-size: 88px; font-weight: 700; color: #10B981; line-height: 1.1; }
+
+  /* MIDDLE ZONE */
+  .stage {
+    position: relative; margin-top: 54px; height: 694px; width: 1080px;
+    background: radial-gradient(1200px 720px at 50% 38%, #062b1e, #020b08 78%);
+    overflow: hidden;
+  }
+  .blob { position: absolute; border-radius: 50%; filter: blur(70px); }
+  .blob.b1 { width: 580px; height: 580px; background: #10B981; left: -120px; top: -170px; opacity: .65; }
+  .blob.b2 { width: 580px; height: 580px; background: #059669; right: -150px; top: 20px; opacity: .60; }
+  .blob.b3 { width: 480px; height: 480px; background: #14B8A6; left: 300px; bottom: -240px; opacity: .55; }
+  .blob.b4 { width: 380px; height: 380px; background: #34D399; right: 120px; bottom: -180px; opacity: .45; }
+
+  /* DASHBOARD WINDOW (Frosted translucent glass) */
+  .dash {
+    position: absolute; left: 63px; top: 54px; width: 954px; height: 586px;
+    border-radius: 34px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    box-shadow: 0 40px 90px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+    backdrop-filter: blur(24px) saturate(160%);
+    -webkit-backdrop-filter: blur(24px) saturate(160%);
+    overflow: hidden;
+    display: flex;
+  }
+
+  /* SIDEBAR */
+  .side {
+    width: 176px; flex: 0 0 176px; height: 100%;
+    background: rgba(255, 255, 255, 0.04);
+    border-right: 1px solid rgba(255, 255, 255, 0.12);
+    display: flex; flex-direction: column; padding: 20px 14px 16px;
+  }
+  .logo { display: flex; align-items: center; gap: 9px; padding: 0 6px; }
+  .logo .lg {
+    width: 30px; height: 30px; border-radius: 9px; flex: 0 0 30px;
+    background: linear-gradient(145deg, #10B981, #059669);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700; color: #fff;
+    box-shadow: 0 6px 14px rgba(16, 185, 129, 0.45);
+  }
+  .logo .ln { font-size: 14px; font-weight: 600; color: #fff; line-height: 1.1; }
+  .logo .ln span { display: block; font-size: 9.5px; font-weight: 500; color: rgba(255, 255, 255, 0.5); letter-spacing: .6px; }
+  
+  .nav { margin-top: 24px; display: flex; flex-direction: column; gap: 5px; }
+  .nitem {
+    display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 11px;
+    font-size: 13.5px; font-weight: 500; color: rgba(255, 255, 255, 0.62);
+    border: 1px solid transparent; cursor: pointer; transition: all .15s;
+  }
+  .nitem svg { width: 16px; height: 16px; flex: 0 0 16px; }
+  .nitem .bdg { margin-left: auto; font-size: 9.5px; font-weight: 700; background: #10B981; color: #fff; border-radius: 999px; padding: 1px 6px; }
+  .nitem.on {
+    background: linear-gradient(120deg, rgba(255, 255, 255, 0.20), rgba(255, 255, 255, 0.07));
+    border-color: rgba(255, 255, 255, 0.32); color: #fff;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22);
+  }
+  .side .sp { flex: 1; }
+  .syscard {
+    border-radius: 14px; padding: 10px 11px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+  }
+  .syscard .at { font-size: 11px; font-weight: 600; color: #fff; display: flex; align-items: center; gap: 6px; }
+  .syscard .at i { width: 6px; height: 6px; border-radius: 50%; background: #10B981; display: block; box-shadow: 0 0 8px #10B981; }
+  .syscard .am { font-size: 10px; color: rgba(255, 255, 255, 0.6); line-height: 1.35; margin-top: 3px; }
+  .userchip { display: flex; align-items: center; gap: 9px; margin-top: 12px; padding: 0 4px; }
+  .userchip .av { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, #10B981, #059669); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #fff; flex: 0 0 28px; }
+  .userchip .un { font-size: 11.5px; font-weight: 600; color: #fff; line-height: 1.15; }
+  .userchip .un span { display: block; font-size: 9.5px; color: rgba(255, 255, 255, 0.45); font-weight: 400; }
+
+  /* MAIN */
+  .main2 { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+  .topbar {
+    flex: 0 0 54px; display: flex; align-items: center; gap: 14px; padding: 0 22px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.11);
+  }
+  .search {
+    flex: 1; max-width: 360px; height: 32px; border-radius: 999px;
+    background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.14);
+    display: flex; align-items: center; gap: 8px; padding: 0 14px;
+    font-size: 12px; color: rgba(255, 255, 255, 0.45);
+  }
+  .search svg { width: 14px; height: 14px; }
+  .topbar .tbtn {
+    margin-left: auto; font-size: 12px; font-weight: 600; color: #fff;
+    background: linear-gradient(120deg, #10B981, #059669); border-radius: 999px; padding: 7px 15px;
+    box-shadow: 0 8px 18px rgba(16, 185, 129, 0.45); white-space: nowrap; cursor: pointer;
+  }
+  .topbar .tav {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: linear-gradient(135deg, #10B981, #059669);
+    display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700;
+  }
+
+  /* VIEWS */
+  .views { position: relative; flex: 1; min-height: 0; }
+  .view { position: absolute; inset: 0; padding: 16px 20px 14px; display: flex; flex-direction: column; gap: 12px; opacity: 0; }
+  .vhead { display: flex; align-items: baseline; justify-content: space-between; flex: 0 0 auto; }
+  .vhead .vt { font-size: 22px; font-weight: 600; color: #fff; letter-spacing: .2px; }
+  .vhead .vt span { color: #10B981; }
+  .vhead .vs { font-size: 11.5px; color: rgba(255, 255, 255, 0.5); display: flex; align-items: center; gap: 6px; }
+  .vhead .vs .livedot { width: 7px; height: 7px; border-radius: 50%; background: #10B981; display: inline-block; box-shadow: 0 0 6px #10B981; }
+  .vhead .vs b { color: #6EE7B7; font-weight: 600; }
+
+  /* CARDS */
+  .card {
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 18px;
+    box-shadow: 0 12px 26px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  }
+  
+  /* STAT ROW */
+  .statrow { display: flex; gap: 11px; flex: 0 0 72px; }
+  .astat { flex: 1; padding: 10px 13px 8px; display: flex; flex-direction: column; overflow: hidden; }
+  .astat .lab { font-size: 11px; color: rgba(255, 255, 255, 0.55); font-weight: 500; display: flex; align-items: center; justify-content: space-between; }
+  .astat .tr { font-size: 9.5px; font-weight: 700; color: #10B981; background: #10B98122; border: 1px solid #10B98144; padding: 1px 6px; border-radius: 999px; }
+  .astat .valrow { display: flex; align-items: baseline; justify-content: space-between; margin-top: 2px; }
+  .astat .val { font-size: 21px; font-weight: 600; color: #fff; line-height: 1.1; }
+
+  /* CHART CARD */
+  .chartcard { flex: 1; padding: 12px 16px 8px; display: flex; flex-direction: column; overflow: hidden; min-height: 0; }
+  .chartcard .ct { font-size: 13.5px; font-weight: 600; color: #fff; display: flex; align-items: center; justify-content: space-between; }
+  .chartcard .ct .cup { font-size: 10.5px; font-weight: 700; color: #6EE7B7; background: #10B98122; border: 1px solid #10B98144; padding: 2px 8px; border-radius: 999px; }
+  .xlabels { display: flex; justify-content: space-between; font-size: 10px; color: rgba(255, 255, 255, 0.42); font-weight: 500; padding: 2px 2px 4px; }
+
+  /* INFO STRIP */
+  .infostrip {
+    flex: 0 0 auto; display: flex; align-items: center; gap: 12px; padding: 9px 14px;
+    border-radius: 12px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.12);
+    font-size: 11px; color: rgba(255, 255, 255, 0.75); overflow: hidden; white-space: nowrap;
+  }
+  .infostrip i { width: 6px; height: 6px; border-radius: 50%; background: #10B981; display: block; flex: 0 0 6px; box-shadow: 0 0 6px #10B981; }
+  .infostrip b { color: #fff; font-weight: 600; }
+  .infostrip span.tag { margin-left: auto; font-size: 9.5px; font-weight: 700; color: #6EE7B7; background: #10B98122; border: 1px solid #10B98144; padding: 1px 7px; border-radius: 999px; }
+
+  /* GRID 2x2 */
+  .grid2x2 { flex: 1; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 11px; min-height: 0; }
+  .dealcard { padding: 12px 14px; display: flex; flex-direction: column; justify-content: space-between; }
+  .dealcard .dh { display: flex; justify-content: space-between; align-items: flex-start; }
+  .dealcard .dtitle { font-size: 13.5px; font-weight: 600; color: #fff; line-height: 1.2; }
+  .dealcard .dsub { font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 2px; }
+  .dealcard .damt { font-size: 17px; font-weight: 700; color: #fff; }
+  .dealcard .dfoot { display: flex; align-items: center; justify-content: space-between; margin-top: 6px; }
+  .pill { font-size: 9.5px; font-weight: 700; padding: 2px 8px; border-radius: 999px; }
+  .pill.primary { background: #10B98122; color: #6EE7B7; border: 1px solid #10B98144; }
+  .pill.muted { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.7); border: 1px solid rgba(255,255,255,0.15); }
+  .pill.green { background: #10b98122; color: #34d399; border: 1px solid #10b98144; }
+
+  /* REPORTS (CHART + DONUT/GAUGE PAIR) */
+  .repmid { flex: 1; display: flex; gap: 12px; min-height: 0; }
+  .donutcard { width: 330px; flex: 0 0 330px; padding: 12px 15px; display: flex; flex-direction: column; justify-content: space-between; }
+  .donutcard .ct { font-size: 13.5px; font-weight: 600; color: #fff; margin-bottom: 4px; }
+  .donutrow { flex: 1; display: flex; align-items: center; gap: 14px; min-height: 0; }
+  .dleg { flex: 1; display: flex; flex-direction: column; gap: 7px; }
+  .dleg .dlrow { display: flex; align-items: center; gap: 7px; font-size: 11px; color: rgba(255, 255, 255, 0.7); font-weight: 500; }
+  .dleg .dlrow i { width: 9px; height: 9px; border-radius: 3px; display: block; flex: 0 0 9px; }
+  .dleg .dlrow b { margin-left: auto; color: #fff; font-weight: 600; }
+
+  /* MESSAGES / CHAT THREAD */
+  .chatmid { flex: 1; display: flex; gap: 12px; min-height: 0; }
+  .chatlist { width: 200px; flex: 0 0 200px; padding: 10px; display: flex; flex-direction: column; gap: 6px; }
+  .citem { padding: 8px 10px; border-radius: 12px; display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.04); border: 1px solid transparent; cursor: pointer; }
+  .citem.active { background: rgba(255,255,255,0.10); border-color: rgba(255,255,255,0.22); }
+  .citem .cav { width: 28px; height: 28px; border-radius: 50%; background: #10B98144; color: #6EE7B7; font-weight: 700; font-size: 11px; display: flex; align-items: center; justify-content: center; }
+  .citem .cinfo { flex: 1; min-width: 0; }
+  .citem .cn { font-size: 12px; font-weight: 600; color: #fff; line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .citem .cs { font-size: 10px; color: rgba(255,255,255,0.5); }
+  .chatbox { flex: 1; padding: 12px 14px; display: flex; flex-direction: column; justify-content: space-between; }
+  .cbubbles { flex: 1; display: flex; flex-direction: column; gap: 10px; min-height: 0; }
+  .bubble { max-width: 82%; padding: 8px 12px; border-radius: 14px; font-size: 11.5px; line-height: 1.4; }
+  .bubble.in { align-self: flex-start; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); color: rgba(255,255,255,0.9); }
+  .bubble.ai { align-self: flex-start; background: #10B98118; border: 1px solid #10B98144; color: #6EE7B7; }
+  .bubble.out { align-self: flex-end; background: linear-gradient(135deg, #10B981, #059669); color: #fff; }
+  .chatinfo { width: 170px; flex: 0 0 170px; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+  .chatinfo .ititle { font-size: 12px; font-weight: 700; color: #fff; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px; }
+  .chatinfo .irow { font-size: 10.5px; color: rgba(255,255,255,0.6); display: flex; flex-direction: column; gap: 2px; }
+  .chatinfo .irow b { color: #fff; font-size: 12px; }
+
+  /* FINANCE TABLE */
+  .tblcard { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-height: 0; padding: 6px 0; }
+  .trow { display: grid; align-items: center; padding: 8px 16px; border-bottom: 1px solid rgba(255,255,255,0.07); font-size: 11.5px; }
+  .trow:last-child { border-bottom: none; }
+  .trow.head { font-size: 9.5px; font-weight: 700; letter-spacing: 1px; color: rgba(255,255,255,0.4); text-transform: uppercase; }
+  .fcols { grid-template-columns: 1fr 1.8fr 1fr 1fr; }
+
+  /* TASKS FEED */
+  .taskfeed { flex: 1; display: flex; flex-direction: column; gap: 9px; min-height: 0; }
+  .taskrow { padding: 10px 14px; display: flex; align-items: center; gap: 12px; }
+  .taskrow .tmid { flex: 1; min-width: 0; }
+  .taskrow .ttitle { font-size: 12.5px; font-weight: 600; color: #fff; }
+  .taskrow .tsub { font-size: 10px; color: rgba(255,255,255,0.5); margin-top: 2px; }
+  .taskrow .tbar { height: 6px; border-radius: 999px; background: rgba(255,255,255,0.1); overflow: hidden; margin-top: 5px; }
+  .taskrow .tfill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, #10B981, #059669); transform-origin: left; }
+
+  /* ANNOUNCEMENTS FEED */
+  .annfeed { flex: 1; display: flex; flex-direction: column; gap: 10px; min-height: 0; }
+  .anncard { padding: 11px 15px; display: flex; flex-direction: column; gap: 6px; }
+  .anncard .annhead { display: flex; align-items: center; justify-content: space-between; }
+  .anncard .anntitle { font-size: 13px; font-weight: 600; color: #fff; }
+  .anncard .annsub { font-size: 11px; color: rgba(255,255,255,0.65); line-height: 1.35; }
+
+  /* SETTINGS GRID */
+  .setgrid { flex: 1; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr 1fr; gap: 10px; min-height: 0; }
+  .setcard { padding: 11px 14px; display: flex; flex-direction: column; justify-content: space-between; }
+  .setcard .stitle { font-size: 12.5px; font-weight: 600; color: #fff; }
+  .setcard .ssub { font-size: 10px; color: rgba(255,255,255,0.5); margin-top: 2px; }
+
+  /* CODE ZONE */
+  .codewin {
+    margin: 56px 48px 0; height: 596px; border-radius: 24px; overflow: hidden;
+    background: #0b0e15; border: 1px solid rgba(255, 255, 255, 0.11);
+    box-shadow: 0 34px 80px rgba(0, 0, 0, 0.6);
+  }
+  .codebar {
+    height: 60px; background: #11141d; display: flex; align-items: center; gap: 9px;
+    padding: 0 22px; border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+  .cdot { width: 14px; height: 14px; border-radius: 50%; }
+  .tab {
+    margin-left: 20px; background: #0b0e15; border: 1px solid rgba(255, 255, 255, 0.08); border-bottom: none;
+    padding: 8px 18px; border-radius: 10px 10px 0 0; font-family: 'Liberation Mono', Consolas, monospace;
+    font-size: 16px; color: #d7deeb; align-self: flex-end; height: 42px; display: flex; align-items: center;
+  }
+  .tab i { color: #10B981; font-style: normal; }
+  pre {
+    padding: 28px 34px; font-family: 'Liberation Mono', Consolas, monospace;
+    font-size: 22px; line-height: 1.8; color: #a9b7d0; white-space: pre;
+  }
+  .k { color: #10B981; } .s { color: #9ece6a; } .t { color: #6EE7B7; }
+  .f { color: #82aaff; } .p { color: #89ddff; } .n { color: #f78c6c; } .cm { color: #565f89; }
+</style>
+</head>
+<body>
+
+  <!-- TITLE ZONE -->
+  <div class="title-zone">
+    <div class="name">Caledon Solar CRM</div>
+    <div class="ver">AI·Pipeline V4</div>
+  </div>
+
+  <!-- MIDDLE ZONE -->
+  <div class="stage">
+    <div class="blob b1"></div>
+    <div class="blob b2"></div>
+    <div class="blob b3"></div>
+    <div class="blob b4"></div>
+    
+    <div class="dash">
+      <!-- SIDEBAR -->
+      <div class="side">
+        <div class="logo">
+          <div class="lg">CS</div>
+          <div class="ln">Caledon Solar<span>CLEAN ENERGY EPC</span></div>
+        </div>
+        <div class="nav" id="nav">
+          
+            <div class="nitem on" data-ic="0" onclick="switchView(0)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+              <span>Overview</span>
+              <span class="bdg">Live</span>
+            </div>
+          
+            <div class="nitem " data-ic="1" onclick="switchView(1)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+              <span>Pipeline</span>
+              <span class="bdg">42</span>
+            </div>
+          
+            <div class="nitem " data-ic="2" onclick="switchView(2)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+              <span>Reports</span>
+              
+            </div>
+          
+            <div class="nitem " data-ic="3" onclick="switchView(3)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              <span>Messages</span>
+              <span class="bdg">3</span>
+            </div>
+          
+        </div>
+        <div class="sp"></div>
+        <div class="syscard">
+          <div class="at"><i></i>AI Engine Live</div>
+          <div class="am">Veltris Neural Bridge active · 99.98% latency</div>
+        </div>
+        <div class="userchip">
+          <div class="av">CR</div>
+          <div class="un">Callum Ross<span>Lead Surveyor</span></div>
+        </div>
+      </div>
+
+      <!-- MAIN -->
+      <div class="main2">
+        <div class="topbar">
+          <div class="search">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.8-3.8"/></svg>
+            Search commercial bids, surveys, quotes…
+          </div>
+          <span class="tbtn">+ New Quote</span>
+          <div class="tav">CR</div>
+        </div>
+        
+        <div class="views" id="views">
+          
+  <!-- VIEW 0: OVERVIEW -->
+  <div class="view" id="v0">
+    <div class="vhead">
+      <div class="vt">Solar Pipeline <span>Overview</span></div>
+      <div class="vs"><i class="livedot"></i>Commercial EPC &middot; <b>DNO Synced</b></div>
+    </div>
+    <div class="statrow">
+      <div class="astat card">
+        <div class="lab">Active Bids <span class="tr">+6 new</span></div>
+        <div class="valrow"><div class="val" data-count="42">0</div>
+    <svg width="64" height="24" viewBox="0 0 64 24" style="overflow:visible;">
+      <path d="M 0.0,21.0 12.8,17.4 25.6,18.3 38.4,11.1 51.2,7.5 64.0,3.0" fill="none" stroke="#10B981" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+      </div>
+      <div class="astat card">
+        <div class="lab">Pipeline <span class="tr">+18.2%</span></div>
+        <div class="valrow"><div class="val">&pound;<span data-count="1.8" data-dec="true">0.0</span>M</div>
+    <svg width="64" height="24" viewBox="0 0 64 24" style="overflow:visible;">
+      <path d="M 0.0,21.0 12.8,15.9 25.6,18.4 38.4,10.7 51.2,8.1 64.0,3.0" fill="none" stroke="#6EE7B7" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+      </div>
+      <div class="astat card">
+        <div class="lab">Win Rate <span class="tr">+4.8%</span></div>
+        <div class="valrow"><div class="val"><span data-count="68.4" data-dec="true">0.0</span>%</div>
+    <svg width="64" height="24" viewBox="0 0 64 24" style="overflow:visible;">
+      <path d="M 0.0,21.0 12.8,16.6 25.6,13.7 38.4,9.4 51.2,6.5 64.0,3.0" fill="none" stroke="#34D399" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+      </div>
+      <div class="astat card">
+        <div class="lab">Bookings <span class="tr">+22%</span></div>
+        <div class="valrow"><div class="val">&pound;<span data-count="164">0</span>k</div>
+    <svg width="64" height="24" viewBox="0 0 64 24" style="overflow:visible;">
+      <path d="M 0.0,21.0 12.8,17.0 25.6,14.0 38.4,9.7 51.2,5.7 64.0,3.0" fill="none" stroke="#14B8A6" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+      </div>
+    </div>
+    <div class="chartcard card">
+      <div class="ct">Commercial EPC Revenue Trajectory (12 Mo) <span class="cup">&pound;1.84M Total</span></div>
+      <svg viewBox="0 0 710 130" style="width:100%; height:110px; margin-top:4px;">
+        <defs>
+          <linearGradient id="r1grad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#10B981" stop-opacity="0.45"/>
+            <stop offset="100%" stop-color="#10B981" stop-opacity="0.0"/>
+          </linearGradient>
+        </defs>
+        <path d="M0,110 L0,85 L118,78 L236,82 L354,55 L472,60 L590,32 L708,18 L708,125 L0,125 Z" fill="url(#r1grad)"/>
+        <path class="aline" data-len="780" d="M0,85 L118,78 L236,82 L354,55 L472,60 L590,32 L708,18" fill="none" stroke="#10B981" stroke-width="3" stroke-linecap="round" stroke-dasharray="780" stroke-dashoffset="780"/>
+        <circle cx="590" cy="32" r="5" fill="#6EE7B7" stroke="#062b1e" stroke-width="2"/>
+        <circle cx="708" cy="18" r="5" fill="#34D399" stroke="#062b1e" stroke-width="2"/>
+      </svg>
+      <div class="xlabels"><span>Q1 COMM</span><span>Q2 SURVEY</span><span>Q3 PEAK PROPOSALS</span><span>Q4 CLOSING</span></div>
+    </div>
+    <div class="infostrip">
+      <i></i><b>AI Copilot:</b> 4 DNO grid connection permits approved across Scottish Power territory &middot; 14 days ahead of Q3 plan
+      <span class="tag">AI OPTIMIZED</span>
+    </div>
+  </div>
+
+  <!-- VIEW 1: PIPELINE -->
+  <div class="view" id="v1">
+    <div class="vhead">
+      <div class="vt">Commercial <span>Pipeline</span></div>
+      <div class="vs"><i class="livedot"></i>42 Deals Active &middot; <b>&pound;1.84M Total</b></div>
+    </div>
+    <div class="statrow">
+      <div class="astat card"><div class="lab">Qualification</div><div class="val">&pound;410k <span style="font-size:11px;color:rgba(255,255,255,0.5);font-weight:400">14 deals</span></div></div>
+      <div class="astat card"><div class="lab">Site Survey</div><div class="val">&pound;580k <span style="font-size:11px;color:rgba(255,255,255,0.5);font-weight:400">12 deals</span></div></div>
+      <div class="astat card"><div class="lab">Proposal Sent</div><div class="val">&pound;490k <span style="font-size:11px;color:rgba(255,255,255,0.5);font-weight:400">10 deals</span></div></div>
+      <div class="astat card"><div class="lab">Closing</div><div class="val">&pound;360k <span style="font-size:11px;color:rgba(255,255,255,0.5);font-weight:400">6 deals</span></div></div>
+    </div>
+    <div class="grid2x2">
+      <div class="dealcard card">
+        <div class="dh">
+          <div><div class="dtitle">Strathclyde Retail Park</div><div class="dsub">120kW Commercial PV Array</div></div>
+          <span class="pill primary">94% AI Close</span>
+        </div>
+        <div class="dfoot">
+          <div class="damt">&pound;185,000</div>
+          <span class="pill green">PROPOSAL SENT</span>
+        </div>
+      </div>
+      <div class="dealcard card">
+        <div class="dh">
+          <div><div class="dtitle">Highland Logistics Hub</div><div class="dsub">350kW Rooftop Array</div></div>
+          <span class="pill primary">89% AI Close</span>
+        </div>
+        <div class="dfoot">
+          <div class="damt">&pound;245,000</div>
+          <span class="pill green">SURVEY PASSED</span>
+        </div>
+      </div>
+      <div class="dealcard card">
+        <div class="dh">
+          <div><div class="dtitle">Borders Agri-Biomass Co</div><div class="dsub">80kW Ground Mount Solar</div></div>
+          <span class="pill primary">91% AI Close</span>
+        </div>
+        <div class="dfoot">
+          <div class="damt">&pound;92,000</div>
+          <span class="pill muted">CONTRACT PREP</span>
+        </div>
+      </div>
+      <div class="dealcard card">
+        <div class="dh">
+          <div><div class="dtitle">Tyne Warehouses Ltd</div><div class="dsub">160kW Solar + 50kWh Battery</div></div>
+          <span class="pill primary">96% AI Close</span>
+        </div>
+        <div class="dfoot">
+          <div class="damt">&pound;148,000</div>
+          <span class="pill green">DNO APPROVED</span>
+        </div>
+      </div>
+    </div>
+    <div class="infostrip">
+      <i></i><b>Pipeline Velocity:</b> Average deal conversion cycle compressed from 44 days to 28 days via automated survey generation
+    </div>
+  </div>
+
+  <!-- VIEW 2: REPORTS -->
+  <div class="view" id="v2">
+    <div class="vhead">
+      <div class="vt">Yield &amp; Sector <span>Reports</span></div>
+      <div class="vs"><i class="livedot"></i>Q3 Intelligence &middot; <b>68.4% Win Rate</b></div>
+    </div>
+    <div class="repmid">
+      <div class="chartcard card" style="flex:1.2;">
+        <div class="ct">Commercial Revenue by Sector <span class="cup">&pound;1.84M Total</span></div>
+        <svg viewBox="0 0 420 130" style="width:100%; height:110px; margin-top:4px;">
+          <defs>
+            <linearGradient id="r1repgrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#14B8A6" stop-opacity="0.45"/>
+              <stop offset="100%" stop-color="#14B8A6" stop-opacity="0.0"/>
+            </linearGradient>
+          </defs>
+          <path d="M0,110 L0,90 L70,82 L140,75 L210,50 L280,55 L350,30 L420,15 L420,120 L0,120 Z" fill="url(#r1repgrad)"/>
+          <path class="aline" data-len="480" d="M0,90 L70,82 L140,75 L210,50 L280,55 L350,30 L420,15" fill="none" stroke="#14B8A6" stroke-width="3" stroke-linecap="round" stroke-dasharray="480" stroke-dashoffset="480"/>
+          <circle cx="350" cy="30" r="5" fill="#6EE7B7" stroke="#062b1e" stroke-width="2"/>
+        </svg>
+        <div class="xlabels"><span>JAN-MAR</span><span>APR-JUN</span><span>JUL-SEP</span><span>OCT-DEC</span></div>
+      </div>
+      <div class="donutcard card">
+        <div class="ct">EPC Mix Breakdown</div>
+        <div class="donutrow">
+          <svg width="86" height="86" viewBox="0 0 86 86">
+            <circle cx="43" cy="43" r="34" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="12"/>
+            <circle class="aline" data-len="214" cx="43" cy="43" r="34" fill="none" stroke="#10B981" stroke-width="12" stroke-dasharray="124 214" stroke-linecap="round" transform="rotate(-90 43 43)"/>
+            <circle class="aline" data-len="214" cx="43" cy="43" r="34" fill="none" stroke="#14B8A6" stroke-width="12" stroke-dasharray="55 214" stroke-dashoffset="-126" stroke-linecap="round" transform="rotate(-90 43 43)"/>
+            <circle class="aline" data-len="214" cx="43" cy="43" r="34" fill="none" stroke="#6EE7B7" stroke-width="12" stroke-dasharray="35 214" stroke-dashoffset="-183" stroke-linecap="round" transform="rotate(-90 43 43)"/>
+            <text x="43" y="47" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">58%</text>
+          </svg>
+          <div class="dleg">
+            <div class="dlrow"><i style="background:#10B981"></i>Commercial EPC <b>58%</b></div>
+            <div class="dlrow"><i style="background:#14B8A6"></i>Storage Systems <b>26%</b></div>
+            <div class="dlrow"><i style="background:#6EE7B7"></i>O&amp;M Contracts <b>16%</b></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="infostrip">
+      <i></i><b>Strategic Note:</b> Battery storage attach rate up +42% on all commercial proposals exceeding 100kW capacity
+      <span class="tag">+42% ATTACH</span>
+    </div>
+  </div>
+
+  <!-- VIEW 3: MESSAGES -->
+  <div class="view" id="v3">
+    <div class="vhead">
+      <div class="vt">Surveyor &amp; Client <span>Messages</span></div>
+      <div class="vs"><i class="livedot"></i>Strathclyde 120kW &middot; <b>DNO Ready</b></div>
+    </div>
+    <div class="chatmid">
+      <div class="chatlist card">
+        <div class="citem active">
+          <div class="cav">EM</div>
+          <div class="cinfo"><div class="cn">Euan MacLeod</div><div class="cs">Strathclyde Retail</div></div>
+        </div>
+        <div class="citem">
+          <div class="cav">FC</div>
+          <div class="cinfo"><div class="cn">Fiona Campbell</div><div class="cs">Highland Logistics</div></div>
+        </div>
+        <div class="citem">
+          <div class="cav">SP</div>
+          <div class="cinfo"><div class="cn">SP Energy Networks</div><div class="cs">DNO G99 Liaison</div></div>
+        </div>
+      </div>
+      <div class="chatbox card">
+        <div class="cbubbles">
+          <div class="bubble in">Can you confirm the G99 relay connection cert for Strathclyde by 4pm today?</div>
+          <div class="bubble ai">&check; AI Copilot: Generated G99 engineering compliance pack from CAD structural survey. DNO notification form auto-populated.</div>
+          <div class="bubble out">Single-line schematic uploaded to SP Energy Networks portal. Final token expected Friday morning.</div>
+        </div>
+      </div>
+      <div class="chatinfo card">
+        <div class="ititle">Deal Dossier</div>
+        <div class="irow"><span>Site:</span><b>Strathclyde Retail</b></div>
+        <div class="irow"><span>Value:</span><b>&pound;185,000</b></div>
+        <div class="irow"><span>AI Win Score:</span><b style="color:#10B981">94% High Prob</b></div>
+        <div class="irow"><span>Next Step:</span><b>G99 Relay Inspection</b></div>
+      </div>
+    </div>
+    <div class="infostrip">
+      <i></i><b>Client SLA:</b> 100% of engineering compliance enquiries answered in under 4 minutes with AI CAD extraction
+    </div>
+  </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CODE ZONE -->
+  <div class="codewin">
+    <div class="codebar">
+      <div class="cdot" style="background:#ff5f57"></div>
+      <div class="cdot" style="background:#febc2e"></div>
+      <div class="cdot" style="background:#28c840"></div>
+      <div class="tab" id="codetab">Overview<i>.jsx</i></div>
+    </div>
+    <pre><code><span class="k">import</span> { useState, useEffect } <span class="k">from</span> <span class="s">'react'</span>;
+<span class="k">import</span> { GlassSidebar } <span class="k">from</span> <span class="s">'./GlassSidebar'</span>;
+<span class="k">import</span> { SolarPipeline } <span class="k">from</span> <span class="s">'./SolarPipeline'</span>;
+
+<span class="k">export const</span> <span class="f">CaledonSolarDashboard</span> = () =&gt; {
+  <span class="k">const</span> [view, setView] = <span class="f">useState</span>(<span class="s">'overview'</span>);
+  <span class="k">const</span> [stats, setStats] = <span class="f">useState</span>({ bids: 42, pipeline: 1.84, winRate: 68.4 });
+
+  <span class="k">return</span> (
+    &lt;<span class="t">main</span> <span class="p">className</span>=<span class="s">"glassy-dashboard emerald-stage"</span>&gt;
+      &lt;<span class="t">GlassSidebar</span> <span class="p">active</span>={view} <span class="p">onSelect</span>={setView} /&gt;
+      &lt;<span class="t">SolarPipeline</span> <span class="p">data</span>={stats} <span class="p">gridApproval</span>=<span class="s">"DNO-SP-99"</span> /&gt;
+    &lt;/<span class="t">main</span>&gt;
+  );
+};</code></pre>
+  </div>
+
+<script>
+  const CODE_TABS = ["Overview","Pipeline","Reports","Messages"];
+  
+  function switchView(idx) {
+    document.querySelectorAll('.view').forEach((el, i) => {
+      el.style.opacity = (i === idx) ? '1' : '0';
+      el.style.visibility = (i === idx) ? 'visible' : 'hidden';
+      el.style.zIndex = (i === idx) ? '2' : '1';
+    });
+    document.querySelectorAll('.nitem[data-ic]').forEach(el => {
+      el.classList.toggle('on', parseInt(el.dataset.ic) === idx);
+    });
+    const ct = document.getElementById('codetab');
+    if (ct && CODE_TABS[idx]) ct.innerHTML = CODE_TABS[idx] + '<i>.jsx</i>';
+  }
+
+  function renderAt(t) {
+    const DUR = 1.5;
+    const XF = 0.18;
+    const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
+    const easeOut = x => 1 - Math.pow(1 - x, 3);
+    const smooth = x => { x = clamp(x, 0, 1); return x * x * (3 - 2 * x); };
+    
+    const slotF = t / DUR;
+    const slot = Math.min(3, Math.floor(slotF));
+    const lt = t - slot * DUR;
+    const prev = slot > 0 ? slot - 1 : -1;
+
+    document.querySelectorAll('.view').forEach((el, i) => {
+      let op = 0, age = 0;
+      if (i === slot) {
+        op = lt < XF ? smooth(lt / XF) : 1;
+        age = lt;
+      } else if (i === prev) {
+        op = lt < XF ? 1 - smooth(lt / XF) : 0;
+        age = DUR + lt;
+      }
+      
+      el.style.opacity = op.toFixed(3);
+      el.style.zIndex = (i === slot) ? 2 : 1;
+      el.style.visibility = op <= 0 ? 'hidden' : 'visible';
+      if (op <= 0) return;
+
+      // Animate numbers and bars during first 0.5s of age
+      const p = easeOut(clamp(age / 0.5, 0, 1));
+      
+      el.querySelectorAll('[data-count]').forEach(c => {
+        const target = parseFloat(c.dataset.count);
+        const val = target * p;
+        if (c.dataset.dec) {
+          c.textContent = val.toFixed(1);
+        } else if (c.dataset.fmt) {
+          c.textContent = Math.round(val).toLocaleString('en-GB');
+        } else {
+          c.textContent = Math.round(val);
+        }
+      });
+
+      el.querySelectorAll('[data-bar]').forEach((b, idx) => {
+        const bp = easeOut(clamp((age - 0.05 - idx * 0.04) / 0.45, 0, 1));
+        b.style.transform = 'scaleX(' + Math.max(0.01, bp).toFixed(3) + ')';
+      });
+
+      el.querySelectorAll('[data-bary]').forEach((b, idx) => {
+        const bp = easeOut(clamp((age - 0.05 - idx * 0.04) / 0.45, 0, 1));
+        b.style.transform = 'scaleY(' + Math.max(0.01, bp).toFixed(3) + ')';
+      });
+
+      el.querySelectorAll('.aline').forEach(s => {
+        const len = parseFloat(s.dataset.len || 600);
+        const sp = easeOut(clamp((age - 0.06) / 0.44, 0, 1));
+        s.style.strokeDashoffset = (len * (1 - sp)).toFixed(1);
+      });
+    });
+
+    document.querySelectorAll('.nitem[data-ic]').forEach(ic => {
+      ic.classList.toggle('on', parseInt(ic.dataset.ic) === slot);
+    });
+
+    const ct = document.getElementById('codetab');
+    if (ct && CODE_TABS[slot]) ct.innerHTML = CODE_TABS[slot] + '<i>.jsx</i>';
+
+    const pulse = 0.55 + 0.45 * Math.sin(t * 3.0);
+    document.querySelectorAll('.livedot').forEach(d => { d.style.opacity = pulse.toFixed(3); });
+  }
+
+  window.renderAt = renderAt;
+  const initialT = parseFloat(new URLSearchParams(location.search).get('t') || '0');
+  renderAt(initialT);
+</script>
+</body>
+</html>

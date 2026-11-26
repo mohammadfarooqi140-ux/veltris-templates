@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Glassy CRM — v43 Replica</title>
+<style>
+@font-face{font-family:Inter;src:url(../vip-fonts/Inter-400.ttf);font-weight:400}
+@font-face{font-family:Inter;src:url(../vip-fonts/Inter-500.ttf);font-weight:500}
+@font-face{font-family:Inter;src:url(../vip-fonts/Inter-600.ttf);font-weight:600}
+@font-face{font-family:Poppins;src:url(../fonts/Poppins-700.ttf);font-weight:700}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{
+  font-family:Inter,system-ui,sans-serif;color:#fff;overflow:hidden;
+  background:radial-gradient(1100px 700px at 50% 30%,#E7E0CF,#CFC7B6 70%,#C4BBA6);
+  display:flex;align-items:center;justify-content:center;
+}
+/* ============ DASHBOARD SHELL (native design size 1480x960) ============ */
+#dash{
+  width:1480px;height:960px;flex:none;position:relative;border-radius:26px;overflow:hidden;
+  background:
+    radial-gradient(900px 480px at 78% -8%,rgba(255,138,60,.14),transparent 60%),
+    radial-gradient(700px 500px at 8% 108%,rgba(120,72,20,.16),transparent 60%),
+    linear-gradient(160deg,#241E1A 0%,#1B1713 55%,#171310 100%);
+  box-shadow:0 40px 90px rgba(30,20,8,.45),0 4px 18px rgba(30,20,8,.35);
+  display:flex;
+}
+.glass{
+  background:rgba(255,255,255,.055);
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:16px;
+  box-shadow:0 12px 28px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.06);
+}
+.glass-card{transition:translate .18s ease-out}
+.glass-card:hover{translate:0 -5px}
+/* ============ ICON RAIL ============ */
+#rail{
+  width:58px;flex:none;height:100%;display:flex;flex-direction:column;align-items:center;
+  padding:16px 0;gap:6px;background:rgba(0,0,0,.28);border-right:1px solid rgba(255,255,255,.07);
+}
+#rail .ric{
+  width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;
+  color:rgba(255,255,255,.55);position:relative;cursor:pointer;flex:none;
+}
+#rail .ric svg{width:19px;height:19px}
+#rail .ric:hover{color:#fff;background:rgba(255,255,255,.07)}
+#rail .ric.active{background:rgba(255,255,255,.12);color:#fff}
+#rail .ric::after{
+  content:attr(data-tip);position:absolute;left:48px;top:50%;transform:translateY(-50%);
+  background:#0d0b09;color:#fff;font-size:11px;font-weight:500;padding:5px 9px;border-radius:7px;
+  white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s;z-index:60;
+  border:1px solid rgba(255,255,255,.14);box-shadow:0 6px 16px rgba(0,0,0,.4);
+}
+#rail .ric:hover::after{opacity:1}
+#rail .sp{flex:1}
+#rail .avatar-mini{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#14B8A6,#0D9488);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600}
+/* ============ MAIN ============ */
+#main{flex:1;padding:18px 20px 20px;position:relative;display:flex;flex-direction:column;min-width:0}
+/* top bar */
+#topbar{display:flex;align-items:center;gap:16px;height:46px;flex:none}
+#search{
+  width:330px;height:42px;border-radius:999px;background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.10);display:flex;align-items:center;gap:9px;padding:0 16px;
+  color:rgba(255,255,255,.45);font-size:13.5px;flex:none;
+}
+#search svg{width:15px;height:15px;flex:none}
+#tabs{display:flex;gap:2px;margin:0 auto;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);padding:4px;border-radius:999px;position:relative}
+#tabpill{position:absolute;top:4px;left:0;height:calc(100% - 8px);background:#0B0B0B;border-radius:999px;box-shadow:0 2px 8px rgba(0,0,0,.45);z-index:0;pointer-events:none;transition:transform 280ms cubic-bezier(.23,1,.32,1),width 280ms cubic-bezier(.23,1,.32,1)}
+#tabs .tab{font-size:14px;font-weight:500;color:rgba(255,255,255,.55);padding:8px 16px;border-radius:999px;cursor:pointer;white-space:nowrap;position:relative;z-index:1}
+#tabs .tab:hover{color:#fff}
+#tabs .tab.active{color:#fff}
+#topright{display:flex;align-items:center;gap:12px;flex:none}
+#bell{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.10);display:flex;align-items:center;justify-content:center;position:relative;cursor:pointer}
+#bell svg{width:16px;height:16px;color:rgba(255,255,255,.75)}
+#bell .dot{position:absolute;top:8px;right:9px;width:7px;height:7px;border-radius:50%;background:#F97316;border:1.5px solid #241d18}
+#userchip{display:flex;align-items:center;gap:9px}
+#userchip .av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#2DD4BF,#0D9488);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600}
+#userchip .un{font-size:13.5px;font-weight:600;line-height:1.15}
+#userchip .ur{font-size:11px;color:rgba(255,255,255,.5)}
+/* pages */
+.page{display:none;flex-direction:column;flex:1;min-height:0}
+.page.on{display:flex}
+/* KPI cards */
+.kpirow{display:flex;gap:10px;flex:none}
+.kpi{
+  flex:1;border-radius:16px;padding:14px 15px 12px;position:relative;overflow:hidden;
+  display:flex;flex-direction:column;
+}
+.kpi.solid{background:#111111;border:1px solid rgba(255,255,255,.08);box-shadow:0 12px 28px rgba(0,0,0,.4)}
+.kpi .krow{display:flex;align-items:flex-start;justify-content:space-between}
+.kpi .chip{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex:none}
+.kpi .chip svg{width:16px;height:16px}
+.kpi .chg{display:flex;align-items:center;gap:2px;font-size:12px;font-weight:600;color:#34D399}
+.kpi .chg svg{width:13px;height:13px}
+.kpi .lab{font-size:12px;color:rgba(255,255,255,.6);margin-top:9px;font-weight:500}
+.kpi .val{font-family:Poppins,Inter,sans-serif;font-size:27px;font-weight:700;color:#fff;line-height:1.12;margin-top:1px}
+.kpi .sub{font-size:11.5px;color:rgba(255,255,255,.45);margin-top:3px}
+.kpi .spark{position:absolute;right:10px;bottom:8px;opacity:.9}
+/* section headings */
+.sechead{display:flex;align-items:baseline;justify-content:space-between;flex:none}
+.sechead h4{font-size:14.5px;font-weight:600}
+.sechead .seeall{font-size:12px;color:rgba(255,255,255,.55);cursor:pointer}
+.sechead .seeall:hover{color:#fff}
+/* hot deals */
+.deal{display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:14px}
+.deal .dtx{min-width:0}
+.deal .dn,.deal .dd{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.deal .dic{width:34px;height:34px;border-radius:10px;flex:none;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px}
+.deal .dn{font-size:13.5px;font-weight:600;line-height:1.2}
+.deal .dd{font-size:11.5px;color:rgba(255,255,255,.5);margin-top:1px}
+.deal .dv{margin-left:auto;text-align:right;flex:none}
+.deal .dv .amt{font-size:14px;font-weight:700}
+.stagechip{font-size:10px;font-weight:700;letter-spacing:.04em;padding:3px 8px;border-radius:999px;text-transform:uppercase;display:inline-block;margin-top:3px}
+.pickrow{display:flex;align-items:center;gap:10px;padding:7px 12px;border-radius:12px;font-size:12.5px}
+.pickrow .pic{width:28px;height:28px;border-radius:8px;background:rgba(255,255,255,.07);display:flex;align-items:center;justify-content:center;flex:none}
+.pickrow .pic svg{width:13px;height:13px;color:rgba(255,255,255,.7)}
+.pickrow .pt{color:rgba(255,255,255,.85);font-weight:500}
+.pickrow .pd{color:rgba(255,255,255,.45);font-size:11.5px}
+.pickrow .tag{margin-left:auto;font-size:10.5px;font-weight:600;color:rgba(255,255,255,.6);background:rgba(255,255,255,.07);padding:3px 8px;border-radius:999px;flex:none}
+/* hero card */
+#hero{
+  border-radius:18px;position:relative;overflow:hidden;padding:20px 22px;flex:1;
+  background:linear-gradient(130deg,#8C1D30 0%,#4A1220 42%,#1D1216 78%,#171210 100%);
+  border:1px solid rgba(255,255,255,.12);box-shadow:0 16px 36px rgba(0,0,0,.4);
+  display:flex;flex-direction:column;
+}
+#hero .badge{align-self:flex-start;display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.16);font-size:11px;font-weight:600;padding:5px 10px;border-radius:999px}
+#hero .badge .fl{width:7px;height:7px;border-radius:50%;background:#FB923C;box-shadow:0 0 8px #FB923C}
+#hero h2{font-family:Poppins,Inter,sans-serif;font-size:30px;font-weight:700;line-height:1.16;margin-top:13px;max-width:480px}
+#hero .hsub{font-size:13px;color:rgba(255,255,255,.72);margin-top:7px}
+#hero .hchart{position:absolute;left:0;right:0;width:100%;bottom:52px;height:110px;pointer-events:none}
+#hero .hacts{margin-top:auto;display:flex;gap:9px;align-items:center;position:relative;z-index:2}
+.pillbtn{font-size:13px;font-weight:600;padding:9px 16px;border-radius:999px;cursor:pointer;border:1px solid transparent}
+.pillbtn.white{background:#fff;color:#16100d}
+.pillbtn.dark{background:rgba(0,0,0,.35);color:#fff;border-color:rgba(255,255,255,.2)}
+.pillbtn.ell{width:38px;height:38px;padding:0;border-radius:50%;background:rgba(0,0,0,.35);color:#fff;border:1px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:15px;letter-spacing:1px}
+/* gradient account cards */
+.acct{
+  border-radius:16px;position:relative;overflow:hidden;padding:14px 15px;cursor:pointer;
+  border:1px solid rgba(255,255,255,.12);box-shadow:0 12px 26px rgba(0,0,0,.35);
+  display:flex;flex-direction:column;
+}
+.acct::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,var(--g1) 0%,var(--g2) 46%,rgba(10,8,7,.94) 88%);z-index:0}
+.acct>*{position:relative;z-index:1}
+.acct .abad{position:absolute;top:12px;left:12px;font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;background:rgba(0,0,0,.34);border:1px solid rgba(255,255,255,.18);padding:4px 8px;border-radius:999px;z-index:2}
+.acct .aic{position:absolute;top:10px;right:10px;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.22);display:flex;align-items:center;justify-content:center;z-index:2}
+.acct .aic svg{width:13px;height:13px;color:#fff}
+.acct .avis{flex:1;display:flex;align-items:center;justify-content:center;width:100%}
+.acct .aname{font-size:14.5px;font-weight:600;line-height:1.2}
+.acct .asub{font-size:11.5px;color:rgba(255,255,255,.55);margin-top:2px}
+.acct .play{position:absolute;right:12px;bottom:12px;width:34px;height:34px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;z-index:2;box-shadow:0 4px 12px rgba(0,0,0,.35)}
+.acct .play svg{width:12px;height:12px;color:#14100d;margin-left:2px}
+/* companies */
+#co-head h1{font-family:Poppins,Inter,sans-serif;font-size:29px;font-weight:700}
+#co-head .csub{font-size:13px;color:rgba(255,255,255,.55);margin-top:3px}
+.fpills{display:flex;gap:7px;flex:none}
+.fpill{font-size:12.5px;font-weight:600;padding:7px 14px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.7);cursor:pointer}
+.fpill.act{background:#fff;color:#14100d;border-color:#fff}
+/* quotes page */
+#qu-head h1,#su-head h1{font-family:Poppins,Inter,sans-serif;font-size:29px;font-weight:700}
+#qu-head .csub,#su-head .csub{font-size:13px;color:rgba(255,255,255,.55);margin-top:3px}
+.qsearch{height:42px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.10);display:flex;align-items:center;gap:9px;padding:0 16px;color:rgba(255,255,255,.45);font-size:13.5px;width:330px;flex:none}
+.qsearch svg{width:15px;height:15px;flex:none}
+#qu-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;text-align:center}
+#qu-empty .eic{width:64px;height:64px;border-radius:18px;background:rgba(167,139,250,.16);color:#C4B5FD;display:flex;align-items:center;justify-content:center;margin-bottom:18px}
+#qu-empty .eic svg{width:30px;height:30px}
+#qu-empty h3{font-family:Poppins,Inter,sans-serif;font-size:21px;font-weight:600}
+#qu-empty .esub{font-size:13.5px;color:rgba(255,255,255,.55);margin-top:6px}
+#qu-empty .pillbtn{margin-top:20px;padding:11px 22px;font-size:14px}
+.minirow{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:13px}
+.minirow .mic{width:34px;height:34px;border-radius:10px;flex:none;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px}
+.minirow .mtx{min-width:0}
+.minirow .mn{font-size:13.5px;font-weight:600;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.minirow .md{font-size:11.5px;color:rgba(255,255,255,.5);margin-top:1px}
+.minirow .mv{margin-left:auto;text-align:right;flex:none;font-size:14px;font-weight:700}
+.minirow .mv .tag2{display:block;font-size:10.5px;font-weight:600;color:rgba(255,255,255,.6);margin-top:3px}
+.sumrow{display:flex;align-items:center;justify-content:space-between;padding:9px 2px;font-size:13.5px}
+.sumrow .sl{color:rgba(255,255,255,.6)}
+.sumrow .sv{font-weight:700}
+.splitbar{height:9px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;display:flex}
+.splitbar .seg{height:100%}
+/* support page */
+.supcard{flex:1;border-radius:16px;padding:0 0 14px;position:relative;overflow:hidden;display:flex;flex-direction:column}
+.supcard .supbar{height:5px;flex:none}
+.supcard .sulab{font-size:12.5px;color:rgba(255,255,255,.6);font-weight:500;margin:13px 16px 0}
+.supcard .suval{font-family:Poppins,Inter,sans-serif;font-size:30px;font-weight:700;line-height:1.1;margin:3px 16px 0}
+.supcard .susub{font-size:11.5px;color:rgba(255,255,255,.45);margin:3px 16px 0}
+.chanrow{display:flex;align-items:center;gap:11px;padding:11px 2px}
+.chanrow .cic{width:32px;height:32px;border-radius:9px;flex:none;display:flex;align-items:center;justify-content:center;font-size:14px}
+.chanrow .cic svg{width:15px;height:15px}
+.chanrow .cn{font-size:13.5px;font-weight:600;width:86px;flex:none}
+.chanrow .track{flex:1;height:7px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden}
+.chanrow .track .fill{height:100%;border-radius:999px;width:0}
+.chanrow .cv{font-size:13.5px;font-weight:700;width:22px;text-align:right;flex:none}
+.panelfoot{margin-top:auto;padding-top:12px;border-top:1px solid rgba(255,255,255,.07);font-size:12px;color:rgba(255,255,255,.45)}
+/* skeleton */
+#skel{position:absolute;inset:64px 20px 20px;display:none;z-index:40;background:radial-gradient(700px 400px at 75% 0%,#26201B,#1B1713 70%);border-radius:18px}
+#skel.on{display:flex;flex-direction:column}
+#skel .sk{border-radius:16px;background:linear-gradient(100deg,rgba(43,36,30,.98) 40%,rgba(74,62,50,.98) 50%,rgba(43,36,30,.98) 60%);background-size:200% 100%;animation:shim 0.9s infinite linear;border:1px solid rgba(255,255,255,.06)}
+@keyframes shim{to{background-position:-200% 0}}
+</style>
+</head>
+<body>
+<div id="dash">
+  <!-- ================= ICON RAIL ================= -->
+  <div id="rail">
+    <div class="ric active" data-tip="Overview" data-page="overview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></div>
+    <div class="ric" data-tip="Search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.8-3.8"/></svg></div>
+    <div class="ric" data-tip="Leads"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h10"/></svg></div>
+    <div class="ric" data-tip="Pipelines"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg></div>
+    <div class="ric" data-tip="Contacts"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3.5"/><path d="M3.5 20c.6-3.2 2.8-5 5.5-5s4.9 1.8 5.5 5"/><path d="M16 5.4a3.5 3.5 0 0 1 0 5.9M18.4 15.4c1.2.8 2 2.2 2.3 4.1"/></svg></div>
+    <div class="ric" data-tip="Companies" data-page="companies"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M5 21V8l7-5 7 5v13"/><path d="M9 9.5h1.6M13.4 9.5H15M9 13.5h1.6M13.4 13.5H15M9 17.5h1.6M13.4 17.5H15"/></svg></div>
+    <div class="ric" data-tip="Quotes" data-page="quotes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h9l4 4v14H6z"/><path d="M9 12h7M9 16h7"/></svg></div>
+    <div class="ric" data-tip="Support" data-page="support"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 13a8 8 0 0 1 16 0"/><rect x="2.5" y="13" width="4" height="6" rx="2"/><rect x="17.5" y="13" width="4" height="6" rx="2"/><path d="M20 19a4 4 0 0 1-4 3h-2"/></svg></div>
+    <div class="ric" data-tip="Reports"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V11M9.5 20V4M15 20v-6M20.5 20V7"/></svg></div>
+    <div class="sp"></div>
+    <div class="ric" data-tip="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2.2"/><circle cx="10" cy="17" r="2.2"/></svg></div>
+    <div class="avatar-mini">HG</div>
+  </div>
+
+  <div id="main">
+    <!-- ================= TOP BAR ================= -->
+    <div id="topbar">
+      <div id="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.8-3.8"/></svg><span id="searchtxt">Search deals, people…</span></div>
+      <div id="tabs">
+        <div id="tabpill"></div>
+        <div class="tab active" data-page="overview">Overview</div>
+        <div class="tab">Leads</div>
+        <div class="tab">Pipelines</div>
+        <div class="tab">Contacts</div>
+        <div class="tab" data-page="companies">Companies</div>
+        <div class="tab" data-page="quotes">Quotes</div>
+        <div class="tab" data-page="support">Support</div>
+        <div class="tab">More</div>
+      </div>
+      <div id="topright">
+        <div id="bell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9.5a6 6 0 0 1 12 0c0 4 1.5 5.5 1.5 5.5h-15S6 13.5 6 9.5"/><path d="M10 19a2.2 2.2 0 0 0 4 0"/></svg><span class="dot"></span></div>
+        <div id="userchip"><div class="av">HG</div><div><div class="un">Hartley &amp; Grey</div><div class="ur">Admin</div></div></div>
+      </div>
+    </div>
+
+    <!-- ================= PAGE: OVERVIEW ================= -->
+    <div class="page on" id="page-overview">
+      <div class="kpirow" style="margin-top:14px" id="ov-kpis"></div>
+
+      <div style="display:flex;gap:12px;margin-top:12px;flex:none;height:386px">
+        <!-- left column -->
+        <div style="width:336px;flex:none;display:flex;flex-direction:column;gap:8px">
+          <div class="sechead"><h4>Hot deals · Today</h4><span class="seeall">See all</span></div>
+          <div class="deal glass glass-card" data-anim>
+            <div class="dic" style="background:rgba(244,63,94,.18);color:#FDA4AF">HG</div>
+            <div class="dtx"><div class="dn">Hartley &amp; Grey</div><div class="dd">Extension · Sunningdale</div><span class="stagechip" style="background:rgba(244,63,94,.2);color:#FDA4AF">Negotiation</span></div>
+            <div class="dv"><div class="amt">£92,500</div></div>
+          </div>
+          <div class="deal glass glass-card" data-anim>
+            <div class="dic" style="background:rgba(217,70,239,.16);color:#F0ABFC">AH</div>
+            <div class="dtx"><div class="dn">Ashworth Homes</div><div class="dd">Loft programme · Ascot</div><span class="stagechip" style="background:rgba(217,70,239,.18);color:#F0ABFC">Negotiation</span></div>
+            <div class="dv"><div class="amt">£86,200</div></div>
+          </div>
+          <div class="deal glass glass-card" data-anim>
+            <div class="dic" style="background:rgba(34,197,94,.16);color:#86EFAC">BC</div>
+            <div class="dtx"><div class="dn">Birchwood Construction</div><div class="dd">Kitchen refits · phase 2</div><span class="stagechip" style="background:rgba(34,197,94,.18);color:#86EFAC">Qualified</span></div>
+            <div class="dv"><div class="amt">£30,400</div></div>
+          </div>
+          <div class="sechead" style="margin-top:4px"><h4>Pick up where you left off</h4></div>
+          <div class="pickrow glass" data-anim>
+            <div class="pic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h9l4 4v14H6z"/><path d="M9 12h7M9 16h7"/></svg></div>
+            <div><div class="pt">Sterling Build — quote sent Tuesday</div><div class="pd">Full renovation · £164,000</div></div><span class="tag">Quote</span>
+          </div>
+          <div class="pickrow glass" data-anim>
+            <div class="pic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></div>
+            <div><div class="pt">Kingsway — site visit notes</div><div class="pd">Yesterday · 11:00 visit</div></div><span class="tag">Visit</span>
+          </div>
+        </div>
+        <!-- hero -->
+        <div id="hero" data-anim>
+          <div class="badge"><span class="fl"></span>Hot this week</div>
+          <h2>Hartley &amp; Grey — Wraparound Extension</h2>
+          <div class="hsub">£92,500 &nbsp;·&nbsp; 78% likely &nbsp;·&nbsp; Closes 18 Dec &nbsp;·&nbsp; Deposit received — start date to confirm</div>
+          <svg class="hchart" viewBox="0 0 800 110" preserveAspectRatio="none">
+            <defs><linearGradient id="hgrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="rgba(255,150,170,.20)"/><stop offset="1" stop-color="rgba(255,150,170,0)"/></linearGradient></defs>
+            <path id="heroline" d="M0,88 C90,80 140,62 230,66 C320,70 370,44 460,40 C550,36 610,22 700,14 L800,6" fill="none" stroke="rgba(255,205,215,.85)" stroke-width="2.5" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100"/>
+            <path id="herofill" d="M0,88 C90,80 140,62 230,66 C320,70 370,44 460,40 C550,36 610,22 700,14 L800,6 L800,110 L0,110 Z" fill="url(#hgrad)"/>
+          </svg>
+          <div class="hacts">
+            <button class="pillbtn white">→ Open deal</button>
+            <button class="pillbtn dark">Export</button>
+            <button class="pillbtn ell">···</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="sechead" style="margin-top:14px"><h4>Accounts to watch</h4><span class="seeall">See all</span></div>
+      <div style="display:flex;gap:10px;margin-top:9px;flex:1;min-height:0" id="ov-accts"></div>
+    </div>
+
+    <!-- ================= PAGE: COMPANIES ================= -->
+    <div class="page" id="page-companies">
+      <div id="co-head" style="margin-top:16px;flex:none">
+        <h1>Companies</h1>
+        <div class="csub">8 accounts · £1.47m open pipeline</div>
+      </div>
+      <div class="fpills" style="margin-top:13px">
+        <div class="fpill act">All</div><div class="fpill">Growing</div><div class="fpill">Steady</div><div class="fpill">At risk</div><div class="fpill">New</div>
+      </div>
+      <div class="kpirow" style="margin-top:12px" id="co-kpis"></div>
+      <div id="co-grid" style="display:grid;grid-template-columns:repeat(6,1fr);grid-template-rows:1fr 1fr;gap:10px;margin-top:12px;flex:1;min-height:0"></div>
+    </div>
+
+    <!-- ================= PAGE: QUOTES & INVOICES ================= -->
+    <div class="page" id="page-quotes">
+      <div style="margin-top:16px;flex:none;display:flex;align-items:flex-end;justify-content:space-between">
+        <div id="qu-head"><h1>Quotes</h1><div class="csub">12 open quotes · £486.2k quoted this month</div></div>
+        <div class="qsearch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.8-3.8"/></svg><span>Search quotes, invoices…</span></div>
+      </div>
+      <div class="kpirow" style="margin-top:12px" id="qu-kpis"></div>
+      <div style="display:flex;gap:12px;margin-top:12px;flex:1;min-height:0">
+        <div class="glass" id="qu-empty" data-anim>
+          <div class="eic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3h9l4 4v14H6z"/><path d="M9 12h7M9 16h7"/></svg></div>
+          <h3>No invoices here</h3>
+          <div class="esub">Create your first invoice</div>
+          <button class="pillbtn white">+ New invoice</button>
+        </div>
+        <div style="width:336px;flex:none;display:flex;flex-direction:column;gap:12px">
+          <div class="glass" data-anim style="flex:1;padding:16px 16px 12px;display:flex;flex-direction:column">
+            <div class="sechead"><h4>Quotes to chase</h4><span class="seeall">See all</span></div>
+            <div style="margin-top:10px;display:flex;flex-direction:column;gap:4px">
+              <div class="minirow"><div class="mic" style="background:rgba(244,63,94,.18);color:#FDA4AF">HG</div><div class="mtx"><div class="mn">Hartley &amp; Grey</div><div class="md">Wraparound extension</div></div><div class="mv">£92,500<span class="tag2">2 days ago</span></div></div>
+              <div class="minirow"><div class="mic" style="background:rgba(217,70,239,.16);color:#F0ABFC">AH</div><div class="mtx"><div class="mn">Ashworth Homes</div><div class="md">Loft programme</div></div><div class="mv">£86,200<span class="tag2">3 days ago</span></div></div>
+              <div class="minirow"><div class="mic" style="background:rgba(34,197,94,.16);color:#86EFAC">BC</div><div class="mtx"><div class="mn">Birchwood Construction</div><div class="md">Kitchen refits</div></div><div class="mv">£30,400<span class="tag2">5 days ago</span></div></div>
+              <div class="minirow"><div class="mic" style="background:rgba(96,165,250,.16);color:#93C5FD">SB</div><div class="mtx"><div class="mn">Sterling Build</div><div class="md">Full renovation</div></div><div class="mv">£164,000<span class="tag2">6 days ago</span></div></div>
+            </div>
+            <div class="panelfoot">Quotes are chased automatically after 3 days</div>
+          </div>
+          <div class="glass" data-anim style="padding:16px 16px 12px;display:flex;flex-direction:column">
+            <div class="sechead"><h4>Invoice summary</h4><span class="seeall">November</span></div>
+            <div class="splitbar" style="margin-top:14px"><div class="seg" style="background:#34D399" data-fill data-pct="82.5"></div><div class="seg" style="background:#FBBF24" data-fill data-pct="17.5"></div></div>
+            <div style="margin-top:10px">
+              <div class="sumrow"><span class="sl">● Paid</span><span class="sv">£152,300</span></div>
+              <div class="sumrow"><span class="sl">● Outstanding</span><span class="sv">£32,300</span></div>
+              <div class="sumrow"><span class="sl">● Overdue</span><span class="sv">£0</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= PAGE: SUPPORT ================= -->
+    <div class="page" id="page-support">
+      <div id="su-head" style="margin-top:16px;flex:none">
+        <h1>Support</h1>
+        <div class="csub">All clear — nothing waiting · replies inside 1 hour</div>
+      </div>
+      <div class="kpirow" style="margin-top:12px" id="su-kpis"></div>
+      <div style="display:flex;gap:10px;margin-top:12px;flex:none">
+        <div class="glass supcard" data-anim><div class="supbar" style="background:#34D399"></div><div class="sulab">Open</div><div class="suval" data-count data-target="0" data-fmt="int" data-delay="0">0</div><div class="susub">Awaiting a reply</div></div>
+        <div class="glass supcard" data-anim><div class="supbar" style="background:#A78BFA"></div><div class="sulab">Pending</div><div class="suval" data-count data-target="0" data-fmt="int" data-delay="90">0</div><div class="susub">Waiting on the client</div></div>
+        <div class="glass supcard" data-anim><div class="supbar" style="background:#5EEAD4"></div><div class="sulab">Resolved</div><div class="suval" data-count data-target="0" data-fmt="int" data-delay="180">0</div><div class="susub">Closed this week</div></div>
+      </div>
+      <div style="display:flex;gap:12px;margin-top:12px;flex:1;min-height:0">
+        <div class="glass" data-anim style="flex:1;padding:18px 18px 14px;display:flex;flex-direction:column">
+          <div class="sechead"><h4>By channel</h4><span class="seeall">Last 30 days</span></div>
+          <div style="margin-top:14px;display:flex;flex-direction:column;justify-content:space-evenly;flex:1">
+            <div class="chanrow"><div class="cic" style="background:rgba(96,165,250,.16);color:#93C5FD"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></div><div class="cn">Email</div><div class="track"><div class="fill" style="background:#60A5FA" data-fill data-pct="0"></div></div><div class="cv">0</div></div>
+            <div class="chanrow"><div class="cic" style="background:rgba(52,211,153,.16);color:#6EE7B7"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 4h4l2 5-2.5 1.5a12 12 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg></div><div class="cn">Phone</div><div class="track"><div class="fill" style="background:#34D399" data-fill data-pct="0"></div></div><div class="cv">0</div></div>
+            <div class="chanrow"><div class="cic" style="background:rgba(167,139,250,.16);color:#C4B5FD"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 1-13.2 8L3 21l1.2-4.6A9 9 0 1 1 21 12z"/></svg></div><div class="cn">WhatsApp</div><div class="track"><div class="fill" style="background:#A78BFA" data-fill data-pct="0"></div></div><div class="cv">0</div></div>
+          </div>
+          <div class="panelfoot">All channels · 0 open tickets</div>
+        </div>
+        <div class="glass" data-anim style="flex:1;padding:18px 18px 14px;display:flex;flex-direction:column;align-items:center">
+          <div class="sechead" style="width:100%"><h4>Customer satisfaction</h4><span class="seeall">CSAT</span></div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center">
+            <svg width="190" height="112" viewBox="0 0 190 112"><path d="M15 102 A80 80 0 0 1 175 102" fill="none" stroke="rgba(255,255,255,.14)" stroke-width="11" stroke-linecap="round"/><path data-gauge data-pct="0" d="M15 102 A80 80 0 0 1 175 102" fill="none" stroke="#34D399" stroke-width="11" stroke-linecap="round" stroke-dasharray="251.3" stroke-dashoffset="251.3"/></svg>
+            <div style="font-family:Poppins,Inter,sans-serif;font-size:32px;font-weight:700;line-height:1;margin-top:-8px"><span data-count data-target="0" data-fmt="csat" data-delay="120">0.0/5</span></div>
+            <div style="font-size:12.5px;color:rgba(255,255,255,.5);margin-top:7px">No ratings yet</div>
+          </div>
+          <div class="panelfoot" style="width:100%">Average across all closed tickets</div>
+        </div>
+        <div class="glass" data-anim style="flex:1;padding:18px 18px 14px;display:flex;flex-direction:column;align-items:center">
+          <div class="sechead" style="width:100%"><h4>New tickets</h4><span class="seeall">Last 7 days</span></div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">
+            <div style="width:56px;height:56px;border-radius:16px;background:rgba(94,234,212,.14);color:#5EEAD4;display:flex;align-items:center;justify-content:center;margin-bottom:14px"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 13a8 8 0 0 1 16 0"/><rect x="2.5" y="13" width="4" height="6" rx="2"/><rect x="17.5" y="13" width="4" height="6" rx="2"/><path d="M20 19a4 4 0 0 1-4 3h-2"/></svg></div>
+            <div style="font-size:16px;font-weight:600">No new tickets</div>
+            <div style="font-size:12.5px;color:rgba(255,255,255,.5);margin-top:5px">Last 7 days · 0 received</div>
+          </div>
+          <div class="panelfoot" style="width:100%">Quiet week — nothing to triage</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- skeleton overlay -->
+    <div id="skel">
+      <div class="sk" style="height:128px;margin-bottom:12px"></div>
+      <div style="display:flex;gap:12px"><div class="sk" style="height:330px;flex:1"></div><div class="sk" style="height:330px;flex:1.6"></div></div>
+      <div class="sk" style="flex:1;margin-top:12px"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ================= DATA ================= */
+const UP = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 18L18 6M9 6h9v9"/></svg>';
+const fmtM = v => '£' + v.toFixed(2) + 'm';
+const fmtPct = v => Math.round(v) + '%';
+const fmtInt = v => String(Math.round(v));
+
+function sparkPoints(seed){
+  let pts=[], y=20+seed*2;
+  for(let i=0;i<8;i++){ y += Math.sin(seed*3+i*1.4)*3.4 - 1.6; y=Math.max(3,Math.min(25,y)); pts.push((i*11)+','+y.toFixed(1)); }
+  return pts.join(' ');
+}
+function kpiCard(o){
+  const spark = o.spark ? '<svg class="spark" width="80" height="28" viewBox="0 0 80 28"><polyline points="'+sparkPoints(o.seed)+'" fill="none" stroke="'+o.color+'" stroke-width="2" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100" data-spark/></svg>' : '';
+  const chg = o.change ? '<div class="chg">'+UP+'<span>'+o.change+'</span></div>' : '';
+  return '<div class="kpi '+(o.solid?'solid':'glass glass-card')+'" data-anim>'+
+    '<div class="krow"><div class="chip" style="background:'+o.tint+';color:'+o.color+'">'+o.icon+'</div>'+chg+'</div>'+
+    '<div class="lab">'+o.label+'</div>'+
+    '<div class="val" data-count data-target="'+o.target+'" data-fmt="'+o.fmt+'" data-delay="'+o.delay+'">0</div>'+
+    (o.sub?'<div class="sub">'+o.sub+'</div>':'')+ spark +'</div>';
+}
+const OV_KPIS = [
+  {icon:'£', color:'#4ADE80', tint:'rgba(34,197,94,.16)',  label:'Revenue this month', target:1.19, fmt:'m',   change:'12.4%', spark:1, seed:2, delay:0, solid:1},
+  {icon:'£', color:'#C4B5FD', tint:'rgba(167,139,250,.16)',label:'Open pipeline',      target:1.47, fmt:'m',   change:'8.1%',  spark:1, seed:5, delay:90},
+  {icon:'+', color:'#93C5FD', tint:'rgba(96,165,250,.16)', label:'New leads · 7 days', target:0,    fmt:'int', change:'',    spark:0, seed:1, delay:180, sub:'All channels · last 7 days'},
+  {icon:'%', color:'#FCD34D', tint:'rgba(245,158,11,.16)', label:'Win rate',           target:41,   fmt:'pct', change:'3.2%',  spark:1, seed:8, delay:270},
+  {icon:'▣', color:'#5EEAD4', tint:'rgba(45,212,191,.15)', label:'Due today',          target:2,    fmt:'int', change:'',      spark:0, seed:3, delay:360, sub:'1 site visit · 1 call'},
+  {icon:'!', color:'#FCA5A5', tint:'rgba(248,113,113,.15)',label:'Open tickets',       target:0,    fmt:'int', change:'',      spark:0, seed:4, delay:450, sub:'All clear — nothing waiting'},
+];
+const QU_KPIS = [
+  {icon:'▤', color:'#fff',    tint:'rgba(255,255,255,.14)',label:'Open quotes',        target:12,    fmt:'int', change:'',      spark:0, seed:2, delay:0, solid:1},
+  {icon:'£', color:'#C4B5FD', tint:'rgba(167,139,250,.16)',label:'Quoted value',       target:486.2, fmt:'k',   change:'6.8%',  spark:1, seed:6, delay:90},
+  {icon:'✉', color:'#4ADE80', tint:'rgba(34,197,94,.16)',  label:'Invoices sent',      target:8,     fmt:'int', change:'',      spark:0, seed:9, delay:180, sub:'November · all paid on time'},
+  {icon:'£', color:'#FCD34D', tint:'rgba(245,158,11,.16)', label:'Paid this month',    target:152.3, fmt:'k',   change:'11.2%', spark:1, seed:4, delay:270},
+];
+const SU_KPIS = [
+  {icon:'!', color:'#fff',    tint:'rgba(255,255,255,.14)',label:'Open tickets',       target:0, fmt:'int',  change:'', spark:0, seed:1, delay:0, solid:1},
+  {icon:'◷', color:'#93C5FD', tint:'rgba(96,165,250,.16)', label:'Avg first response', target:0, fmt:'min',  change:'', spark:0, seed:3, delay:90, sub:'Target · under 1 hour'},
+  {icon:'✓', color:'#4ADE80', tint:'rgba(34,197,94,.16)',  label:'SLA breaches',       target:0, fmt:'int',  change:'', spark:0, seed:5, delay:180, sub:'Last 30 days · none'},
+  {icon:'★', color:'#FCD34D', tint:'rgba(245,158,11,.16)', label:'CSAT',               target:0, fmt:'csat', change:'', spark:0, seed:7, delay:270, sub:'No ratings yet'},
+];
+const CO_KPIS = [
+  {icon:'▦', color:'#fff',    tint:'rgba(255,255,255,.14)',label:'Accounts',           target:8,    fmt:'int', change:'',      spark:0, seed:1, delay:0, solid:1},
+  {icon:'£', color:'#C4B5FD', tint:'rgba(167,139,250,.16)', label:'Open pipeline',      target:1.47, fmt:'m',   change:'8.1%',  spark:1, seed:6, delay:90},
+  {icon:'♥', color:'#4ADE80', tint:'rgba(34,197,94,.16)',   label:'Average health',     target:82,   fmt:'int', change:'2.4%',  spark:1, seed:9, delay:180, sub:'Across 8 accounts'},
+];
+
+/* ---- mini chart builders ---- */
+function barsSVG(heights,color,desc){
+  const bw=13,gap=7,base=64; let x=4,s='';
+  heights.forEach(h=>{ s+='<rect data-bar data-h="'+h+'" x="'+x+'" y="'+(base-h)+'" width="'+bw+'" height="'+h+'" rx="3.5" fill="'+color+'" opacity="0.92"/>'; x+=bw+gap; });
+  return '<svg width="'+(x+2)+'" height="70" viewBox="0 0 '+(x+2)+' 70">'+s+'</svg>';
+}
+function lineSVG(pts,color){
+  return '<svg width="120" height="64" viewBox="0 0 120 64"><polyline points="'+pts+'" fill="none" stroke="'+color+'" stroke-width="2.5" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100" data-spark/></svg>';
+}
+function donutSVG(pct,color,big){
+  const r=big?30:26, c=2*Math.PI*r, s=big?76:66;
+  return '<svg width="'+s+'" height="'+s+'" viewBox="0 0 '+(r*2+10)+' '+(r*2+10)+'">'+
+    '<circle cx="'+(r+5)+'" cy="'+(r+5)+'" r="'+r+'" fill="none" stroke="rgba(255,255,255,.16)" stroke-width="7"/>'+
+    '<circle data-donut data-pct="'+pct+'" cx="'+(r+5)+'" cy="'+(r+5)+'" r="'+r+'" fill="none" stroke="'+color+'" stroke-width="7" stroke-linecap="round" stroke-dasharray="'+c+'" stroke-dashoffset="'+c+'" transform="rotate(-90 '+(r+5)+' '+(r+5)+')"/>'+
+    '<text x="'+(r+5)+'" y="'+(r+10)+'" text-anchor="middle" font-size="'+(big?19:16)+'" font-weight="700" fill="#fff" font-family="Poppins,Inter">'+pct+'</text></svg>';
+}
+function gaugeSVG(pct,color){
+  const r=30, c=Math.PI*r;
+  return '<svg width="84" height="52" viewBox="0 0 84 52">'+
+    '<path d="M7 47 A35 35 0 0 1 77 47" fill="none" stroke="rgba(255,255,255,.16)" stroke-width="7" stroke-linecap="round"/>'+
+    '<path data-gauge data-pct="'+pct+'" d="M7 47 A35 35 0 0 1 77 47" fill="none" stroke="'+color+'" stroke-width="7" stroke-linecap="round" stroke-dasharray="'+c+'" stroke-dashoffset="'+c+'"/>'+
+    '<text x="42" y="46" text-anchor="middle" font-size="17" font-weight="700" fill="#fff" font-family="Poppins,Inter">'+pct+'</text></svg>';
+}
+const PLAY = '<div class="play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l13-7.5z"/></svg></div>';
+const AIC = '<div class="aic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 18L18 6M9 6h9v9"/></svg></div>';
+
+function acctCard(o, tall){
+  return '<div class="acct glass-card" data-anim style="--g1:'+o.g1+';--g2:'+o.g2+';'+(tall?'':'flex:1')+'">'+
+    '<div class="abad">'+o.badge+'</div>'+AIC+
+    '<div class="avis" style="padding-top:22px">'+o.vis+'</div>'+
+    '<div style="padding-right:44px"><div class="aname">'+o.name+'</div><div class="asub">'+o.sub+'</div></div>'+PLAY+'</div>';
+}
+const OV_ACCTS = [
+  {name:'Sterling Build', sub:'£212k pipeline · 4 open deals', badge:'Growing', g1:'#B45309', g2:'#3A2410', vis:barsSVG([22,34,28,44,38,52],'#FBBF24')},
+  {name:'Kingsway Developments', sub:'£168k pipeline · 3 open deals', badge:'Active', g1:'#1D4ED8', g2:'#101E3A', vis:lineSVG('4,52 26,44 48,38 70,26 92,18 114,8','#93C5FD')},
+  {name:'Elm Tree Builders', sub:'£96k pipeline · 2 open deals', badge:'Steady', g1:'#15803D', g2:'#0E2A1A', vis:donutSVG(74,'#4ADE80')},
+  {name:'Northgate Homes', sub:'£74k pipeline · 1 open deal', badge:'At risk', g1:'#A21CAF', g2:'#33123A', vis:donutSVG(57,'#F0ABFC',1)},
+];
+const CO_CARDS = [
+  {name:'Sterling Build', sub:'£212k pipeline', badge:'Growing', g1:'#B45309', g2:'#3A2410', vis:gaugeSVG(91,'#FBBF24')},
+  {name:'Hartley & Grey', sub:'£186k pipeline', badge:'Negotiation', g1:'#BE123C', g2:'#380F1E', vis:barsSVG([52,44,38,30,22,15],'#FDA4AF')},
+  {name:'Ashworth Homes', sub:'£164k pipeline', badge:'Active', g1:'#1D4ED8', g2:'#101E3A', vis:lineSVG('4,52 26,44 48,38 70,26 92,18 114,8','#93C5FD')},
+  {name:'Birchwood Construction', sub:'£121k pipeline', badge:'Steady', g1:'#15803D', g2:'#0E2A1A', vis:donutSVG(74,'#4ADE80')},
+  {name:'Kingsway Developments', sub:'£168k pipeline', badge:'Growing', g1:'#0F766E', g2:'#0C2622', vis:barsSVG([16,24,22,34,42,50],'#5EEAD4')},
+  {name:'Elm Tree Builders', sub:'£96k pipeline', badge:'Steady', g1:'#6D28D9', g2:'#221038', vis:gaugeSVG(68,'#C4B5FD')},
+  {name:'Northgate Homes', sub:'£74k pipeline', badge:'At risk', g1:'#A21CAF', g2:'#33123A', vis:lineSVG('4,20 26,32 48,26 70,40 92,34 114,46','#F0ABFC')},
+  {name:'Willowbrook Construction', sub:'£58k pipeline', badge:'New', g1:'#C2410C', g2:'#38190C', vis:donutSVG(57,'#FDBA74')},
+];
+document.getElementById('ov-kpis').innerHTML = OV_KPIS.map(kpiCard).join('');
+document.getElementById('co-kpis').innerHTML = CO_KPIS.map(kpiCard).join('');
+document.getElementById('qu-kpis').innerHTML = QU_KPIS.map(kpiCard).join('');
+document.getElementById('su-kpis').innerHTML = SU_KPIS.map(kpiCard).join('');
+document.getElementById('ov-accts').innerHTML = OV_ACCTS.map(a=>acctCard(a,false)).join('');
+document.getElementById('co-grid').innerHTML = CO_CARDS.map(a=>acctCard(a,true)).join('');
+
+/* ================= TIME / ANIMATION ENGINE ================= */
+const ease = p => 1 - Math.pow(1-p,3);
+const clamp01 = v => Math.max(0, Math.min(1, v));
+let clockMode = 'live';            // 'live' (rAF) or 'reel' (external __setTime)
+let page = 'overview', pageStart = 0, skelFrom = -1, skelTo = -1;
+let selectedPage = 'overview';
+/* v3 reel: 4 pages x ~1.5s — click at the switch, pill slides 280ms,
+   NO skeleton: outgoing page softens (fade + slight blur, 250ms) while the
+   pill slides, incoming page builds in ~1.1s + 250ms container fade, hold <=0.4s */
+const PAGES = ['overview','companies','quotes','support'];
+const SWITCHES = [1500, 3000, 4500];   // click instants (ms)
+const SKEL_MS = 250, SLIDE_MS = 280;   // SKEL_MS: live-mode skeleton window AND
+                                       // reel-mode soften window (swap point);
+                                       // reel mode never shows the skeleton (v3)
+const FADE_MS = 250;                   // reel-mode incoming-page container fade
+const SEARCH_TXT = {overview:'Search deals, people…', companies:'Search companies…', quotes:'Search quotes, invoices…', support:'Search tickets…'};
+
+function fmtVal(fmt, v){ return fmt==='m' ? fmtM(v) : fmt==='pct' ? fmtPct(v) : fmt==='k' ? '£'+v.toFixed(1)+'k' : fmt==='min' ? Math.round(v)+'m' : fmt==='csat' ? v.toFixed(1)+'/5' : fmtInt(v); }
+
+/* page selected (tab/rail/search) vs page displayed (content) at reel time t */
+function pageAt(t){ let k=0; for(const s of SWITCHES){ if(t>=s) k++; } return PAGES[k]; }
+function displayedAt(t){ let k=0; for(const s of SWITCHES){ if(t>=s+SKEL_MS) k++; } return PAGES[k]; }
+function buildStartOf(p){ const i=PAGES.indexOf(p); return i===0 ? 0 : SWITCHES[i-1]+SKEL_MS; }
+
+/* ---- sliding tab pill ---- */
+const pill = document.getElementById('tabpill');
+function tabRect(p){
+  const tb = document.querySelector('#tabs .tab[data-page="'+p+'"]');
+  if(!tb) return null;
+  return {x: tb.offsetLeft, w: tb.offsetWidth};
+}
+function setPill(x, w){
+  pill.style.transform = 'translateX('+x+'px)';
+  pill.style.width = w+'px';
+}
+/* pill position at reel time t: eased slide old->new tab over SLIDE_MS */
+function pillAt(t){
+  for(let i=0;i<SWITCHES.length;i++){
+    const S = SWITCHES[i];
+    if(t>=S && t<S+SLIDE_MS){
+      const a = tabRect(PAGES[i]), b = tabRect(PAGES[i+1]);
+      if(!a || !b) return;
+      const p = ease((t-S)/SLIDE_MS);
+      setPill(a.x+(b.x-a.x)*p, a.w+(b.w-a.w)*p);
+      return;
+    }
+  }
+  const r = tabRect(pageAt(t));
+  if(r) setPill(r.x, r.w);
+}
+function selectPage(p){
+  selectedPage = p;
+  document.querySelectorAll('#tabs .tab').forEach(tb=>tb.classList.toggle('active', tb.dataset.page===p));
+  document.querySelectorAll('#rail .ric').forEach(rc=>rc.classList.toggle('active', rc.dataset.page===p));
+  document.getElementById('searchtxt').textContent = SEARCH_TXT[p];
+  if(clockMode==='live'){ const r = tabRect(p); if(r) setPill(r.x, r.w); }
+}
+function showPage(p, t){
+  page = p; pageStart = t;
+  PAGES.forEach(pg=>document.getElementById('page-'+pg).classList.toggle('on', pg===p));
+}
+
+function renderAt(t){
+  // v3: reel mode NEVER shows the skeleton overlay — the shimmer flash is gone.
+  // The switch is carried by the sliding pill; the outgoing page softens
+  // (opacity 1->0 + blur 0->4px, ease-out, 250ms) and the incoming page
+  // fades in at container level (opacity 0->1, ease-out, 250ms) on top of
+  // its normal staggered build-in. Live mode keeps the skeleton as before.
+  let skel = false;
+  if(clockMode!=='reel'){ skel = skelFrom>=0 && t>=skelFrom && t<skelTo; }
+  document.getElementById('skel').classList.toggle('on', skel);
+  const local = t - pageStart;
+  const pageEl = document.getElementById('page-'+page);
+  if(clockMode==='reel'){
+    let soften = -1, fadeIn = -1;
+    for(const s of SWITCHES){
+      if(t>=s && t<s+SKEL_MS) soften = (t-s)/SKEL_MS;
+      if(t>=s+SKEL_MS && t<s+SKEL_MS+FADE_MS) fadeIn = (t-(s+SKEL_MS))/FADE_MS;
+    }
+    if(soften>=0){
+      const p = ease(soften);
+      pageEl.style.opacity = String(1-p);
+      pageEl.style.filter = 'blur('+(4*p).toFixed(2)+'px)';
+    } else if(fadeIn>=0){
+      pageEl.style.opacity = String(ease(fadeIn));
+      pageEl.style.filter = '';
+    } else {
+      pageEl.style.opacity = '';
+      pageEl.style.filter = '';
+    }
+  }
+  pageEl.querySelectorAll('[data-count]').forEach(el=>{
+    const target=parseFloat(el.dataset.target), delay=parseFloat(el.dataset.delay||0);
+    const p = ease(clamp01((local-delay)/850));
+    el.textContent = fmtVal(el.dataset.fmt, target*p);
+  });
+  pageEl.querySelectorAll('[data-spark]').forEach((el,i)=>{
+    const p = ease(clamp01((local-100-i*60)/950));
+    el.style.strokeDashoffset = String(100*(1-p));
+  });
+  pageEl.querySelectorAll('[data-donut],[data-gauge]').forEach((el,i)=>{
+    const c = parseFloat(el.getAttribute('stroke-dasharray'));
+    const p = ease(clamp01((local-150-i*70)/950));
+    el.style.strokeDashoffset = String(c*(1 - (parseFloat(el.dataset.pct)/100)*p));
+  });
+  pageEl.querySelectorAll('[data-bar]').forEach((el,i)=>{
+    const h = parseFloat(el.dataset.h);
+    const p = ease(clamp01((local-120-i*50)/850));
+    el.setAttribute('height', h*p); el.setAttribute('y', 64-h*p);
+  });
+  pageEl.querySelectorAll('[data-fill]').forEach((el,i)=>{
+    const pct = parseFloat(el.dataset.pct);
+    const p = ease(clamp01((local-150-i*60)/850));
+    el.style.width = (pct*p)+'%';
+  });
+  if(page==='overview'){
+    const hp = ease(clamp01((local-200)/950));
+    document.getElementById('heroline').style.strokeDashoffset = String(100*(1-hp));
+  }
+  pageEl.querySelectorAll('[data-anim]').forEach((el,i)=>{
+    const p = ease(clamp01((local-i*45)/550));
+    el.style.opacity = String(0.25+0.75*p);
+    el.style.transform = 'translateY('+(10*(1-p))+'px)';
+  });
+}
+/* reel clock: absolute reel time -> dashboard state */
+window.__setTime = function(t){
+  clockMode='reel';
+  pill.style.transition='none';
+  const sel = pageAt(t), disp = displayedAt(t);
+  if(sel!==selectedPage) selectPage(sel);
+  if(disp!==page) showPage(disp, buildStartOf(disp));
+  pillAt(t);
+  renderAt(t);
+};
+window.__settle = function(p){ clockMode='reel'; pill.style.transition='none'; selectPage(p); showPage(p, -100000); const r=tabRect(p); if(r) setPill(r.x, r.w); renderAt(0); };
+/* standalone live mode */
+let liveT0 = performance.now();
+function loop(now){
+  if(clockMode!=='live') return;
+  const t = now - liveT0;
+  if(skelTo>0 && t>=skelTo && page!==pendingPage){ showPage(pendingPage, skelTo); skelFrom=-1; }
+  renderAt(t);
+  requestAnimationFrame(loop);
+}
+let pendingPage='overview';
+function requestPage(p){
+  if(!p || p===page) return;
+  const t = performance.now()-liveT0;
+  pendingPage=p; skelFrom=t; skelTo=t+SKEL_MS;
+  selectPage(p);
+}
+document.querySelectorAll('#tabs .tab').forEach(tb=>{
+  tb.addEventListener('click', ()=>requestPage(tb.dataset.page));
+});
+document.querySelectorAll('#rail .ric').forEach(rc=>{
+  rc.addEventListener('click', ()=>requestPage(rc.dataset.page));
+});
+function fit(){
+  const s = Math.min(innerWidth/1528, innerHeight/1008);
+  document.getElementById('dash').style.transform = 'scale('+Math.max(s,0.2)+')';
+}
+addEventListener('resize', fit); fit();
+pill.style.transition='none';
+showPage('overview', 0);
+selectPage('overview');
+requestAnimationFrame(()=>{ pill.style.transition=''; });
+document.fonts.ready.then(()=>{
+  if(clockMode!=='live') return;
+  const r = tabRect(selectedPage);
+  if(r){ pill.style.transition='none'; setPill(r.x, r.w); requestAnimationFrame(()=>{ pill.style.transition=''; }); }
+});
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>

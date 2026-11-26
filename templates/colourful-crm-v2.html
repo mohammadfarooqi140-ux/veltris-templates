@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Colour CRM — v2</title>
+<title>Colour CRM — v3</title>
 <style>
 @font-face{font-family:Inter;src:url(../vip-fonts/Inter-400.ttf);font-weight:400}
 @font-face{font-family:Inter;src:url(../vip-fonts/Inter-500.ttf);font-weight:500}
@@ -211,6 +211,23 @@ body{
 .st-emerald{background:rgba(5,150,105,.12);color:#047857}
 .st-amber{background:rgba(245,158,11,.14);color:#B45309}
 .st-rose{background:rgba(225,29,72,.12);color:#BE123C}
+/* kanban board (support page) */
+.kb{display:flex;gap:12px}
+.kbcol{flex:1;padding:14px 14px 12px;display:flex;flex-direction:column;min-width:0}
+.kbhead{display:flex;align-items:center;gap:9px;flex:none}
+.kbdot{width:10px;height:10px;border-radius:50%;flex:none}
+.kbt{font-size:15px;font-weight:700}
+.kbcount{margin-left:auto}
+.kbcards{display:flex;flex-direction:column;gap:12px;margin-top:12px}
+.kbcard{background:#fff;border:1px solid rgba(23,20,42,.08);border-radius:12px;padding:13px 15px;box-shadow:0 4px 12px rgba(76,29,149,.07)}
+.kbtop{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.kbnum{font-size:12px;font-weight:700;color:rgba(23,20,42,.5);font-variant-numeric:tabular-nums}
+.kbsub{font-size:15px;font-weight:600;line-height:1.3;margin-top:8px}
+.kbmeta{display:flex;align-items:center;gap:9px;margin-top:10px}
+.kbmeta .ci{width:26px;height:26px;border-radius:8px;background:rgba(124,58,237,.12);color:#6D28D9;display:flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:700;flex:none}
+.kbcust{font-size:13px;font-weight:500;white-space:nowrap}
+.kbage{margin-left:auto;font-size:12px;color:rgba(23,20,42,.5);font-variant-numeric:tabular-nums;white-space:nowrap}
+.kbmore{margin-top:auto;padding-top:12px;font-size:12.5px;color:rgba(23,20,42,.5);text-align:center}
 /* skeleton */
 #skel{position:absolute;inset:64px 20px 20px;display:none;z-index:40;background:linear-gradient(160deg,#FFFFFF,#F3EFFF);border-radius:18px}
 #skel.on{display:flex;flex-direction:column}
@@ -396,18 +413,55 @@ body{
         <div class="glass supcard" data-anim><div class="supbar" style="background:#F59E0B"></div><div class="sulab">Pending</div><div class="suval" data-count data-target="3" data-fmt="int" data-delay="90">0</div><div class="susub">Waiting on the client</div></div>
         <div class="glass supcard" data-anim><div class="supbar" style="background:#059669"></div><div class="sulab">Resolved</div><div class="suval" data-count data-target="14" data-fmt="int" data-delay="180">0</div><div class="susub">Closed this week</div></div>
       </div>
-      <div class="glass" style="margin-top:12px;flex:1;padding:4px 18px 8px;display:flex;flex-direction:column" data-anim>
-        <table class="tbl">
-          <tr><th>Ticket</th><th>Subject</th><th>Customer</th><th>Priority</th><th>Status</th><th>Age</th></tr>
-          <tr><td class="num">#1042</td><td>Deposit invoice not received</td><td>Marlowe &amp; Finch</td><td><span class="stchip st-rose">High</span></td><td><span class="stchip st-rose">Open</span></td><td class="num">2h 45m</td></tr>
-          <tr><td class="num">#1041</td><td>Change start date — garden room</td><td>Juniper Works</td><td><span class="stchip st-amber">Medium</span></td><td><span class="stchip st-rose">Open</span></td><td class="num">5h 10m</td></tr>
-          <tr><td class="num">#1040</td><td>Snagging list after handover</td><td>Sable &amp; Stone</td><td><span class="stchip st-rose">High</span></td><td><span class="stchip st-amber">Pending</span></td><td class="num">1d 3h</td></tr>
-          <tr><td class="num">#1039</td><td>Quote revision — kitchen refit</td><td>Kestrel Build</td><td><span class="stchip st-blue">Low</span></td><td><span class="stchip st-amber">Pending</span></td><td class="num">2d 6h</td></tr>
-          <tr><td class="num">#1038</td><td>Warranty question — loft conversion</td><td>Fernwood Group</td><td><span class="stchip st-amber">Medium</span></td><td><span class="stchip st-amber">Pending</span></td><td class="num">3d 1h</td></tr>
-          <tr><td class="num">#1037</td><td>Site access — new manager login</td><td>Alder &amp; Pine</td><td><span class="stchip st-blue">Low</span></td><td><span class="stchip st-emerald">Resolved</span></td><td class="num">4d 2h</td></tr>
-        </table>
-        <div class="panelfoot">2 awaiting reply — oldest 2h 45m · first-response target under 1 hour</div>
+            <div class="kb" style="margin-top:12px;flex:1;min-height:0" data-anim>
+        <div class="glass kbcol">
+          <div class="kbhead"><span class="kbdot" style="background:#E11D48"></span><span class="kbt">New</span><span class="stchip st-rose kbcount">2</span></div>
+          <div class="kbcards">
+            <div class="kbcard">
+              <div class="kbtop"><span class="kbnum">#1042</span><span class="stchip st-rose">High</span></div>
+              <div class="kbsub">Deposit invoice not received</div>
+              <div class="kbmeta"><span class="ci">MF</span><span class="kbcust">Marlowe &amp; Finch</span><span class="kbage">2h 45m</span></div>
+            </div>
+            <div class="kbcard">
+              <div class="kbtop"><span class="kbnum">#1041</span><span class="stchip st-amber">Medium</span></div>
+              <div class="kbsub">Change start date — garden room</div>
+              <div class="kbmeta"><span class="ci">JW</span><span class="kbcust">Juniper Works</span><span class="kbage">5h 10m</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="glass kbcol">
+          <div class="kbhead"><span class="kbdot" style="background:#F59E0B"></span><span class="kbt">In progress</span><span class="stchip st-amber kbcount">3</span></div>
+          <div class="kbcards">
+            <div class="kbcard">
+              <div class="kbtop"><span class="kbnum">#1040</span><span class="stchip st-rose">High</span></div>
+              <div class="kbsub">Snagging list after handover</div>
+              <div class="kbmeta"><span class="ci">SS</span><span class="kbcust">Sable &amp; Stone</span><span class="kbage">1d 3h</span></div>
+            </div>
+            <div class="kbcard">
+              <div class="kbtop"><span class="kbnum">#1039</span><span class="stchip st-blue">Low</span></div>
+              <div class="kbsub">Quote revision — kitchen refit</div>
+              <div class="kbmeta"><span class="ci">KB</span><span class="kbcust">Kestrel Build</span><span class="kbage">2d 6h</span></div>
+            </div>
+            <div class="kbcard">
+              <div class="kbtop"><span class="kbnum">#1038</span><span class="stchip st-amber">Medium</span></div>
+              <div class="kbsub">Warranty question — loft conversion</div>
+              <div class="kbmeta"><span class="ci">FG</span><span class="kbcust">Fernwood Group</span><span class="kbage">3d 1h</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="glass kbcol">
+          <div class="kbhead"><span class="kbdot" style="background:#059669"></span><span class="kbt">Resolved</span><span class="stchip st-emerald kbcount">1</span></div>
+          <div class="kbcards">
+            <div class="kbcard">
+              <div class="kbtop"><span class="kbnum">#1037</span><span class="stchip st-blue">Low</span></div>
+              <div class="kbsub">Site access — new manager login</div>
+              <div class="kbmeta"><span class="ci">AP</span><span class="kbcust">Alder &amp; Pine</span><span class="kbage">4d 2h</span></div>
+            </div>
+          </div>
+          <div class="kbmore">+ 13 more resolved this week</div>
+        </div>
       </div>
+      <div class="panelfoot" style="margin-top:10px">2 awaiting reply — oldest 2h 45m · first-response target under 1 hour</div>
     <!-- skeleton overlay -->
     <div id="skel">
       <div class="sk" style="height:128px;margin-bottom:12px"></div>

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Veltris | See the system work | Contender D: Dashboard First</title>
+<meta name="description" content="Dashboard led design preview with Veltris content. Helping UK businesses implement AI systems.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --font-display:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --font-body:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --text-base:1.0625rem;
+  --bg:#f3f4f1; --card:#ffffff; --line:#e2e4de; --line-dark:#d4d7cf;
+  --ink:#17181a; --muted:#5f625c; --accent:#2f6fed; --accent-soft:#e8effd; --green:#1d7a4c; --green-soft:#e2f2e8;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:var(--text-base);line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:76rem;margin:0 auto;padding:0 1.5rem}
+.eyebrow{font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
+h1,h2{font-family:var(--font-display);line-height:1.1;letter-spacing:-.03em;font-weight:800}
+h1{font-size:clamp(2.4rem,4.8vw,3.9rem)}
+h2{font-size:clamp(1.8rem,3.4vw,2.6rem);margin-bottom:.75rem}
+h3{font-size:1.1rem;font-weight:700;letter-spacing:-.01em}
+p{max-width:65ch}
+.lede{color:var(--muted);font-size:1.125rem;line-height:1.6}
+section{padding:5rem 0}
+.btn{display:inline-flex;align-items:center;gap:.5rem;border-radius:.6rem;padding:.85rem 1.5rem;font-weight:600;font-size:1rem;line-height:1;border:1px solid transparent;cursor:pointer;background:var(--accent);color:#fff}
+.btn-ghost{border-color:var(--line-dark);color:var(--ink);background:var(--card)}
+/* nav */
+nav{background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50}
+.nav-in{display:flex;align-items:center;justify-content:space-between;height:4.25rem}
+.wordmark{display:flex;align-items:center;gap:.6rem;font-weight:800;font-size:1.2rem;letter-spacing:-.02em}
+.vmark{width:2rem;height:2rem;border-radius:.5rem;background:var(--accent);color:#fff;display:grid;place-items:center;font-weight:800;font-size:1rem}
+.nav-links{display:flex;gap:2rem;font-size:.95rem;color:var(--muted)}
+.nav-links a:hover{color:var(--ink)}
+@media(max-width:48rem){.nav-links{display:none}}
+/* hero */
+.hero{padding:4.5rem 0 3rem;text-align:center}
+.hero .lede{margin:1.25rem auto 2rem}
+.cta-row{display:flex;gap:.9rem;justify-content:center;flex-wrap:wrap}
+/* dashboard mock */
+.dash{margin-top:3.5rem;background:var(--card);border:1px solid var(--line);border-radius:1rem;overflow:hidden;box-shadow:0 40px 80px -40px rgba(23,24,26,.35);display:grid;grid-template-columns:13.5rem 1fr;text-align:left}
+@media(max-width:56rem){.dash{grid-template-columns:1fr}.side{display:none}}
+.side{border-right:1px solid var(--line);padding:1.25rem 1rem;display:flex;flex-direction:column;gap:.25rem;background:#fafaf8}
+.side .who{display:flex;gap:.6rem;align-items:center;padding:.5rem .6rem .9rem;border-bottom:1px solid var(--line);margin-bottom:.8rem}
+.avatar{width:2rem;height:2rem;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-weight:700;font-size:.8rem}
+.who b{display:block;font-size:.9rem}
+.who span{font-size:.78rem;color:var(--muted)}
+.side a{display:flex;gap:.6rem;align-items:center;padding:.55rem .6rem;border-radius:.5rem;font-size:.92rem;color:var(--muted)}
+.side a.on{background:var(--accent-soft);color:var(--accent);font-weight:600}
+.side .lbl{font-size:.68rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#9a9d96;padding:.9rem .6rem .35rem}
+.main{padding:1.5rem 1.75rem 1.75rem}
+.main-top{display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;margin-bottom:1.25rem}
+.search{border:1px solid var(--line);border-radius:.6rem;padding:.55rem .9rem;font-size:.9rem;color:var(--muted);background:#fafaf8;min-width:16rem}
+.pill-btn{border:1px solid var(--line);border-radius:.6rem;padding:.55rem .95rem;font-size:.88rem;font-weight:600;background:var(--card)}
+.cards3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+@media(max-width:48rem){.cards3{grid-template-columns:1fr}}
+.mini-card{border:1px solid var(--line);border-radius:.8rem;padding:1.1rem 1.2rem}
+.mini-card .k{font-size:.78rem;font-weight:600;color:var(--muted);display:flex;justify-content:space-between;align-items:center}
+.mini-card .v{font-size:1.05rem;font-weight:700;margin-top:.45rem;letter-spacing:-.01em}
+.mini-card p{font-size:.88rem;color:var(--muted);margin-top:.25rem}
+.chip{display:inline-block;font-size:.72rem;font-weight:700;border-radius:999px;padding:.2rem .6rem}
+.chip.green{background:var(--green-soft);color:var(--green)}
+.chip.blue{background:var(--accent-soft);color:var(--accent)}
+.dash h4{font-size:1rem;font-weight:700;margin:1.75rem 0 .9rem}
+.feed{display:grid;gap:.6rem}
+.feed-row{display:flex;gap:.9rem;align-items:flex-start;border:1px solid var(--line);border-radius:.7rem;padding:.85rem 1rem}
+.feed-ic{width:2rem;height:2rem;border-radius:.5rem;display:grid;place-items:center;flex-shrink:0;font-size:.95rem}
+.feed-ic.b{background:var(--accent-soft)}
+.feed-ic.g{background:var(--green-soft)}
+.feed-row b{font-size:.95rem;display:block}
+.feed-row span{font-size:.88rem;color:var(--muted)}
+.feed-row time{margin-left:auto;font-size:.8rem;color:var(--muted);white-space:nowrap}
+/* services */
+.svc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-top:2.5rem}
+@media(max-width:56rem){.svc-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:36rem){.svc-grid{grid-template-columns:1fr}}
+.svc-card{background:var(--card);border:1px solid var(--line);border-radius:.9rem;padding:1.6rem}
+.svc-card.lead{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
+.svc-card h3{margin:.9rem 0 .5rem}
+.svc-card p{color:var(--muted);font-size:.97rem}
+.svc-ic{width:2.4rem;height:2.4rem;border-radius:.6rem;background:var(--accent-soft);display:grid;place-items:center;font-size:1.1rem}
+.svc-card.lead .svc-ic{background:var(--accent);color:#fff}
+/* systems */
+.sys-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:2.5rem}
+@media(max-width:48rem){.sys-grid{grid-template-columns:1fr}}
+.sys-card{background:var(--card);border:1px solid var(--line);border-radius:.9rem;padding:1.6rem 1.8rem;display:flex;gap:1rem;align-items:flex-start}
+.sys-card .n{font-weight:800;color:var(--accent);font-size:.95rem}
+.sys-card h3{margin-bottom:.3rem}
+.sys-card p{color:var(--muted);font-size:.97rem}
+/* audit band */
+.audit{background:var(--ink);color:#f5f5f2;border-radius:1rem;padding:3.25rem 3rem;display:grid;grid-template-columns:1fr auto;gap:2rem;align-items:center}
+@media(max-width:48rem){.audit{grid-template-columns:1fr;padding:2.5rem 1.75rem}}
+.audit h2{color:#fff}
+.audit p{color:#b9bcb6;max-width:52ch}
+.audit .btn{background:#fff;color:var(--ink)}
+.audit .meta{margin-top:1rem;font-size:.92rem;color:#b9bcb6}
+/* footer */
+footer{border-top:1px solid var(--line);padding:3rem 0 2.5rem;color:var(--muted);background:var(--card)}
+.foot-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:2rem}
+@media(max-width:48rem){.foot-grid{grid-template-columns:1fr}}
+footer h4{color:var(--ink);font-size:.95rem;margin-bottom:.9rem}
+footer ul{list-style:none;display:grid;gap:.55rem;font-size:.95rem}
+footer a:hover{color:var(--ink)}
+.fine{margin-top:3rem;font-size:.85rem;color:#8a8d86}
+.src-note{font-size:.82rem;color:#8a8d86;margin-top:1rem}
+</style>
+</head>
+<body>
+<nav>
+  <div class="wrap nav-in">
+    <a class="wordmark" href="#"><span class="vmark">V</span>Veltris</a>
+    <div class="nav-links">
+      <a href="#services">Services</a>
+      <a href="#systems">Systems</a>
+      <a href="#audit">Free audit</a>
+    </div>
+    <a class="btn" style="padding:.6rem 1.1rem" href="https://calendar.app.google/opAcE1TeBet57Tx17">Book a free audit</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <p class="eyebrow">Free 60 minute audit</p>
+    <h1 style="margin-top:1rem">See the system work.</h1>
+    <p class="lede">Helping UK businesses implement AI systems. Your website brings the enquiry in. The systems behind it answer it, book it and follow it up, while you get on with the job.</p>
+    <div class="cta-row">
+      <a class="btn" href="https://calendar.app.google/opAcE1TeBet57Tx17">Book a free audit</a>
+      <a class="btn btn-ghost" href="#services">See what we build</a>
+    </div>
+
+    <div class="dash" aria-label="Example Veltris system dashboard">
+      <aside class="side">
+        <div class="who"><span class="avatar">V</span><span><b>Veltris</b><span>Your business</span></span></div>
+        <a href="#" class="on">▦&nbsp; Home</a>
+        <a href="#">✉&nbsp; Enquiries</a>
+        <a href="#">▤&nbsp; Bookings</a>
+        <a href="#">↩&nbsp; Follow up</a>
+        <a href="#">★&nbsp; Reviews</a>
+        <span class="lbl">Admin</span>
+        <a href="#">◐&nbsp; Analytics</a>
+        <a href="#">⚙&nbsp; Settings</a>
+      </aside>
+      <div class="main">
+        <div class="main-top">
+          <h3 style="font-size:1.15rem">Home</h3>
+          <span class="search">⌕&nbsp; Quick search for enquiries…</span>
+          <span class="pill-btn">＋ Add booking</span>
+        </div>
+        <div class="cards3">
+          <div class="mini-card"><span class="k">New enquiry <i class="chip blue">AI answered</i></span><span class="v">Enquiry from your website</span><p>Reply sent by the AI Receptionist.</p></div>
+          <div class="mini-card"><span class="k">Audit booked <i class="chip green">Confirmed</i></span><span class="v">Free audit, Google Meet</span><p>Reminder set for the morning of the call.</p></div>
+          <div class="mini-card"><span class="k">Review request <i class="chip green">Sent</i></span><span class="v">Review asked after the job</span><p>Sent while the work is still fresh.</p></div>
+        </div>
+        <h4>What happened today</h4>
+        <div class="feed">
+          <div class="feed-row"><span class="feed-ic b">✉</span><span><b>Enquiry answered</b><span>Website form enquiry replied to in minutes.</span></span><time>Today</time></div>
+          <div class="feed-row"><span class="feed-ic g">✓</span><span><b>Booking confirmed</b><span>Reminder sent, diary updated, no chasing needed.</span></span><time>Today</time></div>
+          <div class="feed-row"><span class="feed-ic b">↩</span><span><b>Win back sent</b><span>A past client heard from you again at the right time.</span></span><time>Today</time></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section id="services" style="padding-top:1rem">
+  <div class="wrap">
+    <p class="eyebrow">What we build</p>
+    <h2>Everything you need to win more work</h2>
+    <div class="svc-grid">
+      <article class="svc-card lead"><span class="svc-ic">▣</span><h3>Website Development</h3><p>Lead service. A fast, clear website built to turn visits into enquiries.</p></article>
+      <article class="svc-card"><span class="svc-ic">▤</span><h3>CRM with AI built in</h3><p>Every enquiry answered, tracked and followed up in one place.</p></article>
+      <article class="svc-card"><span class="svc-ic">▦</span><h3>Client portals</h3><p>Clients book, pay and check progress in one place.</p></article>
+      <article class="svc-card"><span class="svc-ic">⚡</span><h3>Automations</h3><p>Receptionist, no show killer, win back and review engine.</p></article>
+    </div>
+  </div>
+</section>
+
+<section id="systems" style="padding-top:0">
+  <div class="wrap">
+    <p class="eyebrow">The four systems</p>
+    <h2>Working systems, not just a website</h2>
+    <div class="sys-grid">
+      <div class="sys-card"><span class="n">01</span><span><h3>Instant enquiry answering</h3><p>Every enquiry gets a reply in minutes, day or night, before a rival replies.</p></span></div>
+      <div class="sys-card"><span class="n">02</span><span><h3>No show killer</h3><p>Reminders and confirmations that keep diaries full and gaps filled.</p></span></div>
+      <div class="sys-card"><span class="n">03</span><span><h3>Win back</h3><p>Past clients hear from you again at the right time, with a reason to return.</p></span></div>
+      <div class="sys-card"><span class="n">04</span><span><h3>Review engine</h3><p>Happy clients are asked for a review while the job is still fresh.</p></span></div>
+    </div>
+  </div>
+</section>
+
+<section id="audit" style="padding-top:0">
+  <div class="wrap">
+    <div class="audit">
+      <div>
+        <h2>Book a free audit</h2>
+        <p>60 minutes, Monday to Friday, on Google Meet. We look at your website and your follow up, and show you what to fix first.</p>
+        <p class="meta">Free 60 minute audit · 30 day free pilot when we build for you</p>
+      </div>
+      <a class="btn" href="https://calendar.app.google/opAcE1TeBet57Tx17">Book your free audit</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <a class="wordmark" href="#"><span class="vmark">V</span>Veltris</a>
+        <p style="margin-top:1rem">Helping UK businesses implement AI systems.</p>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="mailto:muhammad@veltris.uk">muhammad@veltris.uk</a></li>
+          <li><a href="https://instagram.com/veltris.ukl">Instagram @veltris.ukl</a></li>
+          <li><a href="https://veltris.uk">veltris.uk</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Veltris</h4>
+        <ul>
+          <li><a href="#services">Services</a></li>
+          <li><a href="#systems">Systems</a></li>
+          <li><a href="https://calendar.app.google/opAcE1TeBet57Tx17">Free audit</a></li>
+        </ul>
+      </div>
+    </div>
+    <p class="fine">© 2026 Veltris. Preview only, not the live site. Dashboard shown is an illustrative mock with no client names or figures.</p>
+  </div>
+</footer>
+</body>
+</html>

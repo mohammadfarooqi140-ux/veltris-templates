@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Veltris | Your website should win work | Contender B: Big Type</title>
+<meta name="description" content="Big type design preview with Veltris content. Helping UK businesses implement AI systems.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --font-display:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --font-body:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --text-base:1.0625rem;
+  --bg:#08080c; --line:#232330; --text:#f7f7f5; --muted:#9c9cab; --violet:#8b7bff;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:var(--text-base);line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:80rem;margin:0 auto;padding:0 2rem}
+.eyebrow{font-size:.75rem;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--muted)}
+h1,h2{font-family:var(--font-display);line-height:1.02;letter-spacing:-.045em;font-weight:900}
+h1{font-size:clamp(3.4rem,9vw,8rem)}
+h2{font-size:clamp(2rem,4.5vw,3.5rem)}
+p{max-width:65ch}
+.lede{color:var(--muted);font-size:1.125rem;line-height:1.6}
+section{padding:6rem 0}
+.btn{display:inline-flex;align-items:center;gap:.6rem;border-radius:999px;padding:.9rem 1.6rem;font-weight:600;font-size:1rem;line-height:1;border:1px solid transparent;cursor:pointer;background:var(--text);color:#0a0a0e}
+.btn-ghost{border-color:var(--line);color:var(--text);background:transparent}
+/* nav */
+nav{position:sticky;top:0;z-index:50;background:rgba(8,8,12,.8);backdrop-filter:blur(12px)}
+.nav-in{display:flex;align-items:center;justify-content:space-between;height:4.5rem}
+.wordmark{font-weight:800;font-size:1.2rem;letter-spacing:-.02em}
+.nav-links{display:flex;gap:2.25rem;font-size:.95rem;color:var(--muted)}
+.nav-links a:hover{color:var(--text)}
+.nav-cta{border:1px solid var(--line);border-radius:999px;padding:.55rem 1.15rem;font-size:.92rem;font-weight:600}
+@media(max-width:48rem){.nav-links{display:none}}
+/* hero */
+.hero{min-height:calc(100vh - 4.5rem);display:flex;flex-direction:column;justify-content:center;padding:4rem 0 3rem;position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;left:-12rem;bottom:-16rem;width:44rem;height:44rem;background:radial-gradient(circle,rgba(139,123,255,.34),transparent 65%);pointer-events:none}
+.hero::after{content:"";position:absolute;right:-8rem;top:-10rem;width:30rem;height:30rem;background:radial-gradient(circle,rgba(139,123,255,.16),transparent 65%);pointer-events:none}
+.hero h1{max-width:12ch;position:relative;z-index:1}
+.hero h1 em{font-style:normal;color:var(--violet)}
+.hero .cta-row{display:flex;gap:.9rem;flex-wrap:wrap;margin-top:2.75rem;position:relative;z-index:1}
+.hero-foot{display:flex;justify-content:space-between;align-items:flex-end;gap:2rem;flex-wrap:wrap;margin-top:5rem;padding-top:2rem;border-top:1px solid var(--line);position:relative;z-index:1}
+.hero-foot .lede{font-size:1rem;max-width:52ch}
+.scroll{font-size:.85rem;color:var(--muted);white-space:nowrap}
+.socials{display:flex;gap:1.75rem;font-size:.9rem;color:var(--muted)}
+.socials a:hover{color:var(--text)}
+/* services as giant rows */
+.rows{border-top:1px solid var(--line)}
+.row{display:grid;grid-template-columns:4rem 1fr 1fr auto;gap:1.5rem;align-items:baseline;padding:2.4rem 0;border-bottom:1px solid var(--line)}
+@media(max-width:48rem){.row{grid-template-columns:1fr;gap:.4rem}}
+.row .num{color:var(--muted);font-size:.95rem;font-weight:600}
+.row h3{font-size:clamp(1.5rem,2.8vw,2.1rem);font-weight:800;letter-spacing:-.03em;line-height:1.1}
+.row p{color:var(--muted)}
+.row .go{font-size:1.4rem;color:var(--muted)}
+/* systems list */
+.sys{margin-top:3rem;display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line)}
+@media(max-width:48rem){.sys{grid-template-columns:1fr}}
+.sys-cell{background:var(--bg);padding:2.25rem}
+.sys-cell h3{font-size:1.3rem;font-weight:800;letter-spacing:-.02em;margin-bottom:.6rem}
+.sys-cell p{color:var(--muted);font-size:.98rem}
+/* audit */
+.audit{border-top:1px solid var(--line);text-align:left}
+.audit h2{max-width:14ch;margin-bottom:1.25rem}
+.audit .meta{margin-top:1.5rem;color:var(--muted);font-size:.95rem}
+/* footer */
+footer{border-top:1px solid var(--line);padding:3rem 0 2.5rem;color:var(--muted)}
+.foot{display:flex;justify-content:space-between;gap:2rem;flex-wrap:wrap}
+footer ul{list-style:none;display:flex;gap:1.75rem;font-size:.95rem}
+footer a:hover{color:var(--text)}
+.fine{margin-top:2.5rem;font-size:.85rem;color:#63636f}
+.src-note{font-size:.82rem;color:#63636f;margin-top:1rem}
+</style>
+</head>
+<body>
+<nav>
+  <div class="wrap nav-in">
+    <a class="wordmark" href="#">Veltris</a>
+    <div class="nav-links">
+      <a href="#services">Services</a>
+      <a href="#systems">Systems</a>
+      <a href="#audit">Free audit</a>
+    </div>
+    <a class="nav-cta" href="https://calendar.app.google/opAcE1TeBet57Tx17">Book a free audit</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <h1>Your website should <em>win work.</em></h1>
+    <div class="cta-row">
+      <a class="btn" href="https://calendar.app.google/opAcE1TeBet57Tx17">Book a free audit <span aria-hidden="true">↗</span></a>
+      <a class="btn btn-ghost" href="#services">See what we build</a>
+    </div>
+    <div class="hero-foot">
+      <p class="lede">Helping UK businesses implement AI systems. We build the website first, then the CRM, client portal and automations that sit behind it.</p>
+      <span class="scroll">Scroll to discover ↓</span>
+      <div class="socials">
+        <a href="https://instagram.com/veltris.ukl">Instagram</a>
+        <a href="mailto:muhammad@veltris.uk">Email</a>
+        <a href="https://veltris.uk">veltris.uk</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section id="services">
+  <div class="wrap">
+    <p class="eyebrow">What we build</p>
+    <h2 style="margin:.9rem 0 2.75rem">Four builds. One team.</h2>
+    <div class="rows">
+      <div class="row"><span class="num">01</span><h3>Website Development</h3><p>A fast, clear website built to turn visits into enquiries.</p><span class="go" aria-hidden="true">→</span></div>
+      <div class="row"><span class="num">02</span><h3>CRM with AI built in</h3><p>Every enquiry answered, tracked and followed up in one place.</p><span class="go" aria-hidden="true">→</span></div>
+      <div class="row"><span class="num">03</span><h3>Client portals</h3><p>Clients book, pay and check progress in one place.</p><span class="go" aria-hidden="true">→</span></div>
+      <div class="row"><span class="num">04</span><h3>Automations</h3><p>Receptionist, no show killer, win back and review engine.</p><span class="go" aria-hidden="true">→</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="systems" style="padding-top:0">
+  <div class="wrap">
+    <p class="eyebrow">The four systems</p>
+    <h2 style="margin:.9rem 0 .5rem">Working systems, not just a website</h2>
+    <div class="sys">
+      <div class="sys-cell"><h3>Instant enquiry answering</h3><p>Every enquiry gets a reply in minutes, day or night, before a rival replies.</p></div>
+      <div class="sys-cell"><h3>No show killer</h3><p>Reminders and confirmations that keep diaries full and gaps filled.</p></div>
+      <div class="sys-cell"><h3>Win back</h3><p>Past clients hear from you again at the right time, with a reason to return.</p></div>
+      <div class="sys-cell"><h3>Review engine</h3><p>Happy clients are asked for a review while the job is still fresh.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="audit" class="audit">
+  <div class="wrap">
+    <p class="eyebrow">Free 60 minute audit</p>
+    <h2 style="margin-top:.9rem">Book a free audit</h2>
+    <p class="lede">60 minutes, Monday to Friday, on Google Meet. We look at your website and your follow up, and show you what to fix first.</p>
+    <div class="cta-row" style="margin-top:2rem">
+      <a class="btn" href="https://calendar.app.google/opAcE1TeBet57Tx17">Book your free audit</a>
+    </div>
+    <p class="meta">Free 60 minute audit · 30 day free pilot when we build for you</p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <a class="wordmark" href="#">Veltris</a>
+      <ul>
+        <li><a href="#services">Services</a></li>
+        <li><a href="#systems">Systems</a></li>
+        <li><a href="https://calendar.app.google/opAcE1TeBet57Tx17">Free audit</a></li>
+      </ul>
+    </div>
+    <p class="fine">© 2026 Veltris. Helping UK businesses implement AI systems. Preview only, not the live site.</p>
+  </div>
+</footer>
+</body>
+</html>

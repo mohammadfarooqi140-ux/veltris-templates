@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Veltris | Websites that win work | Contender A: Dark Showcase</title>
+<meta name="description" content="Dark showcase design preview with Veltris content. Helping UK businesses implement AI systems.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --font-display:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --font-body:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --text-base:1.0625rem;
+  --bg:#0b0b10; --bg-soft:#121218; --card:#16161e; --line:#262633;
+  --text:#f5f5f2; --muted:#a3a3b0; --lime:#c8f542; --lime-ink:#131303;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:var(--text-base);line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:76rem;margin:0 auto;padding:0 1.5rem}
+.eyebrow{font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--lime)}
+h1,h2,h3{font-family:var(--font-display);line-height:1.08;letter-spacing:-.03em;font-weight:800}
+h1{font-size:clamp(2.75rem,6.5vw,5rem)}
+h2{font-size:clamp(1.9rem,3.6vw,2.75rem);margin-bottom:.75rem}
+h3{font-size:1.25rem;letter-spacing:-.02em;line-height:1.2}
+p{max-width:65ch}
+.lede{color:var(--muted);font-size:1.125rem;line-height:1.6}
+section{padding:5.5rem 0}
+.btn{display:inline-flex;align-items:center;gap:.5rem;border-radius:999px;padding:.85rem 1.5rem;font-weight:600;font-size:1rem;line-height:1;border:1px solid transparent;cursor:pointer}
+.btn-lime{background:var(--lime);color:var(--lime-ink)}
+.btn-ghost{border-color:var(--line);color:var(--text);background:transparent}
+/* nav */
+nav{position:sticky;top:0;z-index:50;background:rgba(11,11,16,.82);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.nav-in{display:flex;align-items:center;justify-content:space-between;height:4.25rem}
+.wordmark{display:flex;align-items:center;gap:.6rem;font-weight:800;font-size:1.2rem;letter-spacing:-.02em}
+.vmark{width:2rem;height:2rem;border-radius:.55rem;background:var(--lime);color:var(--lime-ink);display:grid;place-items:center;font-weight:800;font-size:1.05rem}
+.nav-links{display:flex;gap:2rem;font-size:.95rem;color:var(--muted)}
+.nav-links a:hover{color:var(--text)}
+@media(max-width:48rem){.nav-links{display:none}}
+/* hero */
+.hero{padding:6.5rem 0 4rem;text-align:left;position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;inset:-20% -10% auto;height:34rem;background:radial-gradient(40rem 20rem at 70% 0%,rgba(200,245,66,.14),transparent 70%);pointer-events:none}
+.pill{display:inline-flex;align-items:center;gap:.5rem;border:1px solid var(--line);border-radius:999px;padding:.4rem .9rem;font-size:.85rem;color:var(--muted);margin-bottom:1.5rem}
+.pill b{color:var(--lime);font-weight:700}
+.rot{color:var(--lime);display:inline-block;min-width:9ch}
+.hero p.lede{margin:1.5rem 0 2rem}
+.cta-row{display:flex;gap:.9rem;flex-wrap:wrap}
+/* preview strip: three CSS website mockups */
+.strip{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:4rem}
+@media(max-width:48rem){.strip{grid-template-columns:1fr}}
+.mock{background:var(--bg-soft);border:1px solid var(--line);border-radius:1rem;overflow:hidden}
+.mock-bar{display:flex;align-items:center;gap:.35rem;padding:.6rem .8rem;border-bottom:1px solid var(--line)}
+.dot{width:.55rem;height:.55rem;border-radius:50%;background:#3a3a48}
+.mock-bar span{margin-left:.5rem;font-size:.72rem;color:var(--muted)}
+.mock-body{padding:1rem;display:grid;gap:.6rem}
+.mock-h{height:.9rem;border-radius:.3rem;background:#2c2c3a;width:70%}
+.mock-h.short{width:45%;background:var(--lime);opacity:.85}
+.mock-p{height:.5rem;border-radius:.3rem;background:#232330;width:92%}
+.mock-p.short{width:60%}
+.mock-btn{height:1.7rem;border-radius:999px;background:var(--lime);width:6.5rem;margin-top:.3rem}
+.mock-img{height:5.5rem;border-radius:.6rem;background:linear-gradient(135deg,#23233a,#1a2b1a 55%,#2c2c12)}
+.mock-img.b{background:linear-gradient(135deg,#1d2b3a,#12261e 60%,#33241a)}
+.mock-img.c{background:linear-gradient(135deg,#2b1d33,#1a1a2e 60%,#1d2b1a)}
+/* stats */
+.stats{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:3rem 0}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2rem}
+@media(max-width:48rem){.stats-grid{grid-template-columns:repeat(2,1fr)}}
+.stat b{display:block;font-size:clamp(2rem,4vw,2.9rem);letter-spacing:-.03em;line-height:1.05}
+.stat span{color:var(--muted);font-size:.95rem}
+/* bento */
+.bento{display:grid;grid-template-columns:repeat(6,1fr);gap:1rem;margin-top:2.5rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:1.1rem;padding:1.75rem;display:flex;flex-direction:column;gap:.7rem}
+.card.wide{grid-column:span 4}
+.card.narrow{grid-column:span 2}
+.card.half{grid-column:span 3}
+@media(max-width:48rem){.card.wide,.card.narrow,.card.half{grid-column:span 6}}
+.card p{color:var(--muted);font-size:.98rem}
+.tag{align-self:flex-start;font-size:.72rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--lime);border:1px solid var(--line);border-radius:999px;padding:.3rem .7rem}
+.mini{margin-top:auto;display:flex;gap:.5rem;flex-wrap:wrap}
+.mini i{font-style:normal;font-size:.82rem;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:.3rem .7rem}
+/* systems */
+.sys{margin-top:2.5rem;border-top:1px solid var(--line)}
+.sys-row{display:grid;grid-template-columns:2rem 1fr 1fr;gap:1.5rem;align-items:baseline;padding:1.6rem 0;border-bottom:1px solid var(--line)}
+@media(max-width:48rem){.sys-row{grid-template-columns:1fr;gap:.3rem}}
+.sys-row b.num{color:var(--lime);font-size:1rem}
+.sys-row p{color:var(--muted)}
+/* audit band */
+.audit{background:var(--lime);color:var(--lime-ink);border-radius:1.5rem;padding:3.5rem 3rem;display:grid;grid-template-columns:1fr auto;gap:2rem;align-items:center}
+@media(max-width:48rem){.audit{grid-template-columns:1fr;padding:2.5rem 1.75rem}}
+.audit h2{color:var(--lime-ink)}
+.audit p{color:#3d3d12;max-width:52ch}
+.audit .btn{background:var(--lime-ink);color:#f5f5f2}
+.audit .meta{margin-top:1rem;font-size:.92rem;color:#3d3d12}
+/* footer */
+footer{border-top:1px solid var(--line);padding:3.5rem 0 2.5rem;color:var(--muted)}
+.foot-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:2rem}
+@media(max-width:48rem){.foot-grid{grid-template-columns:1fr}}
+footer h4{color:var(--text);font-size:.95rem;margin-bottom:.9rem}
+footer ul{list-style:none;display:grid;gap:.55rem;font-size:.95rem}
+footer a:hover{color:var(--text)}
+.fine{margin-top:3rem;font-size:.85rem;color:#6d6d7c}
+.src-note{font-size:.82rem;color:#6d6d7c;margin-top:1rem}
+</style>
+</head>
+<body>
+<nav>
+  <div class="wrap nav-in">
+    <a class="wordmark" href="#"><span class="vmark">V</span>Veltris</a>
+    <div class="nav-links">
+      <a href="#services">Services</a>
+      <a href="#systems">Systems</a>
+      <a href="#audit">Free audit</a>
+    </div>
+    <a class="btn btn-lime" style="padding:.6rem 1.1rem" href="https://calendar.app.google/opAcE1TeBet57Tx17">Book a free audit</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="pill"><b>Free 60 minute audit</b> · No pitch, just a plan</span>
+    <h1>Websites that win work<br>for <span class="rot" id="rot">builders</span>.</h1>
+    <p class="lede">Helping UK businesses implement AI systems. We build the website first, then the CRM, client portal and automations that sit behind it, so enquiries never slip away.</p>
+    <div class="cta-row">
+      <a class="btn btn-lime" href="https://calendar.app.google/opAcE1TeBet57Tx17">Book a free audit</a>
+      <a class="btn btn-ghost" href="#services">See what we build</a>
+    </div>
+
+    <div class="strip" aria-label="Website previews">
+      <div class="mock">
+        <div class="mock-bar"><i class="dot"></i><i class="dot"></i><i class="dot"></i><span>Builder website</span></div>
+        <div class="mock-body"><div class="mock-img"></div><div class="mock-h"></div><div class="mock-h short"></div><div class="mock-p"></div><div class="mock-btn"></div></div>
+      </div>
+      <div class="mock">
+        <div class="mock-bar"><i class="dot"></i><i class="dot"></i><i class="dot"></i><span>Clinic website</span></div>
+        <div class="mock-body"><div class="mock-img b"></div><div class="mock-h"></div><div class="mock-h short"></div><div class="mock-p"></div><div class="mock-btn"></div></div>
+      </div>
+      <div class="mock">
+        <div class="mock-bar"><i class="dot"></i><i class="dot"></i><i class="dot"></i><span>Planner website</span></div>
+        <div class="mock-body"><div class="mock-img c"></div><div class="mock-h"></div><div class="mock-h short"></div><div class="mock-p"></div><div class="mock-btn"></div></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section class="stats">
+  <div class="wrap stats-grid">
+    <div class="stat"><b>21+</b><span>Live templates</span></div>
+    <div class="stat"><b>4</b><span>Core systems</span></div>
+    <div class="stat"><b>60 min</b><span>Free audit</span></div>
+    <div class="stat"><b>30 day</b><span>Free pilot</span></div>
+  </div>
+</section>
+
+<section id="services">
+  <div class="wrap">
+    <p class="eyebrow">What we build</p>
+    <h2>Everything you need to win more work</h2>
+    <p class="lede">One team, one build. The website leads, the systems behind it do the chasing.</p>
+    <div class="bento">
+      <article class="card wide">
+        <span class="tag">Lead service</span>
+        <h3>Website Development</h3>
+        <p>A fast, clear website built to turn visits into enquiries. Your services, your proof, your booking step, all in one place a visitor can grasp in seconds.</p>
+        <div class="mini"><i>Built for your trade</i><i>Fast to load</i><i>Booking built in</i></div>
+      </article>
+      <article class="card narrow">
+        <span class="tag">CRM</span>
+        <h3>CRM with AI built in</h3>
+        <p>Every enquiry answered, tracked and followed up in one place.</p>
+      </article>
+      <article class="card half">
+        <span class="tag">Portals</span>
+        <h3>Client portals</h3>
+        <p>Clients book, pay and check progress in one place, without ringing you.</p>
+      </article>
+      <article class="card half">
+        <span class="tag">Automations</span>
+        <h3>Automations</h3>
+        <p>Receptionist, no show killer, win back and review engine, running in the background.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="systems" style="padding-top:0">
+  <div class="wrap">
+    <p class="eyebrow">The four systems</p>
+    <h2>Working systems, not just a website</h2>
+    <div class="sys">
+      <div class="sys-row"><b class="num">01</b><h3>Instant enquiry answering</h3><p>Every enquiry gets a reply in minutes, day or night, before a rival replies.</p></div>
+      <div class="sys-row"><b class="num">02</b><h3>No show killer</h3><p>Reminders and confirmations that keep diaries full and gaps filled.</p></div>
+      <div class="sys-row"><b class="num">03</b><h3>Win back</h3><p>Past clients hear from you again at the right time, with a reason to return.</p></div>
+      <div class="sys-row"><b class="num">04</b><h3>Review engine</h3><p>Happy clients are asked for a review while the job is still fresh.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="audit" style="padding-top:0">
+  <div class="wrap">
+    <div class="audit">
+      <div>
+        <h2>Book a free audit</h2>
+        <p>60 minutes, Monday to Friday, on Google Meet. We look at your website and your follow up, and show you what to fix first.</p>
+        <p class="meta">Free 60 minute audit · 30 day free pilot when we build for you</p>
+      </div>
+      <a class="btn" href="https://calendar.app.google/opAcE1TeBet57Tx17">Book your free audit</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <a class="wordmark" href="#" style="margin-bottom:1rem"><span class="vmark">V</span>Veltris</a>
+        <p style="margin-top:1rem">Helping UK businesses implement AI systems.</p>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="mailto:muhammad@veltris.uk">muhammad@veltris.uk</a></li>
+          <li><a href="https://instagram.com/veltris.ukl">Instagram @veltris.ukl</a></li>
+          <li><a href="https://veltris.uk">veltris.uk</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Veltris</h4>
+        <ul>
+          <li><a href="#services">Services</a></li>
+          <li><a href="#systems">Systems</a></li>
+          <li><a href="https://calendar.app.google/opAcE1TeBet57Tx17">Free audit</a></li>
+        </ul>
+      </div>
+    </div>
+    <p class="fine">© 2026 Veltris. Preview only, not the live site.</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var words=["builders","clinics","planners"],i=0,el=document.getElementById("rot");
+  setInterval(function(){ i=(i+1)%words.length; el.textContent=words[i]; },2200);
+})();
+</script>
+</body>
+</html>

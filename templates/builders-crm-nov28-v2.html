@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Meridian CRM — Builders Nov 28 v2</title>
+<style>
+@font-face{font-family:Inter;src:url(../vip-fonts/Inter-400.ttf);font-weight:400}
+@font-face{font-family:Inter;src:url(../vip-fonts/Inter-500.ttf);font-weight:500}
+@font-face{font-family:Inter;src:url(../vip-fonts/Inter-600.ttf);font-weight:600}
+@font-face{font-family:Poppins;src:url(../fonts/Poppins-700.ttf);font-weight:700}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{
+  font-family:Inter,system-ui,sans-serif;color:#2A2118;overflow:hidden;
+  background:linear-gradient(160deg,#FDF8EC 0%,#F6ECD4 45%,#EFE2C4 100%);
+  display:flex;align-items:center;justify-content:center;
+}
+/* ============ DASHBOARD SHELL (native design size 1480x960) ============ */
+#dash{
+  width:1480px;height:960px;flex:none;position:relative;border-radius:28px;overflow:hidden;
+  background:
+    radial-gradient(900px 480px at 82% -8%,rgba(217,119,6,.14),transparent 60%),
+    radial-gradient(700px 500px at 6% 108%,rgba(20,83,45,.13),transparent 60%),
+    linear-gradient(160deg,#FFFDF6 0%,#FBF4E3 55%,#F5EBD2 100%);
+  box-shadow:0 40px 90px rgba(90,60,10,.20),0 4px 18px rgba(90,60,10,.12);
+  display:flex;
+}
+.glass{
+  background:rgba(255,253,247,.92);
+  border:1px solid rgba(42,33,24,.09);
+  border-radius:20px;
+  box-shadow:0 12px 28px rgba(90,60,10,.09),inset 0 1px 0 rgba(255,255,255,.9);
+}
+.glass-card{transition:translate .18s ease-out}
+.glass-card:hover{translate:0 -5px}
+/* ============ ICON RAIL ============ */
+#rail{
+  width:58px;flex:none;height:100%;display:flex;flex-direction:column;align-items:center;
+  padding:16px 0;gap:6px;background:rgba(255,253,247,.6);border-right:1px solid rgba(42,33,24,.07);
+}
+#rail .ric{
+  width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;
+  color:rgba(42,33,24,.5);position:relative;cursor:pointer;flex:none;
+}
+#rail .ric svg{width:19px;height:19px}
+#rail .ric:hover{color:#2A2118;background:rgba(20,83,45,.08)}
+#rail .ric.active{background:linear-gradient(135deg,#14532D,#1E6B41);color:#fff}
+#rail .ric::after{
+  content:attr(data-tip);position:absolute;left:48px;top:50%;transform:translateY(-50%);
+  background:#221A10;color:#fff;font-size:11px;font-weight:500;padding:5px 9px;border-radius:7px;
+  white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s;z-index:60;
+  border:1px solid rgba(255,255,255,.14);box-shadow:0 6px 16px rgba(0,0,0,.4);
+}
+#rail .ric:hover::after{opacity:1}
+#rail .sp{flex:1}
+#rail .avatar-mini{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#14532D,#D97706);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#fff}
+/* ============ MAIN ============ */
+#main{flex:1;padding:18px 20px 20px;position:relative;display:flex;flex-direction:column;min-width:0}
+/* top bar */
+#topbar{display:flex;align-items:center;gap:16px;height:46px;flex:none}
+#search{
+  width:330px;height:42px;border-radius:999px;background:rgba(255,253,247,.95);
+  border:1px solid rgba(42,33,24,.10);display:flex;align-items:center;gap:9px;padding:0 16px;
+  color:rgba(42,33,24,.45);font-size:13.5px;flex:none;
+}
+#search svg{width:15px;height:15px;flex:none}
+#tabs{display:flex;gap:2px;margin:0 auto;background:rgba(255,253,247,.85);border:1px solid rgba(42,33,24,.08);padding:4px;border-radius:999px;position:relative}
+#tabpill{position:absolute;top:4px;left:0;height:calc(100% - 8px);background:#14532D;border-radius:999px;box-shadow:0 2px 8px rgba(20,83,45,.45);z-index:0;pointer-events:none;transition:transform 280ms cubic-bezier(.23,1,.32,1),width 280ms cubic-bezier(.23,1,.32,1)}
+#tabs .tab{font-size:14px;font-weight:500;color:rgba(42,33,24,.55);padding:8px 16px;border-radius:999px;cursor:pointer;white-space:nowrap;position:relative;z-index:1}
+#tabs .tab:hover{color:#2A2118}
+#tabs .tab.active{color:#fff}
+#topright{display:flex;align-items:center;gap:12px;flex:none}
+#bell{width:38px;height:38px;border-radius:50%;background:#FFFDF7;border:1px solid rgba(42,33,24,.10);display:flex;align-items:center;justify-content:center;position:relative;cursor:pointer}
+#bell svg{width:16px;height:16px;color:rgba(42,33,24,.7)}
+#bell .dot{position:absolute;top:8px;right:9px;width:7px;height:7px;border-radius:50%;background:#D97706;border:1.5px solid #fff}
+#userchip{display:flex;align-items:center;gap:9px}
+#userchip .av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#14532D,#D97706);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#fff}
+#userchip .un{font-size:13.5px;font-weight:600;line-height:1.15}
+#userchip .ur{font-size:11px;color:rgba(42,33,24,.5)}
+/* pages */
+.page{display:none;flex-direction:column;flex:1;min-height:0}
+.page.on{display:flex}
+/* section headings */
+.sechead{display:flex;align-items:baseline;justify-content:space-between;flex:none}
+.sechead h4{font-size:14.5px;font-weight:600}
+.sechead .seeall{font-size:12px;color:rgba(42,33,24,.5);cursor:pointer}
+.sechead .seeall:hover{color:#2A2118}
+.stchip{display:inline-block;font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px;white-space:nowrap}
+.st-green{background:rgba(20,83,45,.12);color:#14532D}
+.st-amber{background:rgba(217,119,6,.15);color:#92400E}
+.st-terra{background:rgba(194,65,12,.12);color:#9A3412}
+/* ============ OVERVIEW: revenue chart ============ */
+#chartpanel{padding:20px 24px 14px;display:flex;flex-direction:column;flex:none}
+#charthead{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+#charthead h3{font-family:Poppins,Inter,sans-serif;font-size:21px;font-weight:700}
+#charthead .csub{font-size:13px;color:rgba(42,33,24,.55);margin-top:3px}
+#charttotal{text-align:right;flex:none}
+#charttotal .bigval{font-family:Poppins,Inter,sans-serif;font-size:38px;font-weight:700;color:#14532D;line-height:1.05}
+#charttotal .upchip{display:inline-block;margin-top:4px;font-size:12px;font-weight:700;color:#14532D;background:rgba(20,83,45,.10);padding:4px 10px;border-radius:999px}
+#chartsvg{width:100%;height:auto;display:block;margin-top:6px}
+#chartsvg text{font-family:Inter,sans-serif}
+/* ============ OVERVIEW: job cards ============ */
+.jobcard{flex:1;padding:16px 16px 14px;display:flex;flex-direction:column;min-width:0}
+.jobcard .jtop{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.jobcard .jic{width:38px;height:38px;border-radius:12px;background:rgba(20,83,45,.10);color:#14532D;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12.5px;flex:none}
+.jobcard .jname{font-size:15px;font-weight:600;line-height:1.25;margin-top:11px}
+.jobcard .jsub{font-size:12px;color:rgba(42,33,24,.5);margin-top:2px}
+.jobcard .jbar{margin-top:13px}
+.jobcard .jbarlab{display:flex;justify-content:space-between;font-size:11.5px;color:rgba(42,33,24,.55);margin-bottom:6px}
+.jobcard .jbarlab b{color:#14532D}
+.jobcard .jfoot{display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:11px;border-top:1px solid rgba(42,33,24,.08)}
+.jobcard .jval{font-size:16px;font-weight:700}
+.jobcard .jcrew{font-size:12px;color:rgba(42,33,24,.55)}
+.track{height:8px;border-radius:999px;background:rgba(42,33,24,.08);overflow:hidden}
+.track .fill{height:100%;border-radius:999px;width:0}
+/* ============ PAGE HEADERS ============ */
+.pghead{margin-top:16px;flex:none}
+.pghead h1{font-family:Poppins,Inter,sans-serif;font-size:29px;font-weight:700}
+.pghead .csub{font-size:13px;color:rgba(42,33,24,.55);margin-top:3px}
+/* ============ PIPELINE KANBAN ============ */
+.kb{display:flex;gap:12px}
+.kbcol{flex:1;padding:14px 14px 12px;display:flex;flex-direction:column;min-width:0}
+.kbhead{display:flex;align-items:center;gap:9px;flex:none}
+.kbdot{width:10px;height:10px;border-radius:50%;flex:none}
+.kbt{font-size:15px;font-weight:700}
+.kbcount{margin-left:auto}
+.kbcards{display:flex;flex-direction:column;gap:10px;margin-top:12px}
+.kbcard{background:#FFFDF7;border:1px solid rgba(42,33,24,.09);border-radius:16px;padding:13px 15px;box-shadow:0 4px 12px rgba(90,60,10,.07)}
+.kbtop{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.kbnum{font-size:12px;font-weight:700;color:rgba(42,33,24,.5);font-variant-numeric:tabular-nums}
+.kbsub{font-size:15px;font-weight:600;line-height:1.3;margin-top:8px}
+.kbmeta{display:flex;align-items:center;gap:9px;margin-top:10px}
+.kbmeta .ci{width:26px;height:26px;border-radius:8px;background:rgba(20,83,45,.10);color:#14532D;display:flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:700;flex:none}
+.kbcust{font-size:13px;font-weight:500;white-space:nowrap}
+.kbval{margin-left:auto;font-size:13.5px;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.kbmore{margin-top:auto;padding-top:12px;font-size:12.5px;color:rgba(42,33,24,.5);text-align:center}
+.panelfoot{margin-top:auto;padding-top:12px;border-top:1px solid rgba(42,33,24,.08);font-size:12px;color:rgba(42,33,24,.45)}
+/* ============ QUOTES: invoice cards + totals ============ */
+.invcard{padding:15px 18px;display:flex;align-items:center;gap:14px}
+.invcard .iic{width:44px;height:44px;border-radius:14px;flex:none;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;letter-spacing:.02em}
+.invcard .iic.green{background:rgba(20,83,45,.10);color:#14532D}
+.invcard .iic.amber{background:rgba(217,119,6,.13);color:#92400E}
+.invcard .iic.terra{background:rgba(194,65,12,.11);color:#9A3412}
+.invcard .itx{min-width:0}
+.invcard .in{font-size:14.5px;font-weight:600;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.invcard .id{font-size:12px;color:rgba(42,33,24,.5);margin-top:2px}
+.invcard .iv{margin-left:auto;text-align:right;flex:none}
+.invcard .iamt{font-size:16px;font-weight:700;font-variant-numeric:tabular-nums}
+.invcard .idue{font-size:11.5px;color:rgba(42,33,24,.5);margin-top:3px}
+.sumrow{display:flex;align-items:center;justify-content:space-between;padding:9px 2px;font-size:13.5px}
+.sumrow .sl{color:rgba(42,33,24,.55)}
+.sumrow .sv{font-weight:700}
+.splitbar{height:9px;border-radius:999px;background:rgba(42,33,24,.08);overflow:hidden;display:flex}
+.splitbar .seg{height:100%}
+.chasebox{margin-top:14px;background:rgba(217,119,6,.08);border:1px solid rgba(217,119,6,.18);border-radius:14px;padding:12px 14px}
+.chasebox .cb1{font-size:12px;font-weight:700;color:#92400E;letter-spacing:.04em;text-transform:uppercase}
+.chasebox .cb2{font-size:13.5px;font-weight:600;margin-top:5px}
+.chasebox .cb3{font-size:12px;color:rgba(42,33,24,.55);margin-top:2px}
+/* ============ SCHEDULE: week calendar ============ */
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;flex:1;min-height:0}
+.calday{padding:13px 12px;display:flex;flex-direction:column;min-width:0}
+.calday.today{border-color:rgba(20,83,45,.35);box-shadow:0 12px 28px rgba(20,83,45,.14),inset 0 1px 0 rgba(255,255,255,.9)}
+.calday .cd{font-size:11px;font-weight:700;letter-spacing:.08em;color:rgba(42,33,24,.5);text-transform:uppercase}
+.calday .cn{font-family:Poppins,Inter,sans-serif;font-size:24px;font-weight:700;line-height:1.1;margin-top:2px}
+.calday .cblocks{display:flex;flex-direction:column;gap:9px;margin-top:12px}
+.calblock{border-radius:12px;padding:10px 11px;border-left:4px solid}
+.calblock .bt{font-size:12px;font-weight:700}
+.calblock .bj{font-size:13px;font-weight:600;line-height:1.3;margin-top:3px}
+.calblock .bc{font-size:11.5px;color:rgba(42,33,24,.55);margin-top:2px}
+.calblock.green{background:rgba(20,83,45,.08);border-left-color:#14532D}
+.calblock.amber{background:rgba(217,119,6,.10);border-left-color:#D97706}
+.calblock.terra{background:rgba(194,65,12,.09);border-left-color:#C2410C}
+.calempty{margin-top:12px;border:1.5px dashed rgba(42,33,24,.18);border-radius:12px;padding:16px 10px;text-align:center;font-size:12px;color:rgba(42,33,24,.45)}
+/* skeleton */
+#skel{position:absolute;inset:64px 20px 20px;display:none;z-index:40;background:linear-gradient(160deg,#FFFDF6,#F6ECD4);border-radius:18px}
+#skel.on{display:flex;flex-direction:column}
+#skel .sk{border-radius:16px;background:linear-gradient(100deg,rgba(240,228,200,.98) 40%,rgba(255,255,255,.98) 50%,rgba(240,228,200,.98) 60%);background-size:200% 100%;animation:shim 0.9s infinite linear;border:1px solid rgba(42,33,24,.06)}
+@keyframes shim{to{background-position:-200% 0}}
+</style>
+</head>
+<body>
+<div id="dash">
+  <!-- ================= ICON RAIL ================= -->
+  <div id="rail">
+    <div class="ric active" data-tip="Overview" data-page="overview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></div>
+    <div class="ric" data-tip="Search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.8-3.8"/></svg></div>
+    <div class="ric" data-tip="Leads"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h10"/></svg></div>
+    <div class="ric" data-tip="Pipeline" data-page="pipeline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg></div>
+    <div class="ric" data-tip="Contacts"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3.5"/><path d="M3.5 20c.6-3.2 2.8-5 5.5-5s4.9 1.8 5.5 5"/><path d="M16 5.4a3.5 3.5 0 0 1 0 5.9M18.4 15.4c1.2.8 2 2.2 2.3 4.1"/></svg></div>
+    <div class="ric" data-tip="Quotes" data-page="quotes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h9l4 4v14H6z"/><path d="M9 12h7M9 16h7"/></svg></div>
+    <div class="ric" data-tip="Schedule" data-page="schedule"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></div>
+    <div class="ric" data-tip="Reports"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V11M9.5 20V4M15 20v-6M20.5 20V7"/></svg></div>
+    <div class="sp"></div>
+    <div class="ric" data-tip="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2.2"/><circle cx="10" cy="17" r="2.2"/></svg></div>
+    <div class="avatar-mini">MB</div>
+  </div>
+
+  <div id="main">
+    <!-- ================= TOP BAR ================= -->
+    <div id="topbar">
+      <div id="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.8-3.8"/></svg><span id="searchtxt">Search deals, people…</span></div>
+      <div id="tabs">
+        <div id="tabpill"></div>
+        <div class="tab active" data-page="overview">Overview</div>
+        <div class="tab">Leads</div>
+        <div class="tab" data-page="pipeline">Pipeline</div>
+        <div class="tab">Contacts</div>
+        <div class="tab" data-page="quotes">Quotes</div>
+        <div class="tab" data-page="schedule">Schedule</div>
+        <div class="tab">Invoices</div>
+        <div class="tab">More</div>
+      </div>
+      <div id="topright">
+        <div id="bell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9.5a6 6 0 0 1 12 0c0 4 1.5 5.5 1.5 5.5h-15S6 13.5 6 9.5"/><path d="M10 19a2.2 2.2 0 0 0 4 0"/></svg><span class="dot"></span></div>
+        <div id="userchip"><div class="av">MB</div><div><div class="un">Meridian Build</div><div class="ur">Admin</div></div></div>
+      </div>
+    </div>
+
+    <!-- ================= PAGE: OVERVIEW ================= -->
+    <div class="page on" id="page-overview">
+      <div class="glass" id="chartpanel" style="margin-top:14px" data-anim>
+        <div id="charthead">
+          <div>
+            <h3>Revenue · last 6 months</h3>
+            <div class="csub">June – November 2026 · all jobs invoiced</div>
+          </div>
+          <div id="charttotal">
+            <div class="bigval" data-count data-target="940" data-fmt="k" data-delay="0">£0k</div>
+            <span class="upchip">▲ 18% vs previous 6 months</span>
+          </div>
+        </div>
+        <svg id="chartsvg" viewBox="0 0 1240 340" preserveAspectRatio="none">
+          <line x1="40" y1="40" x2="1220" y2="40" stroke="rgba(42,33,24,.08)" stroke-width="1"/>
+          <line x1="40" y1="170" x2="1220" y2="170" stroke="rgba(42,33,24,.08)" stroke-width="1"/>
+          <text x="8" y="34" font-size="12" fill="rgba(42,33,24,.45)">£200k</text>
+          <text x="8" y="164" font-size="12" fill="rgba(42,33,24,.45)">£100k</text>
+          <rect data-bar data-base="300" data-h="172" x="65"  y="300" width="110" height="0" rx="10" fill="#14532D"/>
+          <rect data-bar data-base="300" data-h="192" x="265" y="300" width="110" height="0" rx="10" fill="#14532D"/>
+          <rect data-bar data-base="300" data-h="157" x="465" y="300" width="110" height="0" rx="10" fill="#14532D"/>
+          <rect data-bar data-base="300" data-h="213" x="665" y="300" width="110" height="0" rx="10" fill="#14532D"/>
+          <rect data-bar data-base="300" data-h="233" x="865" y="300" width="110" height="0" rx="10" fill="#14532D"/>
+          <rect data-bar data-base="300" data-h="255" x="1065" y="300" width="110" height="0" rx="10" fill="#D97706"/>
+          <text x="120"  y="113" font-size="17" font-weight="700" fill="#14532D" text-anchor="middle">£132k</text>
+          <text x="320"  y="93"  font-size="17" font-weight="700" fill="#14532D" text-anchor="middle">£148k</text>
+          <text x="520"  y="128" font-size="17" font-weight="700" fill="#14532D" text-anchor="middle">£121k</text>
+          <text x="720"  y="72"  font-size="17" font-weight="700" fill="#14532D" text-anchor="middle">£164k</text>
+          <text x="920"  y="52"  font-size="17" font-weight="700" fill="#14532D" text-anchor="middle">£179k</text>
+          <text x="1120" y="30"  font-size="17" font-weight="700" fill="#92400E" text-anchor="middle">£196k</text>
+          <text x="120"  y="328" font-size="14" fill="rgba(42,33,24,.55)" text-anchor="middle">Jun</text>
+          <text x="320"  y="328" font-size="14" fill="rgba(42,33,24,.55)" text-anchor="middle">Jul</text>
+          <text x="520"  y="328" font-size="14" fill="rgba(42,33,24,.55)" text-anchor="middle">Aug</text>
+          <text x="720"  y="328" font-size="14" fill="rgba(42,33,24,.55)" text-anchor="middle">Sep</text>
+          <text x="920"  y="328" font-size="14" fill="rgba(42,33,24,.55)" text-anchor="middle">Oct</text>
+          <text x="1120" y="328" font-size="14" font-weight="600" fill="#92400E" text-anchor="middle">Nov</text>
+        </svg>
+      </div>
+
+      <div class="sechead" style="margin-top:14px"><h4>Jobs on site this week</h4><span class="seeall">See all</span></div>
+      <div style="display:flex;gap:10px;margin-top:9px;flex:1;min-height:0">
+        <div class="glass glass-card jobcard" data-anim>
+          <div class="jtop"><div class="jic">SH</div><span class="stchip st-green">Building</span></div>
+          <div class="jname">Loft conversion</div>
+          <div class="jsub">Stonebridge Homes · Epsom</div>
+          <div class="jbar"><div class="jbarlab"><span>Progress</span><b>68%</b></div><div class="track"><div class="fill" data-fill data-pct="68" style="background:#14532D"></div></div></div>
+          <div class="jfoot"><span class="jval">£184,000</span><span class="jcrew">Crew of 6</span></div>
+        </div>
+        <div class="glass glass-card jobcard" data-anim>
+          <div class="jtop"><div class="jic">WC</div><span class="stchip st-green">Building</span></div>
+          <div class="jname">Garden room</div>
+          <div class="jsub">Willowbrook Construction · Guildford</div>
+          <div class="jbar"><div class="jbarlab"><span>Progress</span><b>45%</b></div><div class="track"><div class="fill" data-fill data-pct="45" style="background:#14532D"></div></div></div>
+          <div class="jfoot"><span class="jval">£96,000</span><span class="jcrew">Crew of 4</span></div>
+        </div>
+        <div class="glass glass-card jobcard" data-anim>
+          <div class="jtop"><div class="jic">MD</div><span class="stchip st-amber">Snagging</span></div>
+          <div class="jname">Kitchen extension</div>
+          <div class="jsub">Meadowbank Developments · Reigate</div>
+          <div class="jbar"><div class="jbarlab"><span>Progress</span><b>82%</b></div><div class="track"><div class="fill" data-fill data-pct="82" style="background:#D97706"></div></div></div>
+          <div class="jfoot"><span class="jval">£74,500</span><span class="jcrew">Crew of 3</span></div>
+        </div>
+        <div class="glass glass-card jobcard" data-anim>
+          <div class="jtop"><div class="jic">HC</div><span class="stchip st-green">Building</span></div>
+          <div class="jname">Barn conversion</div>
+          <div class="jsub">Heron &amp; Cross · Horsham</div>
+          <div class="jbar"><div class="jbarlab"><span>Progress</span><b>30%</b></div><div class="track"><div class="fill" data-fill data-pct="30" style="background:#14532D"></div></div></div>
+          <div class="jfoot"><span class="jval">£142,000</span><span class="jcrew">Crew of 5</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= PAGE: PIPELINE ================= -->
+    <div class="page" id="page-pipeline">
+      <div class="pghead">
+        <h1>Pipeline</h1>
+        <div class="csub">12 deals · £775,100 in play</div>
+      </div>
+      <div class="kb" style="margin-top:14px;flex:1;min-height:0" data-anim>
+        <div class="glass kbcol">
+          <div class="kbhead"><span class="kbdot" style="background:#D97706"></span><span class="kbt">New leads</span><span class="stchip st-amber kbcount">4</span></div>
+          <div class="kbcards">
+            <div class="kbcard"><div class="kbtop"><span class="kbnum">2d ago</span><span class="stchip st-amber">New</span></div><div class="kbsub">Side return extension</div><div class="kbmeta"><span class="ci">TR</span><span class="kbcust">Tudor Rose Homes</span><span class="kbval">£18,500</span></div></div>
+            <div class="kbcard"><div class="kbtop"><span class="kbnum">3d ago</span><span class="stchip st-amber">New</span></div><div class="kbsub">Garage conversion</div><div class="kbmeta"><span class="ci">CH</span><span class="kbcust">Copperfield Homes</span><span class="kbval">£24,200</span></div></div>
+            <div class="kbcard"><div class="kbtop"><span class="kbnum">4d ago</span><span class="stchip st-amber">New</span></div><div class="kbsub">Two-storey extension</div><div class="kbmeta"><span class="ci">RB</span><span class="kbcust">Rowan &amp; Birch</span><span class="kbval">£31,000</span></div></div>
+            <div class="kbcard"><div class="kbtop"><span class="kbnum">5d ago</span><span class="stchip st-amber">New</span></div><div class="kbsub">Garden office</div><div class="kbmeta"><span class="ci">AC</span><span class="kbcust">Amberley Court</span><span class="kbval">£12,800</span></div></div>
+          </div>
+          <div class="kbmore">£86,500 in new leads</div>
+        </div>
+        <div class="glass kbcol">
+          <div class="kbhead"><span class="kbdot" style="background:#1E6B41"></span><span class="kbt">Quoted</span><span class="stchip st-green kbcount">3</span></div>
+          <div class="kbcards">
+            <div class="kbcard"><div class="kbtop"><span class="kbnum">Sent 1d ago</span><span class="stchip st-green">Quoted</span></div><div class="kbsub">Garden room</div><div class="kbmeta"><span class="ci">WC</span><span class="kbcust">Willowbrook Construction</span><span class="kbval">£42,600</span></div></div>
+            <div class="kbcard"><div class="kbtop"><span class="kbnum">Sent 2d ago</span><span class="stchip st-green">Quoted</span></div><div class="kbsub">Side return extension</div><div class="kbmeta"><span class="ci">HC</span><span class="kbcust">Heron &amp; Cross</span><span class="kbval">£58,900</span></div></div>
+            <div class="kbcard"><div class="kbtop"><span class="kbnum">Sent 4d ago</span><span class="stchip st-green">Quoted</span></div><div class="kbsub">Loft conversion</div><div class="kbmeta"><span class="ci">KE</span><span class="kbcust">Kingsmere Estates</span><span class="kbval">£27,400</span></div></div>
+          </div>
+          <div class="kbmore">£128,900 quoted · awaiting reply</div>
+        </div>
+        <div class="glass kbcol">
+          <div class="kbhead"><span class="kbdot" style="background:#14532D"></span><span class="kbt">Won</span><span class="stchip st-green kbcount">3</span></div>
+          <div class="kbcards">
+            <div class="kbcard"><div class="kbtop"><span class="kbnum">Won 2d ago</span><span class="stchip st-green">Won</span></div><div class="kbsub">Loft conversion</div><div class="kbmeta"><span class="ci">SH</span><span class="kbcust">Stonebridge Homes</span><span class="kbval">£96,000</span></div></div>
+            <div class="kbcard"><div class="kbtop"><span class="kbnum">Won 3d ago</span><span class="stchip st-green">Won</span></div><div class="kbsub">Kitchen extension</div><div class="kbmeta"><span class="ci">MD</span><span class="kbcust">Meadowbank Developments</span><span class="kbval">£74,500</span></div></div>
+            <div class="kbcard"><div class="kbtop"><span class="kbnum">Won 5d ago</span><span class="stchip st-green">Won</span></div><div class="kbsub">Barn conversion</div><div class="kbmeta"><span class="ci">HC</span><span class="kbcust">Heron &amp; Cross</span><span class="kbval">£63,200</span></div></div>
+          </div>
+          <div class="kbmore">£233,700 won · deposits in</div>
+        </div>
+        <div class="glass kbcol">
+          <div class="kbhead"><span class="kbdot" style="background:#C2410C"></span><span class="kbt">Building</span><span class="stchip st-terra kbcount">2</span></div>
+          <div class="kbcards">
+            <div class="kbcard"><div class="kbtop"><span class="kbnum">Week 6 of 14</span><span class="stchip st-terra">On site</span></div><div class="kbsub">Full renovation</div><div class="kbmeta"><span class="ci">FB</span><span class="kbcust">Fieldgate Build</span><span class="kbval">£184,000</span></div></div>
+            <div class="kbcard"><div class="kbtop"><span class="kbnum">Week 3 of 10</span><span class="stchip st-terra">On site</span></div><div class="kbsub">Barn conversion</div><div class="kbmeta"><span class="ci">TR</span><span class="kbcust">Tudor Rose Homes</span><span class="kbval">£142,000</span></div></div>
+          </div>
+          <div class="kbmore">£326,000 under construction</div>
+        </div>
+      </div>
+      <div class="panelfoot" style="margin-top:10px">Win rate 64% this quarter · average deal £64,600 · 3 quotes to chase</div>
+    </div>
+
+    <!-- ================= PAGE: QUOTES & INVOICES ================= -->
+    <div class="page" id="page-quotes">
+      <div style="margin-top:16px;flex:none;display:flex;align-items:flex-end;justify-content:space-between">
+        <div class="pghead" style="margin-top:0"><h1>Quotes &amp; invoices</h1><div class="csub">November · 5 most recent</div></div>
+      </div>
+      <div style="display:flex;gap:12px;margin-top:14px;flex:1;min-height:0">
+        <div style="flex:1;display:flex;flex-direction:column;gap:10px">
+          <div class="glass invcard" data-anim>
+            <div class="iic green">INV</div>
+            <div class="itx"><div class="in">Stonebridge Homes</div><div class="id">INV-2401 · Loft conversion — stage 2</div></div>
+            <div class="iv"><div class="iamt">£38,400</div><div class="idue"><span class="stchip st-green">Paid</span></div></div>
+          </div>
+          <div class="glass invcard" data-anim>
+            <div class="iic amber">Q</div>
+            <div class="itx"><div class="in">Willowbrook Construction</div><div class="id">Q-1062 · Garden room</div></div>
+            <div class="iv"><div class="iamt">£42,600</div><div class="idue"><span class="stchip st-amber">Sent · due Fri</span></div></div>
+          </div>
+          <div class="glass invcard" data-anim>
+            <div class="iic terra">INV</div>
+            <div class="itx"><div class="in">Meadowbank Developments</div><div class="id">INV-2400 · Kitchen extension — phase 1</div></div>
+            <div class="iv"><div class="iamt">£24,900</div><div class="idue"><span class="stchip st-terra">Overdue 6 days</span></div></div>
+          </div>
+          <div class="glass invcard" data-anim>
+            <div class="iic amber">Q</div>
+            <div class="itx"><div class="in">Heron &amp; Cross</div><div class="id">Q-1061 · Side return extension</div></div>
+            <div class="iv"><div class="iamt">£58,900</div><div class="idue"><span class="stchip st-amber">Sent · due Fri</span></div></div>
+          </div>
+          <div class="glass invcard" data-anim>
+            <div class="iic green">INV</div>
+            <div class="itx"><div class="in">Fieldgate Build</div><div class="id">INV-2399 · Full renovation — stage 1</div></div>
+            <div class="iv"><div class="iamt">£18,200</div><div class="idue"><span class="stchip st-green">Paid</span></div></div>
+          </div>
+          <div class="panelfoot">£183,000 shown · November</div>
+        </div>
+        <div class="glass" data-anim style="width:336px;flex:none;padding:20px 20px 16px;display:flex;flex-direction:column">
+          <div class="sechead"><h4>Money in · November</h4><span class="seeall">See all</span></div>
+          <div style="font-family:Poppins,Inter,sans-serif;font-size:36px;font-weight:700;color:#14532D;margin-top:10px" data-count data-target="214.3" data-fmt="k" data-delay="0">£0k</div>
+          <div style="font-size:12.5px;color:rgba(42,33,24,.55)">Paid this month</div>
+          <div class="splitbar" style="margin-top:16px"><div class="seg" style="background:#14532D" data-fill data-pct="68.4"></div><div class="seg" style="background:#D97706" data-fill data-pct="31.6"></div></div>
+          <div style="margin-top:12px">
+            <div class="sumrow"><span class="sl">● Paid</span><span class="sv">£214,300</span></div>
+            <div class="sumrow"><span class="sl">● Outstanding</span><span class="sv">£86,400</span></div>
+            <div class="sumrow"><span class="sl">● Overdue</span><span class="sv">£12,800</span></div>
+          </div>
+          <div class="chasebox">
+            <div class="cb1">Next chase · Friday</div>
+            <div class="cb2">Q-1061 · Heron &amp; Cross</div>
+            <div class="cb3">£58,900 · side return extension · sent 2 days ago</div>
+          </div>
+          <div class="panelfoot">Invoices are chased automatically after 3 days</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= PAGE: SCHEDULE ================= -->
+    <div class="page" id="page-schedule">
+      <div class="pghead">
+        <h1>Schedule</h1>
+        <div class="csub">Week of Mon 30 Nov – Sun 6 Dec · 11 jobs booked</div>
+      </div>
+      <div class="cal" style="margin-top:14px">
+        <div class="glass calday today" data-anim>
+          <div class="cd">Mon</div><div class="cn">30</div>
+          <div class="cblocks">
+            <div class="calblock amber"><div class="bt">09:00</div><div class="bj">Site measure</div><div class="bc">Willowbrook · Guildford</div></div>
+            <div class="calblock terra"><div class="bt">13:30</div><div class="bj">Kitchen strip-out</div><div class="bc">Stonebridge · Epsom</div></div>
+          </div>
+        </div>
+        <div class="glass calday" data-anim>
+          <div class="cd">Tue</div><div class="cn">1</div>
+          <div class="cblocks">
+            <div class="calblock green"><div class="bt">08:00</div><div class="bj">Foundations</div><div class="bc">Meadowbank · Reigate</div></div>
+            <div class="calblock amber"><div class="bt">15:00</div><div class="bj">Quote visit</div><div class="bc">Tudor Rose · Dorking</div></div>
+          </div>
+        </div>
+        <div class="glass calday" data-anim>
+          <div class="cd">Wed</div><div class="cn">2</div>
+          <div class="cblocks">
+            <div class="calblock green"><div class="bt">09:00</div><div class="bj">Loft steel install</div><div class="bc">Heron &amp; Cross · Horsham</div></div>
+            <div class="calblock terra"><div class="bt">14:00</div><div class="bj">Snagging</div><div class="bc">Fieldgate · Crawley</div></div>
+          </div>
+        </div>
+        <div class="glass calday" data-anim>
+          <div class="cd">Thu</div><div class="cn">3</div>
+          <div class="cblocks">
+            <div class="calblock green"><div class="bt">08:30</div><div class="bj">Roofing</div><div class="bc">Kingsmere · Leatherhead</div></div>
+            <div class="calblock amber"><div class="bt">13:00</div><div class="bj">Client walkthrough</div><div class="bc">Amberley · Cobham</div></div>
+          </div>
+        </div>
+        <div class="glass calday" data-anim>
+          <div class="cd">Fri</div><div class="cn">4</div>
+          <div class="cblocks">
+            <div class="calblock green"><div class="bt">09:00</div><div class="bj">Garden room build</div><div class="bc">Willowbrook · Guildford</div></div>
+            <div class="calblock amber"><div class="bt">16:00</div><div class="bj">Quote visit</div><div class="bc">Copperfield · Woking</div></div>
+          </div>
+        </div>
+        <div class="glass calday" data-anim>
+          <div class="cd">Sat</div><div class="cn">5</div>
+          <div class="cblocks">
+            <div class="calblock terra"><div class="bt">09:00</div><div class="bj">Site tidy + handover</div><div class="bc">Stonebridge · Epsom</div></div>
+          </div>
+        </div>
+        <div class="glass calday" data-anim>
+          <div class="cd">Sun</div><div class="cn">6</div>
+          <div class="calempty">No jobs booked<br>Rest day</div>
+        </div>
+      </div>
+      <div class="panelfoot" style="margin-top:10px">3 crews out this week · 2 quote visits · 1 handover on Saturday</div>
+    </div>
+    <!-- skeleton overlay -->
+    <div id="skel">
+      <div class="sk" style="height:128px;margin-bottom:12px"></div>
+      <div style="display:flex;gap:12px"><div class="sk" style="height:330px;flex:1"></div><div class="sk" style="height:330px;flex:1.6"></div></div>
+      <div class="sk" style="flex:1;margin-top:12px"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ================= DATA ================= */
+const fmtM = v => '£' + v.toFixed(2) + 'm';
+const fmtPct = v => Math.round(v) + '%';
+const fmtInt = v => String(Math.round(v));
+
+/* ================= TIME / ANIMATION ENGINE ================= */
+const ease = p => 1 - Math.pow(1-p,3);
+const clamp01 = v => Math.max(0, Math.min(1, v));
+let clockMode = 'live';            // 'live' (rAF) or 'reel' (external __setTime)
+let page = 'overview', pageStart = 0, skelFrom = -1, skelTo = -1;
+let selectedPage = 'overview';
+/* v2 reel: 4 pages x ~1.5s — click at the switch, pill slides 280ms,
+   NO skeleton: outgoing page softens (fade + slight blur, 250ms) while the
+   pill slides, incoming page builds in ~1.1s + 250ms container fade, hold <=0.4s */
+const PAGES = ['overview','pipeline','quotes','schedule'];
+const SWITCHES = [1500, 3000, 4500];   // click instants (ms)
+const SKEL_MS = 250, SLIDE_MS = 280;   // SKEL_MS: live-mode skeleton window AND
+                                       // reel-mode soften window (swap point);
+                                       // reel mode never shows the skeleton (v3)
+const FADE_MS = 250;                   // reel-mode incoming-page container fade
+const SEARCH_TXT = {overview:'Search deals, people…', pipeline:'Search deals…', quotes:'Search quotes, invoices…', schedule:'Search jobs, crews…'};
+
+function fmtVal(fmt, v){ return fmt==='m' ? fmtM(v) : fmt==='pct' ? fmtPct(v) : fmt==='k' ? '£'+v.toFixed(1)+'k' : fmt==='min' ? Math.round(v)+'m' : fmt==='csat' ? v.toFixed(1)+'/5' : fmtInt(v); }
+
+/* page selected (tab/rail/search) vs page displayed (content) at reel time t */
+function pageAt(t){ let k=0; for(const s of SWITCHES){ if(t>=s) k++; } return PAGES[k]; }
+function displayedAt(t){ let k=0; for(const s of SWITCHES){ if(t>=s+SKEL_MS) k++; } return PAGES[k]; }
+function buildStartOf(p){ const i=PAGES.indexOf(p); return i===0 ? 0 : SWITCHES[i-1]+SKEL_MS; }
+
+/* ---- sliding tab pill ---- */
+const pill = document.getElementById('tabpill');
+function tabRect(p){
+  const tb = document.querySelector('#tabs .tab[data-page="'+p+'"]');
+  if(!tb) return null;
+  return {x: tb.offsetLeft, w: tb.offsetWidth};
+}
+function setPill(x, w){
+  pill.style.transform = 'translateX('+x+'px)';
+  pill.style.width = w+'px';
+}
+/* pill position at reel time t: eased slide old->new tab over SLIDE_MS */
+function pillAt(t){
+  for(let i=0;i<SWITCHES.length;i++){
+    const S = SWITCHES[i];
+    if(t>=S && t<S+SLIDE_MS){
+      const a = tabRect(PAGES[i]), b = tabRect(PAGES[i+1]);
+      if(!a || !b) return;
+      const p = ease((t-S)/SLIDE_MS);
+      setPill(a.x+(b.x-a.x)*p, a.w+(b.w-a.w)*p);
+      return;
+    }
+  }
+  const r = tabRect(pageAt(t));
+  if(r) setPill(r.x, r.w);
+}
+function selectPage(p){
+  selectedPage = p;
+  document.querySelectorAll('#tabs .tab').forEach(tb=>tb.classList.toggle('active', tb.dataset.page===p));
+  document.querySelectorAll('#rail .ric').forEach(rc=>rc.classList.toggle('active', rc.dataset.page===p));
+  document.getElementById('searchtxt').textContent = SEARCH_TXT[p];
+  if(clockMode==='live'){ const r = tabRect(p); if(r) setPill(r.x, r.w); }
+}
+function showPage(p, t){
+  page = p; pageStart = t;
+  PAGES.forEach(pg=>document.getElementById('page-'+pg).classList.toggle('on', pg===p));
+}
+
+function renderAt(t){
+  // v3: reel mode NEVER shows the skeleton overlay — the shimmer flash is gone.
+  // The switch is carried by the sliding pill; the outgoing page softens
+  // (opacity 1->0 + blur 0->4px, ease-out, 250ms) and the incoming page
+  // fades in at container level (opacity 0->1, ease-out, 250ms) on top of
+  // its normal staggered build-in. Live mode keeps the skeleton as before.
+  let skel = false;
+  if(clockMode!=='reel'){ skel = skelFrom>=0 && t>=skelFrom && t<skelTo; }
+  document.getElementById('skel').classList.toggle('on', skel);
+  const local = t - pageStart;
+  const pageEl = document.getElementById('page-'+page);
+  if(clockMode==='reel'){
+    let soften = -1, fadeIn = -1;
+    for(const s of SWITCHES){
+      if(t>=s && t<s+SKEL_MS) soften = (t-s)/SKEL_MS;
+      if(t>=s+SKEL_MS && t<s+SKEL_MS+FADE_MS) fadeIn = (t-(s+SKEL_MS))/FADE_MS;
+    }
+    if(soften>=0){
+      const p = ease(soften);
+      pageEl.style.opacity = String(1-p);
+      pageEl.style.filter = 'blur('+(4*p).toFixed(2)+'px)';
+    } else if(fadeIn>=0){
+      pageEl.style.opacity = String(ease(fadeIn));
+      pageEl.style.filter = '';
+    } else {
+      pageEl.style.opacity = '';
+      pageEl.style.filter = '';
+    }
+  }
+  pageEl.querySelectorAll('[data-count]').forEach(el=>{
+    const target=parseFloat(el.dataset.target), delay=parseFloat(el.dataset.delay||0);
+    const p = ease(clamp01((local-delay)/850));
+    el.textContent = fmtVal(el.dataset.fmt, target*p);
+  });
+  pageEl.querySelectorAll('[data-spark]').forEach((el,i)=>{
+    const p = ease(clamp01((local-100-i*60)/950));
+    el.style.strokeDashoffset = String(100*(1-p));
+  });
+  pageEl.querySelectorAll('[data-donut],[data-gauge]').forEach((el,i)=>{
+    const c = parseFloat(el.getAttribute('stroke-dasharray'));
+    const p = ease(clamp01((local-150-i*70)/950));
+    el.style.strokeDashoffset = String(c*(1 - (parseFloat(el.dataset.pct)/100)*p));
+  });
+  pageEl.querySelectorAll('[data-bar]').forEach((el,i)=>{
+    const h = parseFloat(el.dataset.h);
+    const base = parseFloat(el.dataset.base || 64);
+    const p = ease(clamp01((local-120-i*50)/850));
+    el.setAttribute('height', h*p); el.setAttribute('y', base-h*p);
+  });
+  pageEl.querySelectorAll('[data-fill]').forEach((el,i)=>{
+    const pct = parseFloat(el.dataset.pct);
+    const p = ease(clamp01((local-150-i*60)/850));
+    el.style.width = (pct*p)+'%';
+  });
+  pageEl.querySelectorAll('[data-anim]').forEach((el,i)=>{
+    const p = ease(clamp01((local-i*45)/550));
+    el.style.opacity = String(0.25+0.75*p);
+    el.style.transform = 'translateY('+(10*(1-p))+'px)';
+  });
+}
+/* reel clock: absolute reel time -> dashboard state */
+window.__setTime = function(t){
+  clockMode='reel';
+  pill.style.transition='none';
+  const sel = pageAt(t), disp = displayedAt(t);
+  if(sel!==selectedPage) selectPage(sel);
+  if(disp!==page) showPage(disp, buildStartOf(disp));
+  pillAt(t);
+  renderAt(t);
+};
+window.__settle = function(p){ clockMode='reel'; pill.style.transition='none'; selectPage(p); showPage(p, -100000); const r=tabRect(p); if(r) setPill(r.x, r.w); renderAt(0); };
+/* standalone live mode */
+let liveT0 = performance.now();
+function loop(now){
+  if(clockMode!=='live') return;
+  const t = now - liveT0;
+  if(skelTo>0 && t>=skelTo && page!==pendingPage){ showPage(pendingPage, skelTo); skelFrom=-1; }
+  renderAt(t);
+  requestAnimationFrame(loop);
+}
+let pendingPage='overview';
+function requestPage(p){
+  if(!p || p===page) return;
+  const t = performance.now()-liveT0;
+  pendingPage=p; skelFrom=t; skelTo=t+SKEL_MS;
+  selectPage(p);
+}
+document.querySelectorAll('#tabs .tab').forEach(tb=>{
+  tb.addEventListener('click', ()=>requestPage(tb.dataset.page));
+});
+document.querySelectorAll('#rail .ric').forEach(rc=>{
+  rc.addEventListener('click', ()=>requestPage(rc.dataset.page));
+});
+function fit(){
+  const s = Math.min(innerWidth/1528, innerHeight/1008);
+  document.getElementById('dash').style.transform = 'scale('+Math.max(s,0.2)+')';
+}
+addEventListener('resize', fit); fit();
+pill.style.transition='none';
+showPage('overview', 0);
+selectPage('overview');
+requestAnimationFrame(()=>{ pill.style.transition=''; });
+document.fonts.ready.then(()=>{
+  if(clockMode!=='live') return;
+  const r = tabRect(selectedPage);
+  if(r){ pill.style.transition='none'; setPill(r.x, r.w); requestAnimationFrame(()=>{ pill.style.transition=''; }); }
+});
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
